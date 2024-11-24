@@ -51,7 +51,17 @@ public:
         }
         else if(getIT()==ant)
         {
-            s << color<< "An" << "\033[0m";
+            s << color<< "A" << getID() << "\033[0m";
+        }
+        else if(getIT()==grasshoper)
+        {
+             s << color<< "G" << getID() << "\033[0m";
+        }
+        else if(getIT()==spider){
+          s << color<< "S" << getID() << "\033[0m";
+        }
+        else if(getIT()==beetle){
+          s << color<< "B" << getID() << "\033[0m";
         }
 
         return s.str();
