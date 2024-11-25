@@ -6,12 +6,17 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(.)
 
 add_executable(HIVE
-        insect.cpp
-        insect.h
         main.cpp
-        map.cpp
-        map.h
-        utils.cpp
-        utils.h
-        hive.h
-        deck.h)
+        src/utils/hiveException.h
+        src/utils/utils.cpp
+        src/utils/utils.h
+        src/features/insect.cpp
+        src/features/insect.h
+        src/features/map.cpp
+        src/features/map.h
+        src/features/deck.h
+        src/features/inputs.h
+        src/inputsManager.h
+        src/solver.h
+        src/renderer.h
+        src/hive.h)
