@@ -230,9 +230,40 @@ std::vector<vec2i> Grasshopper:: getPossibleMovements(Map m) {
 }
 
 
+//Fonction de Spider
+/*std::vector<vec2i> Spider:: getPossibleMovements(Map m) {
+    J'ai une idée pour ça : Ca serait possible d'appeler 3 fois getPossibleMovements de Bee ?, pq techniquement c la même chose,
+    On veut tous les endroits que l'abeille peut atteindre en 3 coups
+}*/
 
+// Fonction de Ant
+std::vector<vec2i> Ant:: getPossibleMovements(Map m) {//L'idée ? faire une boucle auto gérée : On prend une case (la première étant celle de départ) et on prend toutes les cases vides adjacentes dans une liste. On parcourt cette liste, si le potential movement est un possible movement, on ajoute ses cases vides adjacentes à potential movement, puis on l'enleve de potential movement et on l'ajoute à possible movement. Une fois qu'on ne peut plus ajouter, c'est fini !
+    std::vector<vec2i> possibleMovements;
+    std::vector<vec2i> potentialMovements;
+    int added=0;
+    int done=0;
+    std::list<vec2i> neighbors = m.getNeighbours(getCoordinates());
+    for (auto &it : neighbors) {//On parcourt les voisins
+        if (m.isSlotFree(it)) {
+            potentialMovements.push_back(it);
+        }
+    }
 
-
+    std::list<vec2i> newNeighbours = m.getNeighbours(it);
+    for (auto &it2 : newNeighbours) {//On parcourt les voisins de la case
+        if (!m.isSlotFree(it2) && it2!= getCoordinates()) {//Si la case a un voisin différent de Ant
+            for (auto& it3:possibleMovements) {
+                if (it3 == it) {
+                    added++;
+                }
+            }
+            if (added==0) {//Si la case n'est pas déjà ajoutée dans possibleMovement
+                possibleMovements.push_back(it);
+            }
+            break;
+        }
+    }
+}
 
 
 
