@@ -68,7 +68,7 @@ std::vector<vec2i> Insect::setRule(Map m) const {
                 neighbors = m.getNeighbours(*it);
                 isOk = true;
                 for (auto voisin = neighbors.begin(); voisin != neighbors.end(); ++voisin) {
-                    if( m.getInsect(voisin) != nullptr && m.getInsect(voisin).getColor() != this->getColor()) {
+                    if( m.getInsect(voisin) != nullptr && m.getInsect(voisin)->getColor() != this->getColor()) {
                         isOk = false; // Indique qu'on ne veut pas l'ajouter dans possible place
                         break; // Pas besoin de checker les autres voisins
                     }
@@ -120,7 +120,7 @@ bool Insect:: isLinkingHive(Map m) {
     }
     return i_insect != nbInsect;
 }
-//Fonction former Neighbour pour détecter les anciens voisin à la nouvelle position
+//Fonction former Neighbour pour détecter les anciens voisin à la nouvelle position : POUR BOUGER, IL FAUT STRICTEMENT 1 ANCIEN VOISIN!!
 int Insect::getFormerNeighbour(vec2i newPosition, Map m) {
     int count=0;
     std::list<vec2i> formerNeighbour=m.getNeighbours(getCoordinates());
@@ -154,7 +154,7 @@ std::vector<vec2i> Bee:: getPossibleMovements(Map m) {
     if(!this->isLinkingHive(m)) { //Vérifie que l'insect puisse bouger
         std::list<vec2i> neighbors = m.getNeighbours(getCoordinates());//Récupère les voisins de la case
         std::list<vec2i> neighborsPossibleMovements;
-        for (auto it = neighbors.begin(); it != neighbors.end(); ++it) { //Pour chaque voisin, si le slot est free et attaché à au moins un membre on l'ajoute à possibleMovement
+        for (auto it = neighbors.begin(); it != neighbors.end(); ++it) { //Pour chaque voisin, si le slot est free et attaché à au moins un membre dont un (et un seul) est un ancien voisin on l'ajoute à possibleMovement
             if(m.isSlotFree(*it) == 1 ) {
                 neighborsPossibleMovements = m.getNeighbours(*it);
                 for (auto itPossibleMovement = neighborsPossibleMovements.begin(); itPossibleMovement != neighborsPossibleMovements.end(); ++itPossibleMovement) {
@@ -165,7 +165,6 @@ std::vector<vec2i> Bee:: getPossibleMovements(Map m) {
                 }
             }
         }
-    }
     return possibleMovements;
 }
 
@@ -205,7 +204,7 @@ std::vector<vec2i> Beetle:: getPossibleMovements(Map m) {
 
 // Fonctions de Grasshoper
 
-std::vector<vec2i> Grasshopper:: getPossiblesMovement(Map m) {
+std::vector<vec2i> Grasshopper:: getPossibleMovements(Map m) {
     std::vector<vec2i> possibleMovements;
     int breakCount = 0;
     if(!this->isLinkingHive(m)) {
@@ -221,10 +220,10 @@ std::vector<vec2i> Grasshopper:: getPossiblesMovement(Map m) {
                 it2 = neighbors.at(i++);
                 while(goOn) {
                     // On itère dans le voisin de position x du voisin x du voisin x etc jusqu'à trouver une case vide
-                    it2 =  std::pmr::vector<vec2i>(m.getNeighbours(*it2).begin(),m.getNeighbours(*it2).end()).at(i);
+                    it2 =  std::vector<vec2i>(m.getNeighbours(*it2).begin(),m.getNeighbours(*it2).end()).at(i);
                     if(m.isSlotFree(*it)) {
                         possibleMovements.push_back(*it2); // On ajoute la position de la case vide dans possibleMovement
-                        goOn = false; // On arrète la boucle
+                        goOn = false; // On arrête la boucle
                     }
                 }
             }
