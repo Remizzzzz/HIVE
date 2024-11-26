@@ -156,9 +156,9 @@ std::vector<vec2i> Bee:: getPossibleMovements(Map m) {
         std::list<vec2i> neighborsPossibleMovements;
         for (auto it = neighbors.begin(); it != neighbors.end(); ++it) { //Pour chaque voisin, si le slot est free et attaché à au moins un membre dont un (et un seul) est un ancien voisin on l'ajoute à possibleMovement
             if(m.isSlotFree(*it) == 1 ) {
-                neighborsPossibleMovements = m.getNeighbours(*it);
+                neighborsPossibleMovements = m.getNeighbours(*it);//On récupère les voisins du voisin
                 for (auto itPossibleMovement = neighborsPossibleMovements.begin(); itPossibleMovement != neighborsPossibleMovements.end(); ++itPossibleMovement) {
-                    if(m.isSlotFree(*itPossibleMovement) == 0 && *itPossibleMovement != getCoordinates() && getFormerNeighbour(*itPossibleMovement, m)==1) {
+                    if(m.isSlotFree(*itPossibleMovement) == 0 && *itPossibleMovement != getCoordinates() && getFormerNeighbour(*it, m)==1) { //Si le slot est occupé par une autre pièce que self, et qu'il y a exactement un ancien voisin dans la liste alors on peut bouger
                         possibleMovements.push_back(*it);//Dès qu'on trouve une case
                         }
                     }
@@ -176,22 +176,13 @@ std::vector<vec2i> Bee:: getPossibleMovements(Map m) {
 std::vector<vec2i> Beetle:: getPossibleMovements(Map m) {
     std::vector<vec2i> possibleMovements;
     int breakCount = 0;
-    if(!this->isLinkingHive(m)) {
-        std::list<vec2i> neighbours = m.getNeighbours(getCoordinates());
-        for (auto it = neighbours.begin(); it != neighbours.end(); ++it) {
-            std::list<vec2i> neighborsPossibleMovements=m.getNeighbours(*it);
-            for (auto itPossibleMovement=neighborsPossibleMovements.begin();itPossibleMovement != neighborsPossibleMovements.end(); ++itPossibleMovement) {
-                if(*itPossibleMovement!=getCoordinates()) {
-                    for (auto itSameNeighbour=neighbours.begin();itSameNeighbour!=neighbours.end();++itSameNeighbour) {
-                        if (itPossibleMovement == itSameNeighbour) {
-                            possibleMovements.push_back(*it);
-                            breakCount++;
-                        }
-                    }
-                }
-                if (breakCount>0) {
-                    breakCount=0;
-                    break;
+    if(!this->isLinkingHive(m)) { // Si l'insecte ne lie pas la ruche
+        std::list<vec2i> neighbours = m.getNeighbours(getCoordinates()); // On récupère la liste des cases voisines
+        for (auto it = neighbours.begin(); it != neighbours.end(); ++it) { //On itère dans chaque case voisine
+            std::list<vec2i> neighborsPossibleMovements=m.getNeighbours(*it); // On récupère la liste des cases voisines des cases voisines
+            for (auto itPossibleMovement=neighborsPossibleMovements.begin();itPossibleMovement != neighborsPossibleMovements.end(); ++itPossibleMovement) { //On itère dans cette liste
+                if(*itPossibleMovement!=getCoordinates() && getFormerNeighbour(*it, m)==1) { //Si le voisin a un autre voisin que l'insecte ET qu'à la nouvelle position, le scarabée a au moins 1 voisin, alors il peut bouger
+                    possibleMovements.push_back(*it);
                 }
             }
         }
