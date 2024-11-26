@@ -68,7 +68,7 @@ public:
 
     };
 
-    virtual std::vector<vec2i> getPossiblesMouvements() = 0;
+    virtual std::vector<vec2i> getPossibleMovements() = 0;
     std::vector<vec2i> setRule(Map m) const;
     bool isLinkingHive(Map m);
 };
@@ -77,7 +77,7 @@ class Bee : Insect {
 
 
 public:
-    std::vector<vec2i> getPossiblesMouvements(Map m);
+    std::vector<vec2i> getPossibleMovements(Map m);
     bool isCircled(Map m);
 };
 
@@ -89,22 +89,22 @@ public:
     Insect& getInsectUnder() {
         return isAboveOf;
     }
-    std::vector<vec2i> getPossiblesMouvements(Map m);
+    std::vector<vec2i> getPossibleMovements(Map m);
 };
 
 class Grasshopper : public Insect {
 public:
-    std::vector<vec2i> getPossiblesMouvements(Map m);
+    std::vector<vec2i> getPossibleMovements(Map m);
 };
 
 class Spider : public Insect {
 public:
-    std::vector<vec2i> getPossiblesMouvements(Map m);
+    std::vector<vec2i> getPossibleMovements(Map m);
 };
 
 class Ant : public Insect {
 public:
-    std::vector<vec2i> getPossiblesMouvements(Map m);
+    std::vector<vec2i> getPossibleMovements(Map m);
 };
 
 #endif //HIVE_INSECT_H

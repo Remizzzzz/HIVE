@@ -136,7 +136,7 @@ bool Bee::isCircled(Map m) {
 }
 
 //Renvoi un vector avec les mouvements possibles de la reine
-std::vector<vec2i> Bee:: getPossiblesMouvements(Map m) {
+std::vector<vec2i> Bee:: getPossibleMovements(Map m) {
     std::vector<vec2i> possibleMovements;
     if(!this->isLinkingHive(m)) { //Vérifie que l'insect puisse bouger
         std::list<vec2i> neighbors = m.getNeighbours(getCoordinates());//Récupère les voisins de la case
@@ -165,7 +165,7 @@ std::vector<vec2i> Bee:: getPossiblesMouvements(Map m) {
 // Fonctions de Beetle
 
 
-std::vector<vec2i> Beetle:: getPossiblesMouvements(Map m) {
+std::vector<vec2i> Beetle:: getPossibleMovements(Map m) {
     std::vector<vec2i> possibleMovements;
     int breakCount = 0;
     if(!this->isLinkingHive(m)) {
@@ -196,7 +196,7 @@ std::vector<vec2i> Beetle:: getPossiblesMouvements(Map m) {
 
 // Fonctions de Grasshoper
 
-std::vector<vec2i> Grasshopper:: getPossiblesMouvements(Map m) {
+std::vector<vec2i> Grasshopper:: getPossiblesMovement(Map m) {
     std::vector<vec2i> possibleMovements;
     int breakCount = 0;
     if(!this->isLinkingHive(m)) {
