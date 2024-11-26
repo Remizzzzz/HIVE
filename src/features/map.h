@@ -60,7 +60,9 @@ public:
     void putInsect(const Insect * insect_, const vec2i & pos_){
         slots[posToIndex(pos_)] = insect_;
     }
-
+    const Insect * getInsect(const vec2i & pos_) {
+        return slots[posToIndex(pos_)];
+    }
     /**
      * @brief \n set the slot on position pos_ to nullptr
      * @param pos_ : position of the slot to remove

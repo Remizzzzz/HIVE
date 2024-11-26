@@ -120,7 +120,20 @@ bool Insect:: isLinkingHive(Map m) {
     }
     return i_insect != nbInsect;
 }
-
+//Fonction former Neighbour pour détecter les anciens voisin à la nouvelle position
+int Insect::getFormerNeighbour(vec2i newPosition, Map m) {
+    int count=0;
+    std::list<vec2i> formerNeighbour=m.getNeighbours(getCoordinates());
+    std::list<vec2i> newNeighbours=m.getNeighbours(newPosition);
+    for (auto it=formerNeighbour.begin();it!=formerNeighbour.end();++it) {
+        for (auto itn=newNeighbours.begin();itn!=newNeighbours.end();++itn) {
+            if (*it == *itn) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
 
 //Fonctions de Bee
 
@@ -145,12 +158,8 @@ std::vector<vec2i> Bee:: getPossibleMovements(Map m) {
             if(m.isSlotFree(*it) == 1 ) {
                 neighborsPossibleMovements = m.getNeighbours(*it);
                 for (auto itPossibleMovement = neighborsPossibleMovements.begin(); itPossibleMovement != neighborsPossibleMovements.end(); ++itPossibleMovement) {
-                    if(m.isSlotFree(*itPossibleMovement) == 0 && *itPossibleMovement != getCoordinates()) {
-                        for (auto itSameNeighbour=neighbors.begin();itSameNeighbour!=neighbors.end();++itSameNeighbour) {
-                            if (itPossibleMovement == itSameNeighbour) {
-                                possibleMovements.push_back(*it);//Dès qu'on touve une case
-                                break;
-                            }
+                    if(m.isSlotFree(*itPossibleMovement) == 0 && *itPossibleMovement != getCoordinates() && getFormerNeighbour(*itPossibleMovement, m)==1) {
+                        possibleMovements.push_back(*it);//Dès qu'on trouve une case
                         }
                     }
                 }

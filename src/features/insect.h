@@ -67,7 +67,7 @@ public:
         return s.str();
 
     };
-
+    int getFormerNeighbour(vec2i newPosition, Map m); //Fonctions pour detecter les anciens voisins à la nouvelle position
     virtual std::vector<vec2i> getPossibleMovements() = 0;
     std::vector<vec2i> setRule(Map m) const;
     bool isLinkingHive(Map m);
