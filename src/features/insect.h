@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "map.h"
-#include "utils.h"
+#include "../utils/utils.h"
 
 enum insectType{bee,ant,grasshoper,spider,beetle};
 
@@ -29,7 +29,7 @@ class Insect{
 public:
     Insect( bool col, insectType type) : id(counter++), iT(type), color(col),coordinates({NULL,NULL}) {};
 
-    int  getId() const { return id; }
+    int  getID() const { return id; }
     int  getIT() const { return iT; }
     bool  getColor() const { return color; }
     vec2i getCoordinates() const { return coordinates; }
