@@ -240,30 +240,56 @@ std::vector<vec2i> Grasshopper:: getPossibleMovements(Map m) {
 std::vector<vec2i> Ant:: getPossibleMovements(Map m) {//L'idée ? faire une boucle auto gérée : On prend une case (la première étant celle de départ) et on prend toutes les cases vides adjacentes dans une liste. On parcourt cette liste, si le potential movement est un possible movement, on ajoute ses cases vides adjacentes à potential movement, puis on l'enleve de potential movement et on l'ajoute à possible movement. Une fois qu'on ne peut plus ajouter, c'est fini !
     std::vector<vec2i> possibleMovements;
     std::vector<vec2i> potentialMovements;
-    int added=0;
-    int done=0;
+    std::vector<vec2i> impossibleMovements;
+
+    // Initialiser les voisins vides immédiats comme mouvements potentiels
     std::list<vec2i> neighbors = m.getNeighbours(getCoordinates());
-    for (auto &it : neighbors) {//On parcourt les voisins
-        if (m.isSlotFree(it)) {
-            potentialMovements.push_back(it);
+    for (const auto &neighbor : neighbors) {
+        if (m.isSlotFree(neighbor)) {
+            potentialMovements.push_back(neighbor);
         }
     }
 
-    std::list<vec2i> newNeighbours = m.getNeighbours(it);
-    for (auto &it2 : newNeighbours) {//On parcourt les voisins de la case
-        if (!m.isSlotFree(it2) && it2!= getCoordinates()) {//Si la case a un voisin différent de Ant
-            for (auto& it3:possibleMovements) {
-                if (it3 == it) {
-                    added++;
+    // Parcourir les mouvements potentiels
+    auto it = potentialMovements.begin();// Je fais comme ça parce que chatGPT m'a dit que ct pas bien de faire while (!potentialMovements.empty())
+    while (it != potentialMovements.end()) {
+        bool valid = false; // Indique si le mouvement est valide
+        std::list<vec2i> newNeighbours = m.getNeighbours(*it); //On récupère les voisins de la case vide
+
+        for (const auto &neighbour : newNeighbours) {
+            if (!m.isSlotFree(neighbour) && neighbour != getCoordinates()) {
+                // Si la case a un voisin non vide et ce voisin n'est pas Ant
+                valid = true;
+
+                // Ajouter les voisins vides non encore explorés à potentialMovements
+                for (const auto &newNeighbour : newNeighbours) {
+                    if (m.isSlotFree(newNeighbour)) {
+                        if (std::find(potentialMovements.begin(), potentialMovements.end(), newNeighbour) == potentialMovements.end() &&
+                            std::find(possibleMovements.begin(), possibleMovements.end(), newNeighbour) == possibleMovements.end() &&
+                            std::find(impossibleMovements.begin(), impossibleMovements.end(), newNeighbour) == impossibleMovements.end()) {
+                            potentialMovements.push_back(newNeighbour);
+                        }
+                    }
                 }
+                break; // Arrêter la vérification dès qu'un voisin valide est trouvé
             }
-            if (added==0) {//Si la case n'est pas déjà ajoutée dans possibleMovement
-                possibleMovements.push_back(it);
-            }
-            break;
+        }
+
+        if (valid) {//Probleme valid always false ? vérifier getNeighbour et getCoordinate
+            // Mouvement validé, le supprimer de potentialMovements
+            it = potentialMovements.erase(it);
+            possibleMovements.push_back(*it); // Ajouter à possibleMovements
+
+        } else {
+            // Mouvement invalide, l'ajouter à impossibleMovements
+            impossibleMovements.push_back(*it);
+            it = potentialMovements.erase(it);
         }
     }
+
+    return possibleMovements;
 }
+
 
 
 
