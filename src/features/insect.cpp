@@ -181,8 +181,14 @@ std::vector<vec2i> Beetle:: getPossibleMovements(Map m) {
         for (auto it = neighbours.begin(); it != neighbours.end(); ++it) { //On itère dans chaque case voisine
             std::list<vec2i> neighborsPossibleMovements=m.getNeighbours(*it); // On récupère la liste des cases voisines des cases voisines
             for (auto itPossibleMovement=neighborsPossibleMovements.begin();itPossibleMovement != neighborsPossibleMovements.end(); ++itPossibleMovement) { //On itère dans cette liste
-                if(*itPossibleMovement!=getCoordinates() && getFormerNeighbour(*it, m)==1) { //Si le voisin a un autre voisin que l'insecte ET qu'à la nouvelle position, le scarabée a au moins 1 voisin, alors il peut bouger
-                    possibleMovements.push_back(*it);
+                if(*itPossibleMovement!=getCoordinates() && isAboveOf!=nullptr) { //Si le voisin a un autre voisin que l'insecte ET que le scarabée est au dessus d'un insecte
+                    if (getFormerNeighbour(*it,m)>1) {
+                        possibleMovements.push_back(*it);
+                    }
+                } else if (*itPossibleMovement!=getCoordinates() && isAboveOf==nullptr) {//Si le voisin a un autre voisin que l'insecte ET que le scarabée n'est pas au dessus d'un insecte
+                    if (getFormerNeighbour(*it,m)==1) {//Si la nouvelle position a exactement un ancien voisin
+                        possibleMovements.push_back(*it);
+                    }
                 }
             }
         }

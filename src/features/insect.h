@@ -83,10 +83,10 @@ public:
 
 class Beetle : Insect {
 
-    Insect& isAboveOf;
+    Insect* isAboveOf;
 
 public:
-    Insect& getInsectUnder() {
+    Insect* getInsectUnder() {
         return isAboveOf;
     }
     std::vector<vec2i> getPossibleMovements(Map m);
