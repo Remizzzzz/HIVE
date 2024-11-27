@@ -9,11 +9,9 @@
 #include <utility>
 #include <vector>
 
-#include "map.h"
 #include "../utils/utils.h"
-
-enum insectType{bee,ant,grasshoper,spider,beetle};
 class Map;
+enum insectType{bee,ant,grasshoper,spider,beetle};
 class Insect{
     int id;
     insectType iT;

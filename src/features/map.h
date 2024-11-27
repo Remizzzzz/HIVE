@@ -9,7 +9,6 @@
 #include <vector>
 #include <list>
 #include "../utils/utils.h"
-#include "insect.h"
 class Insect;
 class Map{
 private:
