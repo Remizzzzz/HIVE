@@ -254,13 +254,12 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map &m) {//L'idée ? faire une bou
     auto it = potentialMovements.begin();// Je fais comme ça parce que chatGPT m'a dit que ct pas bien de faire while (!potentialMovements.empty())
     while (it != potentialMovements.end()) {
         std::list<vec2i> newNeighbours = m.getNeighbours(*it); //On récupère les voisins de la case vide
-        for (const auto &neighbour : newNeighbours) {
-            if (!m.isSlotFree(neighbour) && neighbour != getCoordinates() || false) {
+        for (auto &neighbour : newNeighbours) {
+            if (!m.isSlotFree(neighbour) && neighbour != getCoordinates()) {
                 // Si la case a un voisin non vide et ce voisin n'est pas Ant
                 valid = true;
-
-                // Ajouter les voisins vides non encore explorés à potentialMovements
-                for (const auto &newNeighbour : newNeighbours) {
+                // Ajouter les voisins vides de la case non encore traités à potentialMovements
+                for (auto &newNeighbour : newNeighbours) {
                     if (m.isSlotFree(newNeighbour)) {
                         if (std::find(potentialMovements.begin(), potentialMovements.end(), newNeighbour) == potentialMovements.end() &&
                             std::find(possibleMovements.begin(), possibleMovements.end(), newNeighbour) == possibleMovements.end() &&

@@ -136,19 +136,19 @@ private:
         bool b = false;
 
         for(int i = 0; i < sideSize * sideSize ; i += sideSize){
-            b = b || (slots[i] == nullptr);
+            b = b || (slots[i] != nullptr);
         }
         return b;
     }
 
     /**
-     * @brief check if an instect is close to the right border
+     * @brief check if an insect is close to the right border
      */
     bool isRightBorderTouched(){
         bool b = false;
 
         for(int i = sideSize - 1; i < sideSize * sideSize ; i += sideSize){
-            b = b || (slots[i] == nullptr);
+            b = b || (slots[i] != nullptr);
         }
         return b;
     }
