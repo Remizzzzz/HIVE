@@ -1,13 +1,19 @@
-CMakeLists.txt.user
-CMakeCache.txt
-CMakeFiles
-CMakeScripts
-cmake-build-debug
-Testing
-Makefile
-cmake_install.cmake
-install_manifest.txt
-compile_commands.json
-CTestTestfile.cmake
-_deps
-CMakeUserPresets.json
+# Ignorer tout par défaut
+*
+
+# Inclure uniquement les fichiers nécessaires au projet HIVE
+!main.cpp
+!src/utils/hiveException.h
+!src/utils/utils.cpp
+!src/utils/utils.h
+!src/features/insect.cpp
+!src/features/insect.h
+!src/features/map.cpp
+!src/features/map.h
+!src/features/deck.h
+!src/features/inputs.h
+!src/inputsManager.h
+!src/solver.h
+!src/renderer.h
+!src/hive.h
+
