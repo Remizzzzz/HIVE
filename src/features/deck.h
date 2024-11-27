@@ -67,11 +67,11 @@ public:
         return insects.at(index_) == nullptr;
     }
 
-    bool isIndexValid(const int & index_){
+    bool isIndexValid(const int & index_) const{
         return index_ >= 0 && index_ < insectNb ;
     }
 
-    void deleteAt(const int & index_){
+    void removeAt(const int & index_){
         insectNb--;
         insects[index_] = insects[insectNb];
         insects[insectNb] = nullptr;

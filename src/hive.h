@@ -46,11 +46,14 @@ class Hive{
 public:
 
     Hive(Mode mode_, Version version_, int rewindNb_ = 3)
-        :   mode(mode_), version(version_),
-            insects(),
-            rewindNb(rewindNb_), map(trueMapSideSize,rewindNb),
-            inputsManager(mode, inputs),
-            solver(map, trueMapSideSize)
+            :   mode(mode_), version(version_),
+                insects(),
+                rewindNb(rewindNb_), map(trueMapSideSize,rewindNb),
+                inputs(),
+                deck1(),
+                deck2(),
+                inputsManager(mode, inputs),
+                solver(map, inputs, deck1, deck2, trueMapSideSize)
     {
         switch (version) {
             case console:
@@ -67,8 +70,8 @@ public:
 
 
     void run(){
-        inputsManager.getInputs();
-        solver.update(inputs);
+        inputsManager.updateInputs();
+        solver.update();
         renderer->render(inputs);
     }
 };
