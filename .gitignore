@@ -1,13 +1,6 @@
-CMakeLists.txt.user
-CMakeCache.txt
-CMakeFiles
-CMakeScripts
-cmake-build-debug
-Testing
-Makefile
-cmake_install.cmake
-install_manifest.txt
-compile_commands.json
-CTestTestfile.cmake
-_deps
-CMakeUserPresets.json
+# Ignorer tout par défaut
+*
+# Inclure uniquement les fichiers nécessaires au projet HIVE
+!main.cpp
+!CMakeLists.txt
+!src/
