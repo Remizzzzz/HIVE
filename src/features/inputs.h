@@ -21,7 +21,7 @@ struct Inputs{
     std::string message;
 
     //Si un curseur est en y negatif alors il est sur le deck 1
-    //Si il est en y plus grand que la taille de la map il est sur le deck 2
+    //S'il est en y plus grand que la taille de la map il est sur le deck 2
     //Donc faut bien prendre en compte que ça vise une carte du deck
 
     bool movementNeeded() const{
