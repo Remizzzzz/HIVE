@@ -12,6 +12,7 @@
 #include <list>
 #include <algorithm>
 
+int Insect::counter = 0;
 //Fonctions de Insect
 
 // Renvoie tout les slots dispos sur la map pour poser une pièce
@@ -149,7 +150,7 @@ bool Bee::isCircled(Map &m) {
 }
 
 //Renvoi un vector avec les mouvements possibles de la reine
-std::vector<vec2i> Bee:: getPossibleMovements(Map &m) {
+std::vector<vec2i> Bee:: getPossibleMovements(Map &m){
     std::vector<vec2i> possibleMovements;
     if(!this->isLinkingHive(m)) { //Vérifie que l'insect puisse bouger
         std::list<vec2i> neighbors = m.getNeighbours(getCoordinates());//Récupère les voisins de la case
@@ -173,7 +174,7 @@ std::vector<vec2i> Bee:: getPossibleMovements(Map &m) {
 // Fonctions de Beetle
 
 
-std::vector<vec2i> Beetle:: getPossibleMovements(Map &m) {
+std::vector<vec2i> Beetle:: getPossibleMovements(Map &m){
     std::vector<vec2i> possibleMovements;
     int breakCount = 0;
     if(!this->isLinkingHive(m)) { // Si l'insecte ne lie pas la ruche

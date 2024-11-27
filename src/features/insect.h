@@ -66,24 +66,26 @@ public:
 
     };
     int getFormerNeighbour(vec2i newPosition, Map &m); //Fonctions pour detecter les anciens voisins à la nouvelle position
-    virtual std::vector<vec2i> getPossibleMovements() = 0;
+    virtual std::vector<vec2i> getPossibleMovements(Map &m) = 0;
     std::vector<vec2i> setRule(Map &m) const;
     bool isLinkingHive(Map &m) const;
 };
 
-class Bee : Insect {
+class Bee : public Insect {
 
 
 public:
+    Bee(bool col) : Insect(col, bee) {}
     std::vector<vec2i> getPossibleMovements(Map &m);
     bool isCircled(Map &m);
 };
 
-class Beetle : Insect {
+class Beetle : public Insect {
 
     Insect* isAboveOf;
 
 public:
+    Beetle(bool col) : Insect(col, beetle) {}
     Insect* getInsectUnder() {
         return isAboveOf;
     }
@@ -92,17 +94,20 @@ public:
 
 class Grasshopper : public Insect {
 public:
+    Grasshopper(bool col) : Insect(col, grasshoper) {}
     std::vector<vec2i> getPossibleMovements(Map &m);
 };
 
 class Spider : public Insect {
 public:
+    Spider(bool col) : Insect(col, spider) {}
     std::vector<vec2i> getPossibleMovements(Map &m);
 };
 
 class Ant : public Insect {
 public:
-    std::vector<vec2i> getPossibleMovements(Map &m);
+    Ant(bool col) : Insect(col, ant) {}
+    std::vector<vec2i> getPossibleMovements(Map &m) ;
 };
 
 #endif //HIVE_INSECT_H
