@@ -8,9 +8,10 @@
 #include <iostream>
 #include <vector>
 #include <list>
-#include "../utils/utils.h"
-#include "insect.h"
 
+#include "insect.h"
+#include "../utils/utils.h"
+class Insect;
 class Map{
 private:
 
@@ -45,7 +46,7 @@ private:
     }
 
 public:
-    int getSideSize() const{return sideSize;}
+
     explicit Map(int & sideSize_,int &n) : sideSize(sideSize_),rewind(n){
         for(int i = 0; i < sideSize * sideSize; i++){
             slots.push_back(nullptr);
@@ -57,17 +58,22 @@ public:
      * @param insect_ : insect to put
      * @param pos_ : position of the slot in which the insect will be put
      */
-    void putInsect(const Insect * insect_, const vec2i & pos_){
+    void putInsectTo(const Insect * insect_, const vec2i & pos_){
         slots[posToIndex(pos_)] = insect_;
     }
-    const Insect * getInsect(const vec2i & pos_) const{
+    const Insect * getInsectAt(const vec2i & pos_) {
         return slots[posToIndex(pos_)];
     }
+
+    const int & getSideSize() const{
+        return sideSize;
+    }
+
     /**
      * @brief \n set the slot on position pos_ to nullptr
      * @param pos_ : position of the slot to remove
      */
-    void removeInsect(const vec2i & pos_){
+    void removeInsectAt(const vec2i & pos_){
         slots[posToIndex(pos_)] = nullptr;
     }
 
@@ -80,16 +86,16 @@ public:
     }
 
     /**@brief move the insect on pos1_ to the pos2_.*/
-    void move(const vec2i & pos1_, const vec2i & pos2_){
+    void moveInsect(const vec2i & pos1_, const vec2i & pos2_){
         if(!(isSlotFree(pos1_) || pos1_ == pos2_)){
-            putInsect(slots[posToIndex(pos1_)], pos2_);
-            removeInsect(pos1_);
+            putInsectTo(slots[posToIndex(pos1_)], pos2_);
+            removeInsectAt(pos1_);
         }
         addToHistoric(pos1_,pos2_);//If the movement is a rewind, goBack will manage the historic
     }
 
     //return positions of the filled slots around pos_
-    std::list<vec2i> getNeighbours(const vec2i & pos_){
+    std::list<vec2i> getNeighbours(const vec2i & pos_) const{
         std::list<vec2i> neighbours{};
 
         if(pos_.getI() % 2 == 0) {
@@ -120,7 +126,7 @@ public:
     }
     void goBack() {
         if (!historic.empty()) {
-            move(historic.front().to,historic.front().from); //Rewind move
+            moveInsect(historic.front().to,historic.front().from); //Rewind move
             historic.pop_front();          // Erase the head of historic (here, the goBack move)
             historic.pop_front();               // Erase the head of historic again (here, the move we just rewinded)
         }
@@ -190,7 +196,7 @@ private:
                     for(int j = 0; j < sideSize; j++){
                         vec2i curr = vec2i(i,j);
                         if(!isSlotFree(curr)){
-                            move(curr,curr + tVec);
+                            moveInsect(curr,curr + tVec);
                         }
                     }
                 }
@@ -201,7 +207,7 @@ private:
                     for(int j = sideSize - 1; j >= 0; j--){
                         vec2i curr = vec2i(i,j);
                         if(!isSlotFree(curr)){
-                            move(curr,curr + tVec);
+                            moveInsect(curr,curr + tVec);
                         }
                     }
                 }
@@ -215,7 +221,7 @@ private:
                     for(int j = 0; j < sideSize; j++){
                         vec2i curr = vec2i(i,j);
                         if(!isSlotFree(curr)){
-                            move(curr,curr + tVec);
+                            moveInsect(curr,curr + tVec);
                         }
                     }
                 }
@@ -226,7 +232,7 @@ private:
                     for(int j = sideSize - 1; j >= 0; j--){
                         vec2i curr = vec2i(i,j);
                         if(!isSlotFree(curr)){
-                            move(curr,curr + tVec);
+                            moveInsect(curr,curr + tVec);
                         }
                     }
                 }

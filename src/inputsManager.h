@@ -17,35 +17,39 @@ enum Mode{PvP,PvAI};
 class InputsManager{
 
 private:
-    Inputs inputs;
+    Inputs & inputs;
     Mode mode;
     int switcher;
 
 private:
 
-    const Inputs & getAIInputs();
-    const Inputs & getPlayerInputs();
+    void updateAIInputs();
+    void updatePlayerInputs();
 
 public:
 
-    explicit InputsManager(Mode mode_) : mode(mode_), inputs(), switcher(0){}
+    explicit InputsManager(Mode mode_, Inputs & inputs_) : mode(mode_), inputs(inputs_), switcher(0){}
 
-    const Inputs & getInputs(){
+    void updateInputs(){
 
         switch (mode) {
             case PvP:
-                return getPlayerInputs();
+                updatePlayerInputs();
+                break;
             case PvAI:
                 if(switcher){
                     switcher = (switcher + 1) % 2;
-                    return getPlayerInputs();
+                    updatePlayerInputs();
+                    break;
                 }
                 else{
                     switcher = (switcher + 1) % 2;
-                    return getAIInputs();
+                    updateAIInputs();
+                    break;
                 }
             default:
                 throw HiveException("inputsManager.h:InputsManager:getInputs", "invalid mode");
+                break;
         }
     }
 

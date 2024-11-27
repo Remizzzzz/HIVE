@@ -9,11 +9,9 @@
 #include <utility>
 #include <vector>
 
-#include "map.h"
 #include "../utils/utils.h"
-
-enum insectType{bee,ant,grasshoper,spider,beetle};
 class Map;
+enum insectType{bee,ant,grasshoper,spider,beetle};
 class Insect{
     int id;
     insectType iT;
@@ -27,7 +25,7 @@ class Insect{
 
 
 public:
-    Insect( bool col, insectType type) : id(counter++), iT(type), color(col),coordinates({-1,-1}) {};//Ici -1 signifie NULL
+    Insect( bool col, insectType type) : id(counter++), iT(type), color(col),coordinates({-1,-1}) {};//Ici -1 c'est pour NULL, mais la valeur doit être int
 
     int  getID() const { return id; }
     int  getIT() const { return iT; }
