@@ -27,7 +27,7 @@ class Insect{
 
 
 public:
-    Insect( bool col, insectType type) : id(counter++), iT(type), color(col),coordinates({NULL,NULL}) {};
+    Insect( bool col, insectType type) : id(counter++), iT(type), color(col),coordinates({-1,-1}) {};//Ici -1 signifie NULL
 
     int  getID() const { return id; }
     int  getIT() const { return iT; }

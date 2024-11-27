@@ -8,7 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
-
+#include "../utils/utils.h"
 #include "insect.h"
 
 class Map{
@@ -45,7 +45,7 @@ private:
     }
 
 public:
-
+    int getSideSize() const{return sideSize;}
     explicit Map(int & sideSize_,int &n) : sideSize(sideSize_),rewind(n){
         for(int i = 0; i < sideSize * sideSize; i++){
             slots.push_back(nullptr);
@@ -60,7 +60,7 @@ public:
     void putInsect(const Insect * insect_, const vec2i & pos_){
         slots[posToIndex(pos_)] = insect_;
     }
-    const Insect * getInsect(const vec2i & pos_) {
+    const Insect * getInsect(const vec2i & pos_) const{
         return slots[posToIndex(pos_)];
     }
     /**
