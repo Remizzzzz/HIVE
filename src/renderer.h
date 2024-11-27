@@ -1,7 +1,4 @@
-//
-// Created by loic_ on 26/11/2024.
-//
-
+// Renderer.h
 #ifndef HIVE_RENDERER_H
 #define HIVE_RENDERER_H
 
@@ -89,8 +86,8 @@ private:
         if (slot) {
             return slot->getPrintableValue(); // Valeur de l'insecte
         }
-        return "  "; // Case vide
+        return " "; // Case vide
     }
 };
 
-#endif //HIVE_RENDERER_H
+#endif // HIVE_RENDERER_H

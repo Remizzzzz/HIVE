@@ -1,6 +1,7 @@
 #include "src/features/map.h"
 #include "src/renderer.h"
 #include "src/features/insect.h"
+#include <limits>
 
 int main() {
     int sideSize = 8; // Taille de la carte
@@ -19,5 +20,7 @@ int main() {
     Renderer renderer(gameMap);
     renderer.displayMap();
 
+    std::cout << "Appuyez sur Entree pour quitter...";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     return 0;
 }
