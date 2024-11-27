@@ -76,7 +76,7 @@ private:
         if (slot) {
             return slot->getPrintableValue();  // Valeur de l'insecte sans espace supplémentaire
         }
-        return ".";  // Affiche un point si la case est vide
+        return "--";  // Affiche un point si la case est vide
     }
 };
 
