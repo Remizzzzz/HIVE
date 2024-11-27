@@ -8,6 +8,8 @@
 #include <iostream>
 #include <vector>
 #include <list>
+
+#include "insect.h"
 #include "../utils/utils.h"
 class Insect;
 class Map{
