@@ -53,7 +53,7 @@ private:
 
         for (size_t col = 0; col < sideSize; ++col) {
             vec2i pos(static_cast<int>(rowIndex), static_cast<int>(col));
-            const Insect *slot = map.getInsect(pos);
+            const Insect *slot = map.getInsectAt(pos);
 
             // Affiche le contenu de la cellule
             std::cout << "| " << getSlotContent(slot) << " ";

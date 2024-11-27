@@ -61,7 +61,7 @@ public:
     void putInsectTo(const Insect * insect_, const vec2i & pos_){
         slots[posToIndex(pos_)] = insect_;
     }
-    const Insect * getInsectAt(const vec2i & pos_) {
+    const Insect * getInsectAt(const vec2i & pos_) const{
         return slots[posToIndex(pos_)];
     }
 
