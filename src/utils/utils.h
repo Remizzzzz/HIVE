@@ -52,7 +52,7 @@ public:
 
 };
 
-/** Opérations mathématiqes simples */
+/** Opérations mathématiqes de base */
 vec2i operator+(vec2i const & v1_, vec2i const & v2_);
 vec2i operator-(vec2i const & v1_, vec2i const & v2_);
 vec2i operator*(int const & k, vec2i const & v_);
