@@ -249,15 +249,13 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map m) {//L'idée ? faire une bouc
             potentialMovements.push_back(neighbor);
         }
     }
-
+    bool valid = false; // Indique si le mouvement est valide
     // Parcourir les mouvements potentiels
     auto it = potentialMovements.begin();// Je fais comme ça parce que chatGPT m'a dit que ct pas bien de faire while (!potentialMovements.empty())
     while (it != potentialMovements.end()) {
-        bool valid = false; // Indique si le mouvement est valide
         std::list<vec2i> newNeighbours = m.getNeighbours(*it); //On récupère les voisins de la case vide
-
         for (const auto &neighbour : newNeighbours) {
-            if (!m.isSlotFree(neighbour) && neighbour != getCoordinates()) {
+            if (!m.isSlotFree(neighbour) && neighbour != getCoordinates() || false) {
                 // Si la case a un voisin non vide et ce voisin n'est pas Ant
                 valid = true;
 
@@ -277,9 +275,9 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map m) {//L'idée ? faire une bouc
 
         if (valid) {//Probleme valid always false ? vérifier getNeighbour et getCoordinate
             // Mouvement validé, le supprimer de potentialMovements
-            it = potentialMovements.erase(it);
             possibleMovements.push_back(*it); // Ajouter à possibleMovements
-
+            it = potentialMovements.erase(it);
+            valid=false;
         } else {
             // Mouvement invalide, l'ajouter à impossibleMovements
             impossibleMovements.push_back(*it);

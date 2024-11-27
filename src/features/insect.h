@@ -13,7 +13,7 @@
 #include "../utils/utils.h"
 
 enum insectType{bee,ant,grasshoper,spider,beetle};
-
+class Map;
 class Insect{
     int id;
     insectType iT;
