@@ -85,7 +85,7 @@ std::vector<vec2i> Insect::setRule( Map &m) const {
 }
 
 //Fonction qui détermine si en enlevant un insecte la ruche est toujours lié (si l'insecte à le droit de bouger)
-bool Insect:: isLinkingHive(Map &m) {
+bool Insect:: isLinkingHive(Map &m) const {
 
     // On parcourt toute la map pour compter son nombre d'insecte et garder une valeur d'insect
     int found_i = -1, found_j, nbInsect = 0;
