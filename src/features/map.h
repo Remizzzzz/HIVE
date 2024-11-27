@@ -63,6 +63,11 @@ public:
     const Insect * getInsect(const vec2i & pos_) {
         return slots[posToIndex(pos_)];
     }
+
+    const int & getSideSize() const{
+        return sideSize;
+    }
+
     /**
      * @brief \n set the slot on position pos_ to nullptr
      * @param pos_ : position of the slot to remove

@@ -26,12 +26,15 @@ class Hive{
 
     std::vector<Insect> insects;
 
-    const int mapSize{32};
+    const int trueMapSideSize{32};
+    const int renderedMapSideSize{28};
     int rewindNb;
     Map map;
 
     Deck deck1;
     Deck deck2;
+
+    Inputs inputs;
 
     InputsManager inputsManager;
 
@@ -45,9 +48,9 @@ public:
     Hive(Mode mode_, Version version_, int rewindNb_ = 3)
         :   mode(mode_), version(version_),
             insects(),
-            rewindNb(rewindNb_), map(mapSize,rewindNb),
-            inputsManager(mode),
-            solver(map)
+            rewindNb(rewindNb_), map(trueMapSideSize,rewindNb),
+            inputsManager(mode, inputs),
+            solver(map, trueMapSideSize)
     {
         switch (version) {
             case console:
@@ -64,9 +67,9 @@ public:
 
 
     void run(){
-        const Inputs & inputs = inputsManager.getInputs();
+        inputsManager.getInputs();
         solver.update(inputs);
-        renderer->render();
+        renderer->render(inputs);
     }
 };
 
