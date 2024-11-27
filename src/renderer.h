@@ -1,7 +1,3 @@
-//
-// Created by loic_ on 26/11/2024.
-//
-
 #ifndef HIVE_RENDERER_H
 #define HIVE_RENDERER_H
 
@@ -26,18 +22,30 @@ public:
         size_t sideSize = map.getSideSize();
 
         for (size_t row = 0; row < sideSize; ++row) {
-            // Affiche le séparateur horizontal si ce n'est pas la première ligne
-            if (row > 0) {
-                displaySeparator(row);
-            }
+            // Affiche les espaces d'indentation pour simuler les décalages
+            displayIndentation(row);
 
             // Affiche la ligne actuelle
             displayRow(row);
+
+            // Affiche un saut de ligne pour séparer les lignes
+            std::cout << std::endl;
         }
     }
 
 private:
     const Map &map;
+
+    /**
+     * @brief Affiche les indentations pour simuler les décalages de la grille hexagonale.
+     * @param rowIndex L'indice de la ligne à afficher.
+     */
+    void displayIndentation(size_t rowIndex) const {
+        // Lignes impaires (indexées 1, 3, 5...) doivent être décalées vers la droite
+        if (rowIndex % 2 == 1) {
+            std::cout << "  ";  // Ajoute des espaces pour décaler
+        }
+    }
 
     /**
      * @brief Affiche une ligne de cellules avec des insectes ou des cases vides.
@@ -46,38 +54,17 @@ private:
     void displayRow(size_t rowIndex) const {
         size_t sideSize = map.getSideSize();
 
-        // Indentation pour la grille hexagonale
-        if (rowIndex % 2 == 1) {
-            std::cout << "  ";
-        }
-
         for (size_t col = 0; col < sideSize; ++col) {
             vec2i pos(static_cast<int>(rowIndex), static_cast<int>(col));
             const Insect *slot = map.getInsectAt(pos);
 
-            // Affiche le contenu de la cellule
-            std::cout << "| " << getSlotContent(slot) << " ";
+            // Affiche le contenu de la cellule sans espace supplémentaire
+            if (getSlotContent(slot)==".") {
+                std::cout << " "<< getSlotContent(slot) << "  ";  // Trois espaces pour espacer les cases
+            } else {
+                std::cout << "" << getSlotContent(slot) << "  ";// Seulement deux espaces
+            }
         }
-
-        std::cout << "|" << std::endl; // Termine la ligne
-    }
-
-    /**
-     * @brief Affiche les séparateurs horizontaux entre les lignes.
-     * @param rowIndex L'indice de la ligne.
-     */
-    void displaySeparator(size_t rowIndex) const {
-        size_t sideSize = map.getSideSize();
-
-        if (rowIndex % 2 == 1) {
-            std::cout << "  ";
-        }
-
-        for (size_t col = 0; col < sideSize; ++col) {
-            std::cout << "\\ / ";
-        }
-
-        std::cout << "\\" << std::endl;
     }
 
     /**
@@ -87,10 +74,10 @@ private:
      */
     std::string getSlotContent(const Insect *slot) const {
         if (slot) {
-            return slot->getPrintableValue(); // Valeur de l'insecte
+            return slot->getPrintableValue();  // Valeur de l'insecte sans espace supplémentaire
         }
-        return "  "; // Case vide
+        return ".";  // Affiche un point si la case est vide
     }
 };
 
-#endif //HIVE_RENDERER_H
+#endif // HIVE_RENDERER_H
