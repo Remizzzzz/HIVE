@@ -5,6 +5,8 @@
 #ifndef HIVE_UTILS_H
 #define HIVE_UTILS_H
 
+#include <iostream>
+
 class vec2i{
 private:
     int i;
@@ -56,5 +58,6 @@ public:
 vec2i operator+(vec2i const & v1_, vec2i const & v2_);
 vec2i operator-(vec2i const & v1_, vec2i const & v2_);
 vec2i operator*(int const & k, vec2i const & v_);
+std::ostream & operator<<(std::ostream & f_, vec2i const & v_);
 
 #endif //HIVE_UTILS_H
