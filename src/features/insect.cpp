@@ -196,7 +196,7 @@ std::vector<vec2i> Beetle:: getPossibleMovements(Map &m){
     }
     return possibleMovements;
 }
-
+//test
 
 
 
