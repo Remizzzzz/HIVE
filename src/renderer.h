@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include "features/map.h"
-
+//test
 /**
  * @brief Classe pour afficher la carte d'une partie de Hive.
  */

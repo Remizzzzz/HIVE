@@ -198,6 +198,7 @@ std::vector<vec2i> Beetle:: getPossibleMovements(Map &m){
 }
 
 
+
 // Fonctions de Grasshoper
 
 std::vector<vec2i> Grasshopper:: getPossibleMovements(Map &m) {

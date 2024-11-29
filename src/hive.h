@@ -17,7 +17,7 @@
 #include "renderer.h"
 
 //enum Mode{PvP,PvAI};
-//enum Version{console, graphic};
+enum Version{console, graphic};
 
 class Hive{
 
@@ -27,7 +27,7 @@ class Hive{
     std::vector<Insect> insects;
 
     const int trueMapSideSize{32};
-    const int renderedMapSideSize{28};
+    const int renderedMapSideSize{30};
     int rewindNb;
     Map map;
 
@@ -52,15 +52,15 @@ public:
                 inputs(),
                 deck1(),
                 deck2(),
-                inputsManager(mode, inputs),
+                inputsManager(mode, inputs, renderedMapSideSize, deck1, deck2),
                 solver(map, inputs, deck1, deck2, trueMapSideSize)
     {
         switch (version) {
             case console:
-                renderer = new ConsoleRenderer(map);
+                //renderer = new ConsoleRenderer(map);
                 break;
             case graphic:
-                renderer = new GraphicRenderer(map);
+                //renderer = new GraphicRenderer(map);
                 break;
             default:
                 renderer = nullptr;
@@ -70,9 +70,11 @@ public:
 
 
     void run(){
-        inputsManager.updateInputs();
-        solver.update();
-        renderer->render(inputs);
+        inputsManager.updateAIInputs();
+        std::cout << inputs;
+
+        //solver.update();
+        //renderer->render(inputs);
     }
 };
 

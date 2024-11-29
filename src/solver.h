@@ -111,37 +111,33 @@ private:
     }
 
     void resetInputs(){
-        inputs.cursor1selected = false;
-        inputs.cursor2selected = false;
+        inputs = Inputs();
     }
 
 public:
 
-    void update(){
+    void update(bool player_){
         if(inputs.movementNeeded()){
             if (isCursor1Valid() && isCursor2Valid()){
-                vec2i & cursor1 = inputs.cursor1;
-                vec2i & cursor2 = inputs.cursor2;
-
-                switch (getCursor1Location()) {
-                    case 0:
-                        mapToMapMovement(cursor1,cursor2);
-                        break;
-                    case 1:
-                        deckToMapMovement(1,cursor1,cursor2);
-                        break;
-                    case 2:
-                        deckToMapMovement(2,cursor1,cursor2);
-                        break;
-                    default:
-                        throw HiveException("solver.h:Solver:update", "cursor 1 invalid");
-                        break;
+                if (map.getInsectAt(inputs.cursor1)->getColor() == player_){
+                    switch (getCursor1Location()) {
+                        case 0:
+                            mapToMapMovement(inputs.cursor1,inputs.cursor2);
+                            break;
+                        case 1:
+                            deckToMapMovement(1,inputs.cursor1,inputs.cursor2);
+                            break;
+                        case 2:
+                            deckToMapMovement(2,inputs.cursor1,inputs.cursor2);
+                            break;
+                        default:
+                            throw HiveException("solver.h:Solver:update", "cursor 1 invalid");
+                            break;
+                    }
+                    resetInputs();
                 }
-                resetInputs();
             }
             else throw HiveException("solver.h:Solver:update", "cursor1 or cursor2 invalid for map");
-
-
         }
     }
 
