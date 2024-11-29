@@ -335,7 +335,12 @@ std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) {
 }
 
 
+// Fonction de spider
 
+std::vector<vec2i> Spider:: getPossibleMovements(Map &m) {
+    std::vector<vec2i> possibleMovements;
+    return possibleMovements;
+}
 
 
 
