@@ -45,21 +45,21 @@ public:
         std::stringstream s;
         if(getIT()==bee)
         {
-            s <<"|"<< "\033[33mQ" << color << "B" << "\033[0m"<<"|"; // Q affiché en jaune, B avec la couleur du joueur (pour Queen Bee)
+            s << "\033[33mQ" << color << "B" << "\033[0m"; // Q affiché en jaune, B avec la couleur du joueur (pour Queen Bee)
         }
         else if(getIT()==ant)
         {
-            s <<"|"<< color<< "A" << getID() << "\033[0m"<<"|";
+            s << color<< "A" << getID() << "\033[0m";
         }
         else if(getIT()==grasshoper)
         {
-             s <<"|"<< color<< "G" << getID() << "\033[0m"<<"|";
+             s << color<< "G" << getID() << "\033[0m";
         }
         else if(getIT()==spider){
-          s <<"|"<< color<< "S" << getID() << "\033[0m"<<"|";
+          s << color<< "S" << getID() << "\033[0m";
         }
         else if(getIT()==beetle){
-          s <<"|"<< color<< "B" << getID() << "\033[0m"<<"|";
+          s << color<< "B" << getID() << "\033[0m";
         }
 
         return s.str();
