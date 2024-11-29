@@ -74,7 +74,7 @@ public:
 class Bee : public Insect {
 
 
-public:
+public://test
     Bee(bool col) : Insect(col, bee) {}
     std::vector<vec2i> getPossibleMovements(Map &m);
     bool isCircled(Map &m);
