@@ -29,8 +29,8 @@ private:
     std::vector<const Insect *> slots{};
     std::list<movement> historic{};
     vec2i relativePos{};
-    int sideSize{32};
-    int rewind=5;
+    const int sideSize;
+    int rewind;
 
 
     /**
@@ -47,7 +47,7 @@ private:
 
 public:
 
-    explicit Map(int & sideSize_,int &n) : sideSize(sideSize_),rewind(n){
+    explicit Map(const int & sideSize_,int &n) : sideSize(sideSize_),rewind(n){
         for(int i = 0; i < sideSize * sideSize; i++){
             slots.push_back(nullptr);
         }

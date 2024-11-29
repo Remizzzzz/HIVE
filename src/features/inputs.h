@@ -28,7 +28,8 @@ struct Inputs{
         return cursor1selected && cursor2selected;
     }
 
-
 };
+
+std::ostream & operator<<(std::ostream & f_, Inputs & inputs_);
 
 #endif //HIVE_INPUTS_H

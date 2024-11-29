@@ -3,8 +3,10 @@
 #include "src/features/insect.h"
 #include <limits>
 
+#include "src/hive.h"
+
 int main() {
-    int sideSize = 8; // Taille de la carte
+    /*int sideSize = 8; // Taille de la carte
     int rewindLimit = 5;
     Map gameMap(sideSize, rewindLimit);
 
@@ -22,6 +24,12 @@ int main() {
     renderer.displayMap();
 
     std::cout << "Appuyez sur Entree pour quitter...";
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');*/
+
+    Hive hive(PvP,console);
+
+    hive.run();
+
+
     return 0;
 }

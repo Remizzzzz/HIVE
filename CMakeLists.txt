@@ -16,6 +16,7 @@ add_executable(HIVE
         src/features/map.h
         src/features/deck.h
         src/features/inputs.h
+        src/features/inputs.cpp
         src/inputsManager.h
         src/solver.h
         src/renderer.h
