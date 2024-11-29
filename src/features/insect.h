@@ -91,7 +91,7 @@ public:
     }
     std::vector<vec2i> getPossibleMovements(Map &m);
 };
-
+//t
 class Grasshopper : public Insect {
 public:
     Grasshopper(bool col) : Insect(col, grasshoper) {}
