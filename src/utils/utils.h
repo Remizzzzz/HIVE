@@ -36,6 +36,13 @@ public:
     bool operator!=(vec2i const & v_) const {
         return i != v_.i || j != v_.j;
     }
+    bool operator<(const vec2i& other) const {
+        // Comparaison lexicographique : d'abord par x, puis par y
+        if (i != other.i) {
+            return i < other.i;
+        }
+        return j < other.j;
+    }
 
     /** @brief Renvoi la composante i de vec2i.*/
     [[nodiscard]] const int & getI() const{return i;}
