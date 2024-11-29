@@ -3,4 +3,3 @@
 # Inclure uniquement les fichiers nécessaires au projet HIVE
 !main.cpp
 !src
-!src/**
