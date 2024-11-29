@@ -297,7 +297,8 @@ std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) {
     std::set<vec2i> possibleMovements;
     for (auto it = neighbours.begin(); it != neighbours.end(); ++it) {
         //On itère dans chaque case voisine
-        if(!m.isSlotFree(*it)){
+        if(!m.isSlotFree(*it)){ // Si la case est occupé on détermine le type d'insecte et on applique sa
+            // method getPossibleMovement où on ajoute les cases dans l'ensemble
         switch(m.getInsectAt(*it)->getIT()) {
             case bee:
                 for (const auto& movement : Bee::getPossibleMovements(m)) {
@@ -328,6 +329,7 @@ std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) {
                 break;
         }}
     }
+    // Converti l'ensemble en vector
     std::vector<vec2i> possibleMovementsVector(possibleMovements.begin(), possibleMovements.end());
     return possibleMovementsVector;
 }
