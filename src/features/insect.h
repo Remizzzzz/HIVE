@@ -11,7 +11,7 @@
 
 #include "../utils/utils.h"
 class Map;
-enum insectType{bee,ant,grasshoper,spider,beetle};
+enum insectType{bee,ant,grasshopper,spider,beetle, mosquitoe};
 class Insect{
     int id;
     insectType iT;
@@ -51,7 +51,7 @@ public:
         {
             s << color<< "A" << getID() << "\033[0m";
         }
-        else if(getIT()==grasshoper)
+        else if(getIT()==grasshopper)
         {
              s << color<< "G" << getID() << "\033[0m";
         }
@@ -71,7 +71,7 @@ public:
     bool isLinkingHive(Map &m) const;
 };
 
-class Bee : public Insect {
+class Bee : public virtual Insect {
 
 
 public://test
@@ -80,7 +80,7 @@ public://test
     bool isCircled(Map &m);
 };
 
-class Beetle : public Insect {
+class Beetle : public virtual Insect {
 
     Insect* isAboveOf;
 
@@ -89,24 +89,33 @@ public:
     Insect* getInsectUnder() {
         return isAboveOf;
     }
-    std::vector<vec2i> getPossibleMovements(Map &m);
+    virtual std::vector<vec2i> getPossibleMovements(Map &m);
 };
 
-class Grasshopper : public Insect {
+class Grasshopper : public virtual Insect {
 public:
-    Grasshopper(bool col) : Insect(col, grasshoper) {}
-    std::vector<vec2i> getPossibleMovements(Map &m);
+    Grasshopper(bool col) : Insect(col, grasshopper) {}
+    virtual std::vector<vec2i> getPossibleMovements(Map &m);
 };
 
-class Spider : public Insect {
+class Spider : public virtual Insect {
 public:
     Spider(bool col) : Insect(col, spider) {}
-    std::vector<vec2i> getPossibleMovements(Map &m);
+    virtual std::vector<vec2i> getPossibleMovements(Map &m);
 };
 
-class Ant : public Insect {
+class Ant : public virtual Insect {
 public:
     Ant(bool col) : Insect(col, ant) {}
+    virtual std::vector<vec2i> getPossibleMovements(Map &m) ;
+};
+
+class Mosquitoe : public virtual Insect, public virtual Ant, public virtual Bee, public virtual Grasshopper,
+public virtual Beetle, public virtual Spider  {
+public:
+    Mosquitoe(bool col)
+        : Insect(col, mosquitoe), Ant(col), Bee(col), Grasshopper(col), Beetle(col), Spider(col) {}
+
     std::vector<vec2i> getPossibleMovements(Map &m) ;
 };
 

@@ -1,6 +1,7 @@
 //
 // Created by Thiba on 29/10/2024.
 //
+#include <set>
 #ifndef HIVE_INSECT_CPP
 #define HIVE_INSECT_CPP
 #define MAP_SIZE 32
@@ -286,6 +287,37 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map &m) {//L'idée ? faire une bou
 
     return possibleMovements;
 }
+
+
+//Fonctions de Moustique
+
+std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) {
+
+    std::list<vec2i> neighbours = m.getNeighbours(getCoordinates()); // On récupère la liste des cases voisines
+    std::set<vec2i> possibleMovements;
+    for (auto it = neighbours.begin(); it != neighbours.end(); ++it) {
+        //On itère dans chaque case voisine
+        enum insectType{bee,ant,grasshoper,spider,beetle, mosquitoe};
+        switch(m.getInsectAt(*it)->getIT()) {
+            case bee:
+            possibleMovements.insert(Bee::getPossibleMovements(&m));
+                break;
+            case ant:
+
+                break;
+            case grasshoper:
+
+                break;
+            case spider:
+
+                break;
+            case mosquitoe:
+
+                break;
+        }
+    }
+}
+
 
 
 
