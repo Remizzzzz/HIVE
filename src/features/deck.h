@@ -9,6 +9,8 @@
 
 #include "insect.h"
 
+#include "../utils/hiveException.h"
+
 class Deck{
 
 private:
@@ -17,7 +19,6 @@ private:
 
 public:
     Deck() = default;
-
 
     // Classe interne pour l'itérateur
     class Iterator {
@@ -58,6 +59,21 @@ public:
         return Iterator(insects.begin() + insectNb);
     }
 
+    const int & getInsectNb() const{
+        return insectNb;
+    }
+
+    void addInsect(Insect * insect_){
+        if (insects.size() > insectNb){
+            insects[insectNb] = insect_;
+        }
+        else if (insects.size() == insectNb){
+            insects.push_back(insect_);
+        }
+        else throw HiveException("deck.h:Deck:addInsect", "insectNb > insects.size()");
+
+        insectNb++;
+    }
 
     Insect * getInsectAt(const int & index_){
         return insects.at(index_);

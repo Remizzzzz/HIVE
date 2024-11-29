@@ -11,7 +11,7 @@
 #include <iostream>
 #include "../utils/hiveException.h"
 
-void InputsManager:: updateAIInputs() {
+/*void InputsManager:: updateAIInputs() {
 
 }
 
@@ -19,7 +19,7 @@ void InputsManager:: updateAIInputs() {
 
 void InputsManager:: updatePlayerInputs() {
 
-}
+}*/
 
 
 #endif //HIVE_INPUTMANAGER_CPP
