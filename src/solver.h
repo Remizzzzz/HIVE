@@ -54,7 +54,7 @@ private:
                     if (map.isSlotFree(cursor2_)) {
                         map.putInsectTo(deck1.getInsectAt(cursor1_.getJ()), cursor2_);
                         deck1.removeAt(cursor1_.getJ());
-                    } else if (deck1.getInsectAt(cursor1_.getJ())->getIT() == grasshoper) {
+                    } else if (deck1.getInsectAt(cursor1_.getJ())->getIT() == grasshopper) {
                         //---------------A FAIRE--------------------
                         /*
                          deck1.getInsectAt(cursor1.getJ())
@@ -72,7 +72,7 @@ private:
                     if (map.isSlotFree(cursor2_)) {
                         map.putInsectTo(deck2.getInsectAt(cursor1_.getJ()), cursor2_);
                         deck2.removeAt(cursor1_.getJ());
-                    } else if (deck2.getInsectAt(cursor1_.getJ())->getIT() == grasshoper) {
+                    } else if (deck2.getInsectAt(cursor1_.getJ())->getIT() == grasshopper) {
                         //---------------A FAIRE--------------------
                         /*
                          deck2.getInsectAt(cursor1.getJ())
@@ -96,7 +96,7 @@ private:
             if (map.isSlotFree(cursor2_)){
                 map.moveInsect(cursor1_,cursor2_);
             }
-            else if (deck2.getInsectAt(cursor1_.getJ())->getIT() == grasshoper) {
+            else if (deck2.getInsectAt(cursor1_.getJ())->getIT() == grasshopper) {
                 //---------------A FAIRE--------------------
                 /*
                  deck2.getInsectAt(cursor1.getJ())
