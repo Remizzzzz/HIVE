@@ -3,4 +3,4 @@
 # Inclure uniquement les fichiers nécessaires au projet HIVE
 !main.cpp
 !CMakeLists.txt
-!src/
+!src
