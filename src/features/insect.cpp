@@ -12,6 +12,7 @@
 #include <vector>
 #include <list>
 #include <algorithm>
+#include <set>
 
 int Insect::counter = 0;
 //Fonctions de Insect
@@ -292,30 +293,43 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map &m) {//L'idée ? faire une bou
 //Fonctions de Moustique
 
 std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) {
-
     std::list<vec2i> neighbours = m.getNeighbours(getCoordinates()); // On récupère la liste des cases voisines
     std::set<vec2i> possibleMovements;
     for (auto it = neighbours.begin(); it != neighbours.end(); ++it) {
         //On itère dans chaque case voisine
-        enum insectType{bee,ant,grasshoper,spider,beetle, mosquitoe};
+        if(!m.isSlotFree(*it)){
         switch(m.getInsectAt(*it)->getIT()) {
             case bee:
-            possibleMovements.insert(Bee::getPossibleMovements(&m));
+                for (const auto& movement : Bee::getPossibleMovements(m)) {
+                    possibleMovements.insert(movement);
+                }
                 break;
             case ant:
-
+                for (const auto& movement : Ant::getPossibleMovements(m)) {
+                    possibleMovements.insert(movement);
+                }
                 break;
-            case grasshoper:
+            case grasshopper:
+                for (const auto& movement : Grasshopper::getPossibleMovements(m)) {
+                    possibleMovements.insert(movement);
+                }
 
                 break;
             case spider:
+                for (const auto& movement : Spider::getPossibleMovements(m)) {
+                    possibleMovements.insert(movement);
+                }
 
                 break;
-            case mosquitoe:
-
+            case beetle:
+                for (const auto& movement : Beetle::getPossibleMovements(m)) {
+                    possibleMovements.insert(movement);
+                }
                 break;
-        }
+        }}
     }
+    std::vector<vec2i> possibleMovementsVector(possibleMovements.begin(), possibleMovements.end());
+    return possibleMovementsVector;
 }
 
 
