@@ -19,4 +19,5 @@ add_executable(HIVE
         src/inputsManager.h
         src/solver.h
         src/renderer.h
-        src/hive.h)
+        src/hive.h
+        src/features/inputsManager.cpp)

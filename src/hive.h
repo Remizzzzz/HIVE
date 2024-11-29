@@ -17,7 +17,7 @@
 #include "renderer.h"
 
 //enum Mode{PvP,PvAI};
-//enum Version{console, graphic};
+enum Version{console, graphic};
 
 class Hive{
 
