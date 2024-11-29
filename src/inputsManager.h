@@ -35,9 +35,9 @@ private:
 private:
 
     void randomUpdateOfCursor(const int cursorId_){
+        int randomValue = random.getRandomInt(0,6);
         switch (cursorId_) {
             case 1:
-                int randomValue = random.getRandomInt(0,6);
                 if (randomValue == 0){
                     inputs.cursor1.setI(-1);
                     inputs.cursor1.setJ(random.getRandomInt(0,deck1.getInsectNb()));
