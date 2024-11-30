@@ -36,36 +36,16 @@ public:
     //static int  get_max_instance() { return max_instance; }// A voir si utile
 
 
-    [[nodiscard]] std::string getPrintableValue() const {
+    [[nodiscard]] virtual std::string getPrintableValue() const
+    {
         std::string color;
         if(getColor() == true ) {
             color = "\033[34m";
         }else {
             color = "\033[31m";
         }
-        std::stringstream s;
-        if(getIT()==bee)
-        {
-            s << "\033[33mQ" << color << "B" << "\033[0m"; // Q affiché en jaune, B avec la couleur du joueur (pour Queen Bee)
-        }
-        else if(getIT()==ant)
-        {
-            s << color<< "A" << getID() << "\033[0m";
-        }
-        else if(getIT()==grasshopper)
-        {
-             s << color<< "G" << getID() << "\033[0m";
-        }
-        else if(getIT()==spider){
-          s << color<< "S" << getID() << "\033[0m";
-        }
-        else if(getIT()==beetle){
-          s << color<< "B" << getID() << "\033[0m";
-        }
-
-        return s.str();
-
-    };
+        return color;
+    }
     int getFormerNeighbour(vec2i newPosition, Map &m) const; //Fonctions pour detecter les anciens voisins à la nouvelle position
     virtual std::vector<vec2i> getPossibleMovements(Map &m) const = 0;
     std::vector<vec2i> setRule(Map &m) const;
@@ -79,6 +59,18 @@ public://test
     Bee(bool col) : Insect(col, bee) {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
     bool isCircled(Map &m);
+    [[nodiscard]] std::string getPrintableValue() const override
+    {
+        std::string color;
+        std::stringstream s;
+        if(getColor() == true ) {
+            color = "\033[34m";
+        }else {
+            color = "\033[31m";
+        }
+        s << "\033[33mQ" << color << "B" << "\033[0m"; // Q affiché en jaune, B avec la couleur du joueur (pour Queen Bee)
+        return s.str();
+    }
 };
 
 class Beetle : public virtual Insect {
@@ -91,24 +83,72 @@ public:
         return isAboveOf;
     }
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
+    [[nodiscard]] std::string getPrintableValue() const override
+    {
+        std::string color;
+        std::stringstream s;
+        if(getColor() == true ) {
+            color = "\033[34m";
+        }else {
+            color = "\033[31m";
+        }
+        s << color<< "B" << getID() << "\033[0m";
+        return s.str();
+    }
 };
 
 class Grasshopper : public virtual Insect {
 public:
     Grasshopper(bool col) : Insect(col, grasshopper) {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
+    [[nodiscard]] std::string getPrintableValue() const override
+    {
+        std::string color;
+        std::stringstream s;
+        if(getColor() == true ) {
+            color = "\033[34m";
+        }else {
+            color = "\033[31m";
+        }
+        s << color<< "G" << getID() << "\033[0m";
+        return s.str();
+    }
 };
 
 class Spider : public virtual Insect {
 public:
     Spider(bool col) : Insect(col, spider) {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
+    [[nodiscard]] std::string getPrintableValue() const override
+    {
+        std::string color;
+        std::stringstream s;
+        if(getColor() == true ) {
+            color = "\033[34m";
+        }else {
+            color = "\033[31m";
+        }
+        s << color<< "S" << getID() << "\033[0m";
+        return s.str();
+    }
 };
 
 class Ant : public virtual Insect {
 public:
     Ant(bool col) : Insect(col, ant) {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
+    [[nodiscard]] std::string getPrintableValue() const override
+    {
+        std::string color;
+        std::stringstream s;
+        if(getColor() == true ) {
+            color = "\033[34m";
+        }else {
+            color = "\033[31m";
+        }
+        s << color<< "A" << getID() << "\033[0m";
+        return s.str();
+    }
 };
 
 class Mosquitoe : public virtual Insect, public virtual Ant, public virtual Bee, public virtual Grasshopper,
@@ -118,6 +158,18 @@ public:
         : Insect(col, mosquitoe), Ant(col), Bee(col), Grasshopper(col), Beetle(col), Spider(col) {}
 
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
+    [[nodiscard]] std::string getPrintableValue() const override
+    {
+        std::string color;
+        std::stringstream s;
+        if(getColor() == true ) {
+            color = "\033[34m";
+        }else {
+            color = "\033[31m";
+        }
+        s << color<< "M" << getID() << "\033[0m";
+        return s.str();
+    }
 };
 
 #endif //HIVE_INSECT_H
