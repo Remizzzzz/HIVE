@@ -292,7 +292,7 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const{//L'idée ? faire un
 
 //Fonctions de Moustique
 
-std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) {
+std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) const{
     std::list<vec2i> neighbours = m.getNeighbours(getCoordinates()); // On récupère la liste des cases voisines
     std::set<vec2i> possibleMovements;
     for (auto it = neighbours.begin(); it != neighbours.end(); ++it) {
@@ -337,7 +337,7 @@ std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) {
 
 // Fonction de spider
 
-std::vector<vec2i> Spider:: getPossibleMovements(Map &m) {
+std::vector<vec2i> Spider:: getPossibleMovements(Map &m) const{
     std::vector<vec2i> possibleMovements;
     return possibleMovements;
 }

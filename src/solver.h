@@ -51,7 +51,7 @@ private:
                 map.putInsectTo(player_.getDeck().getInsectAt(start.getJ()), destination);
                 player_.addActiveInsectsFromDeck(start.getJ());
                 player_.deck.removeAt(start.getJ());
-            } else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshoper) {
+            } else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {
                 //---------------A FAIRE--------------------
                 /*
                  deck1.getInsectAt(cursor1.getJ())
@@ -73,7 +73,7 @@ private:
             if (map.isSlotFree(destination)){
                 map.moveInsect(start,destination);
             }
-            else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshoper) {
+            else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {
                 //---------------A FAIRE--------------------
                 /*
                  deck2.getInsectAt(cursor1.getJ())
