@@ -15,9 +15,9 @@
 #include <set>
 
 int Insect::counter = 0;
-//Fonctions de Insect
 
-// Renvoie tout les slots dispos sur la map pour poser une pièce
+// Méthodes de Insect
+// Renvoie tous les slots dispos sur la map pour poser une pièce
 std::vector<vec2i> Insect::setRule( Map &m) const {
     std::vector<vec2i> possiblePlace;
      // On cherche les endroits possibles
@@ -111,7 +111,7 @@ bool Insect:: isLinkingHive(Map &m) const {
     {
         neighbors = m.getNeighbours(insectSet[i_insect]);
         for (auto it = neighbors.begin(); it != neighbors.end(); ++it) {// On itère dans les voisins
-            if(m.isSlotFree(*it) == 0)//Quand on trouve un voisin insect de l'elem on l'ajoute dans la liste insectset si pas encore dedans sauf si c'est l'insect sur lequel on a appelé la fonction
+            if(m.isSlotFree(*it) == 0) // Quand on trouve un voisin insect de l'elem on l'ajoute dans la liste insectset si pas encore dedans sauf si c'est l'insect sur lequel on a appelé la fonction
             {
                 if (std::find(insectSet.begin(), insectSet.end(), *it)[0] != *it && *it != getCoordinates()) {
                     // L'élément n'est pas trouvé, donc on l'ajoute
@@ -138,44 +138,42 @@ int Insect::getFormerNeighbour(vec2i newPosition, Map &m) const{
     return count;
 }
 
-//Fonctions de Bee
 
-//Fonction qui dit si la reine est encerclée
+
+// Méthodes de Bee
+// Fonction qui dit si la reine abeille est encerclée (partie terminée)
 bool Bee::isCircled(Map &m) {
     std::list<vec2i> neighbors = m.getNeighbours(getCoordinates());
-    for (auto it = neighbors.begin(); it != neighbors.end(); ++it) {
-        // On itère dans les voisins
-        if(m.isSlotFree(*it) == 1)//Quand on trouve une case on renvoie false
-        { return false;}
+    for (auto it = neighbors.begin(); it != neighbors.end(); ++it) { // On itère dans les voisins
+        // Quand on trouve une case vide, on renvoie false. La reine n'est pas encerclée
+        if(m.isSlotFree(*it) == 1) return false;
     }
+    // La reine est encerclée.
     return true;
 }
 
-//Renvoi un vector avec les mouvements possibles de la reine
-std::vector<vec2i> Bee:: getPossibleMovements(Map &m) const{
+// Renvoi un vector avec les mouvements possibles de la reine abeille
+std::vector<vec2i> Bee::getPossibleMovements(Map &m) const {
     std::vector<vec2i> possibleMovements;
-    if(!this->isLinkingHive(m)) { //Vérifie que l'insect puisse bouger
-        std::list<vec2i> neighbors = m.getNeighbours(getCoordinates());//Récupère les voisins de la case
-        std::list<vec2i> neighborsPossibleMovements;
-        for (auto it = neighbors.begin(); it != neighbors.end(); ++it) { //Pour chaque voisin, si le slot est free et attaché à au moins un membre dont un (et un seul) est un ancien voisin on l'ajoute à possibleMovement
-            if(m.isSlotFree(*it) == 1 ) {
-                neighborsPossibleMovements = m.getNeighbours(*it);//On récupère les voisins du voisin
-                for (auto itPossibleMovement = neighborsPossibleMovements.begin(); itPossibleMovement != neighborsPossibleMovements.end(); ++itPossibleMovement) {
-                    if(m.isSlotFree(*itPossibleMovement) == 0 && *itPossibleMovement != getCoordinates() && getFormerNeighbour(*it, m)==1) { //Si le slot est occupé par une autre pièce que self, et qu'il y a exactement un ancien voisin dans la liste alors on peut bouger
-                        possibleMovements.push_back(*it);//Dès qu'on trouve une case
-                        }
-                    }
-                }
+
+    // Vérifie que l'abeille puisse bouger
+    if(!this->isLinkingHive(m)) {
+        std::list<vec2i> neighbors = m.getNeighbours(getCoordinates()); // Récupère les voisins de la case
+
+        // Parcourt chaque voisin
+        for (const auto &neighbor : neighbors) {
+            // Si le slot est libre ET qu'il y a exactement un ancien voisin parmi les nouveaux
+            if(m.isSlotFree(neighbor) == 1  && getFormerNeighbour(neighbor, m) == 1) {
+                possibleMovements.push_back(neighbor); // Ajoute la case valide
             }
         }
+    }
     return possibleMovements;
 }
 
 
 
-// Fonctions de Beetle
-
-
+// Méthodes de Beetle
 std::vector<vec2i> Beetle:: getPossibleMovements(Map &m) const{
     std::vector<vec2i> possibleMovements;
     int breakCount = 0;
@@ -201,8 +199,7 @@ std::vector<vec2i> Beetle:: getPossibleMovements(Map &m) const{
 
 
 
-// Fonctions de Grasshoper
-
+// Méthodes de Grasshoper
 std::vector<vec2i> Grasshopper:: getPossibleMovements(Map &m) const{
     std::vector<vec2i> possibleMovements;
     int breakCount = 0;
@@ -232,14 +229,12 @@ std::vector<vec2i> Grasshopper:: getPossibleMovements(Map &m) const{
 }
 
 
-//Fonction de Spider
-/*std::vector<vec2i> Spider:: getPossibleMovements(Map m) {
-    J'ai une idée pour ça : Ca serait possible d'appeler 3 fois getPossibleMovements de Bee ?, pq techniquement c la même chose,
-    On veut tous les endroits que l'abeille peut atteindre en 3 coups
-}*/
 
-// Fonction de Ant
-std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const{//L'idée ? faire une boucle auto gérée : On prend une case (la première étant celle de départ) et on prend toutes les cases vides adjacentes dans une liste. On parcourt cette liste, si le potential movement est un possible movement, on ajoute ses cases vides adjacentes à potential movement, puis on l'enleve de potential movement et on l'ajoute à possible movement. Une fois qu'on ne peut plus ajouter, c'est fini !
+// Méthodes de Ant
+// L'idée ? faire une boucle auto gérée : On prend une case (la première étant celle de départ) et on prend toutes les cases vides adjacentes dans une liste.
+// On parcourt cette liste, si le potential movement est un possible movement, on ajoute ses cases vides adjacentes à potential movement,
+// puis on l'enlève de potential movement et on l'ajoute à possible movement. Une fois qu'on ne peut plus ajouter, c'est fini !
+std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const {
     std::vector<vec2i> possibleMovements;
     std::vector<vec2i> potentialMovements;
     std::vector<vec2i> impossibleMovements;
@@ -290,8 +285,47 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const{//L'idée ? faire un
 }
 
 
-//Fonctions de Moustique
 
+// Méthodes de spider
+std::vector<vec2i> Spider::getPossibleMovements(Map &m) const {
+    std::vector<vec2i> possibleMovements;
+
+    // Vérifie que l'insecte puisse bouger
+    if (!this->isLinkingHive(m)) {
+        // 1er niveau de voisins
+        std::list<vec2i> firstLevel = m.getNeighbours(getCoordinates());
+
+        for (const auto &level1 : firstLevel) {
+            // Si le slot est libre ET qu'il y a exactement un ancien voisin parmi les nouveaux
+            if (m.isSlotFree(level1) == 1 && getFormerNeighbour(level1, m) == 1) {
+                // 2e niveau de voisins
+                std::list<vec2i> secondLevel = m.getNeighbours(level1);
+
+                for (const auto &level2 : secondLevel) {
+                    // Idem level1 + vérification que le voisin2 ne soit pas la position de départ
+                    if (m.isSlotFree(level2) && level2 != getCoordinates() && getFormerNeighbour(level2, m) == 1) {
+                        // 3e niveau de voisins
+                        std::list<vec2i> thirdLevel = m.getNeighbours(level2);
+
+                        for (const auto &level3 : thirdLevel) {
+                            // Idem level1 + vérification que le voisin3 ne soit pas la position level1
+                            if (m.isSlotFree(level3) && level3 != level1 && getFormerNeighbour(level3, m) == 1) {
+                                // Ajouter le mouvement valide
+                                possibleMovements.push_back(level3);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return possibleMovements;
+}
+
+
+
+// Méthodes de mosquito
 std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) const{
     std::list<vec2i> neighbours = m.getNeighbours(getCoordinates()); // On récupère la liste des cases voisines
     std::set<vec2i> possibleMovements;
@@ -333,17 +367,6 @@ std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) const{
     std::vector<vec2i> possibleMovementsVector(possibleMovements.begin(), possibleMovements.end());
     return possibleMovementsVector;
 }
-
-
-// Fonction de spider
-
-std::vector<vec2i> Spider:: getPossibleMovements(Map &m) const{
-    std::vector<vec2i> possibleMovements;
-    return possibleMovements;
-}
-
-
-
 
 
 

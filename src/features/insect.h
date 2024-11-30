@@ -16,12 +16,10 @@ class Insect{
     int id;
     insectType iT;
     vec2i coordinates;
-    bool color; // 0 = bleu , 1 = rouge
+    bool color; // 0 = bleu, 1 = rouge
     //bool relie_ruche   sûr qu'on en ai besoin?
     static int counter; // pour définir les identifiants à init dans le .cpp
-    //static  int const max_instance = MI; // A voir si utile
-
-
+    //static int const max_instance = MI; // A voir si utile
 
 
 public:
@@ -52,9 +50,8 @@ public:
     bool isLinkingHive(Map &m) const;
 };
 
+
 class Bee : public virtual Insect {
-
-
 public://test
     Bee(bool col) : Insect(col, bee) {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
@@ -72,6 +69,7 @@ public://test
         return s.str();
     }
 };
+
 
 class Beetle : public virtual Insect {
 
@@ -97,6 +95,7 @@ public:
     }
 };
 
+
 class Grasshopper : public virtual Insect {
 public:
     Grasshopper(bool col) : Insect(col, grasshopper) {}
@@ -114,6 +113,7 @@ public:
         return s.str();
     }
 };
+
 
 class Spider : public virtual Insect {
 public:
@@ -133,6 +133,7 @@ public:
     }
 };
 
+
 class Ant : public virtual Insect {
 public:
     Ant(bool col) : Insect(col, ant) {}
@@ -150,6 +151,7 @@ public:
         return s.str();
     }
 };
+
 
 class Mosquitoe : public virtual Insect, public virtual Ant, public virtual Bee, public virtual Grasshopper,
 public virtual Beetle, public virtual Spider  {
@@ -171,5 +173,8 @@ public:
         return s.str();
     }
 };
+
+
+
 
 #endif //HIVE_INSECT_H
