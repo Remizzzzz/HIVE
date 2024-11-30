@@ -30,7 +30,6 @@ int main() {
 
     try{
         Hive hive(PvP,console);
-
         hive.run();
     }
     catch (const HiveException & HE_){

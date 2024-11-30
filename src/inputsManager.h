@@ -53,6 +53,10 @@ private:
         }
     }
 
+    void updatePossibleMovements(Player & player_){
+
+    }
+
 public:
 
     explicit InputsManager(Mode mode_, const int renderedMapSideSize_, Map & map_):
@@ -61,31 +65,46 @@ public:
     void updateAIInputs(Player & player_){
         Inputs & inputs = player_.inputs;
 
-        const Insect * selectedInsect;
+        int cursorId = inputs.isStartSelected() + 1;
 
         int randomValue = random.getRandomInt(0,4);
+        const Insect * selectedInsect;
 
+        switch (cursorId){
+            case 1:
+                /*if ((player_.deck.isEmpty() && player_.activeInsects.empty())){
+                    throw HiveException("inputsManager.h:InputsManager:updateAIInputs","deck and activeInsects are empty");
+                    return;
+                }
 
-        if ((player_.deck.isEmpty() && player_.activeInsects.empty())){
-            throw HiveException("inputsManager.h:InputsManager:updateAIInputs","deck and activeInsects are empty");
-            return;
+                if ((randomValue == 0 || player_.getActiveInsects().empty()) && !player_.getDeck().isEmpty()){
+                    selectedInsect = player_.deck.getInsectAt(random.getRandomInt(0,int(player_.getDeck().getInsectNb())));
+                }
+                else{
+                    selectedInsect = player_.getActiveInsects()[random.getRandomInt(0,int(player_.getActiveInsects().size()))];
+                }
+
+                inputs.setStart(selectedInsect->getCoordinates());*/
+                inputs.setStart(vec2i{1,1});
+
+                inputs.needPossibleDestinationsUpdate();
+
+                break;
+            case 2:
+                if (!inputs.isPossibleDestinationsEmpty()){
+                    inputs.setDestionationIndex(random.getRandomInt(0,int (inputs.getPossibleDestinationsNumber())));
+                }
+                else{
+                    //lancer exception
+                }
+                break;
+            default:
+                //Lancer exception
+                break;
         }
 
-        if ((randomValue == 0 || player_.getActiveInsects().empty()) && !player_.getDeck().isEmpty()){
-            selectedInsect = player_.deck.getInsectAt(random.getRandomInt(0,int(player_.getDeck().getInsectNb())));
-        }
-        else{
-            selectedInsect = player_.getActiveInsects()[random.getRandomInt(0,int(player_.getActiveInsects().size()))];
-        }
-
-        inputs.setStart(selectedInsect->getCoordinates());
-
-        inputs.setPossibleDestinations(selectedInsect->getPossibleMovements(map));
-
-        if (!inputs.isPossibleDestinationsEmpty()){
-            inputs.setDestionationIndex(random.getRandomInt(0,int (inputs.getPossibleDestinationsNumber())));
-        }
     }
+
 
     void updatePlayerInputs(Player & player_){
         Inputs & inputs = player_.inputs;
@@ -114,6 +133,7 @@ public:
                 case 13:
                     if (!inputs.isStartSelected()){
                         inputs.selectStart();
+                        inputs.needPossibleDestinationsUpdate();
                     }
                     else{
                         inputs.selectDestination();

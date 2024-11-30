@@ -34,7 +34,8 @@ private:
 
     bool isStartValid(Player & player_) const{
         return player_.inputs.getStart().getI() >= -1 && player_.inputs.getStart().getI() <= trueMapSideSize &&
-               player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < trueMapSideSize;
+               player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < trueMapSideSize &&
+               !map.isSlotFree(player_.inputs.getStart());
     }
 
     bool isDestinationValid(Player & player_) const{
@@ -90,26 +91,51 @@ private:
 public:
 
     int update(Player & player_){
-        if(player_.inputs.movementNeeded()){
-            if (isStartValid(player_) && isDestinationValid(player_)){
-                if (map.getInsectAt(player_.inputs.getStart())->getColor() == player_.getId()){
-                    int loc = getStartLocation(player_);
 
-                    if (loc == 0){
-                        mapToMapMovement(player_);
-                        return 1;
-                    }
-                    else if (loc == player_.getId()){
-                        deckToMapMovement(player_);
-                        return 1;
-                    }
-                    else{
-                        //Wrong deck selected;
-                        //throw HiveException("solver.h:Solver:update", "cursor 1 invalid");
-                    }
+        if (player_.inputs.isPossibleDestinationsNeeded()){
+            if (isStartValid(player_)){
+                std::cout << "i" ;
+                int loc = getStartLocation(player_);
+
+                if (loc == 0){
+                    //Il faudrait plutot appeler une fonction qui dit ou on peut poser une piece depuis le deck
+                    player_.inputs.setPossibleDestinations(map.getInsectAt(player_.inputs.getStart())->getPossibleMovements(map));
+                    player_.inputs.noNeedForPossibleDestinationsUpdate();
+                    return 1;
+                }
+                else if (loc == player_.getId()){
+                    player_.inputs.setPossibleDestinations(map.getInsectAt(player_.inputs.getStart())->getPossibleMovements(map));
+                    player_.inputs.noNeedForPossibleDestinationsUpdate();
+                    return 1;
+                }
+                else{
+                    //Wrong deck selected;
+                    //throw HiveException("solver.h:Solver:update", "cursor 1 invalid");
                 }
             }
-            else throw HiveException("solver.h:Solver:update", "start or destination invalid for map");
+        }
+        else{
+            if(player_.inputs.movementNeeded()){
+                if (isStartValid(player_) && isDestinationValid(player_)){
+                    if (map.getInsectAt(player_.inputs.getStart())->getColor() == player_.getId()){
+                        int loc = getStartLocation(player_);
+
+                        if (loc == 0){
+                            mapToMapMovement(player_);
+                            return 2;
+                        }
+                        else if (loc == player_.getId()){
+                            deckToMapMovement(player_);
+                            return 2;
+                        }
+                        else{
+                            //Wrong deck selected;
+                            //throw HiveException("solver.h:Solver:update", "cursor 1 invalid");
+                        }
+                    }
+                }
+                else throw HiveException("solver.h:Solver:update", "start or destination invalid for map");
+            }
         }
         return 0;
     }

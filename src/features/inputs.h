@@ -15,12 +15,14 @@ class Inputs{
 private:
     //le joueur a validé son action
     bool startSelected;
-    bool destinationSelected;
-
     //Position apres la premiere validation
     vec2i start;
+
+    //le joueur a validé son action
+    bool destinationSelected;
     //Position apres la deuxieme validation
     int destinationIndex;
+    bool needPossibleDestinations{false};
     std::vector<vec2i> possibleDestinations;
 
     std::string message;
@@ -82,6 +84,18 @@ public:
         destinationSelected = true;
     }
 
+    void needPossibleDestinationsUpdate(){
+        needPossibleDestinations = true;
+    }
+
+    void noNeedForPossibleDestinationsUpdate(){
+        needPossibleDestinations = false;
+    }
+
+    bool isPossibleDestinationsNeeded() const{
+        return needPossibleDestinations;
+    }
+
     void setMessage(const std::string & message_){
         message = message_;
     }
@@ -93,6 +107,7 @@ public:
     void reset(){
         startSelected = false;
         destinationSelected = false;
+        needPossibleDestinations = false;
     }
 
 };

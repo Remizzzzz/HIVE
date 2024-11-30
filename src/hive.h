@@ -88,16 +88,23 @@ public:
 
 
         inputsManager.updateAIInputs(*currentPlayer);
-        //std::cout << currentPlayer->inputs;
+        std::cout << currentPlayer->inputs;
 
-        /*if(solver.update(*currentPlayer)){
-            resetInputs(*currentPlayer);
-            switchPlayer();
+        switch (solver.update(*currentPlayer)) {
+            case 0:
+                //le mouvement est pas bon
+                resetInputs(*currentPlayer);
+            case 1:
+                //Le travail est en cours
+            case 2:
+                //mouvement fait
+                resetInputs(*currentPlayer);
+                switchPlayer();
         }
-        else{
-            resetInputs(*currentPlayer);
-        }*/
 
+
+        inputsManager.updateAIInputs(*currentPlayer);
+        std::cout << currentPlayer->inputs;
         //renderer->render(inputs);
     }
 };
