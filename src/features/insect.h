@@ -31,6 +31,7 @@ public:
     int  getIT() const { return iT; }
     bool  getColor() const { return color; }
     vec2i getCoordinates() const { return coordinates; }
+    void setCoordinates(const vec2i & coordinates_){coordinates = coordinates_;}
     //static int  get_counter() { return counter; }// A voir si utile
     //static int  get_max_instance() { return max_instance; }// A voir si utile
 
@@ -65,8 +66,8 @@ public:
         return s.str();
 
     };
-    int getFormerNeighbour(vec2i newPosition, Map &m); //Fonctions pour detecter les anciens voisins à la nouvelle position
-    virtual std::vector<vec2i> getPossibleMovements(Map &m) = 0;
+    int getFormerNeighbour(vec2i newPosition, Map &m) const; //Fonctions pour detecter les anciens voisins à la nouvelle position
+    virtual std::vector<vec2i> getPossibleMovements(Map &m) const = 0;
     std::vector<vec2i> setRule(Map &m) const;
     bool isLinkingHive(Map &m) const;
 };
@@ -76,7 +77,7 @@ class Bee : public virtual Insect {
 
 public://test
     Bee(bool col) : Insect(col, bee) {}
-    std::vector<vec2i> getPossibleMovements(Map &m);
+    std::vector<vec2i> getPossibleMovements(Map &m) const override;
     bool isCircled(Map &m);
 };
 
@@ -89,25 +90,25 @@ public:
     Insect* getInsectUnder() {
         return isAboveOf;
     }
-    virtual std::vector<vec2i> getPossibleMovements(Map &m);
+    std::vector<vec2i> getPossibleMovements(Map &m) const override;
 };
 
 class Grasshopper : public virtual Insect {
 public:
     Grasshopper(bool col) : Insect(col, grasshopper) {}
-    virtual std::vector<vec2i> getPossibleMovements(Map &m);
+    std::vector<vec2i> getPossibleMovements(Map &m) const override;
 };
 
 class Spider : public virtual Insect {
 public:
     Spider(bool col) : Insect(col, spider) {}
-    virtual std::vector<vec2i> getPossibleMovements(Map &m);
+    std::vector<vec2i> getPossibleMovements(Map &m) const override;
 };
 
 class Ant : public virtual Insect {
 public:
     Ant(bool col) : Insect(col, ant) {}
-    virtual std::vector<vec2i> getPossibleMovements(Map &m) ;
+    std::vector<vec2i> getPossibleMovements(Map &m) const override;
 };
 
 class Mosquitoe : public virtual Insect, public virtual Ant, public virtual Bee, public virtual Grasshopper,
@@ -116,7 +117,7 @@ public:
     Mosquitoe(bool col)
         : Insect(col, mosquitoe), Ant(col), Bee(col), Grasshopper(col), Beetle(col), Spider(col) {}
 
-    std::vector<vec2i> getPossibleMovements(Map &m) ;
+    std::vector<vec2i> getPossibleMovements(Map &m) const override;
 };
 
 #endif //HIVE_INSECT_H

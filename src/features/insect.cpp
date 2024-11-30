@@ -124,7 +124,7 @@ bool Insect:: isLinkingHive(Map &m) const {
     return i_insect != nbInsect;
 }
 //Fonction former Neighbour pour détecter les anciens voisin à la nouvelle position : POUR BOUGER, IL FAUT STRICTEMENT 1 ANCIEN VOISIN!!
-int Insect::getFormerNeighbour(vec2i newPosition, Map &m) {
+int Insect::getFormerNeighbour(vec2i newPosition, Map &m) const{
     int count=0;
     std::list<vec2i> formerNeighbour=m.getNeighbours(getCoordinates());
     std::list<vec2i> newNeighbours=m.getNeighbours(newPosition);
@@ -152,7 +152,7 @@ bool Bee::isCircled(Map &m) {
 }
 
 //Renvoi un vector avec les mouvements possibles de la reine
-std::vector<vec2i> Bee:: getPossibleMovements(Map &m){
+std::vector<vec2i> Bee:: getPossibleMovements(Map &m) const{
     std::vector<vec2i> possibleMovements;
     if(!this->isLinkingHive(m)) { //Vérifie que l'insect puisse bouger
         std::list<vec2i> neighbors = m.getNeighbours(getCoordinates());//Récupère les voisins de la case
@@ -176,7 +176,7 @@ std::vector<vec2i> Bee:: getPossibleMovements(Map &m){
 // Fonctions de Beetle
 
 
-std::vector<vec2i> Beetle:: getPossibleMovements(Map &m){
+std::vector<vec2i> Beetle:: getPossibleMovements(Map &m) const{
     std::vector<vec2i> possibleMovements;
     int breakCount = 0;
     if(!this->isLinkingHive(m)) { // Si l'insecte ne lie pas la ruche
@@ -203,7 +203,7 @@ std::vector<vec2i> Beetle:: getPossibleMovements(Map &m){
 
 // Fonctions de Grasshoper
 
-std::vector<vec2i> Grasshopper:: getPossibleMovements(Map &m) {
+std::vector<vec2i> Grasshopper:: getPossibleMovements(Map &m) const{
     std::vector<vec2i> possibleMovements;
     int breakCount = 0;
     if(!this->isLinkingHive(m)) {
@@ -239,7 +239,7 @@ std::vector<vec2i> Grasshopper:: getPossibleMovements(Map &m) {
 }*/
 
 // Fonction de Ant
-std::vector<vec2i> Ant:: getPossibleMovements(Map &m) {//L'idée ? faire une boucle auto gérée : On prend une case (la première étant celle de départ) et on prend toutes les cases vides adjacentes dans une liste. On parcourt cette liste, si le potential movement est un possible movement, on ajoute ses cases vides adjacentes à potential movement, puis on l'enleve de potential movement et on l'ajoute à possible movement. Une fois qu'on ne peut plus ajouter, c'est fini !
+std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const{//L'idée ? faire une boucle auto gérée : On prend une case (la première étant celle de départ) et on prend toutes les cases vides adjacentes dans une liste. On parcourt cette liste, si le potential movement est un possible movement, on ajoute ses cases vides adjacentes à potential movement, puis on l'enleve de potential movement et on l'ajoute à possible movement. Une fois qu'on ne peut plus ajouter, c'est fini !
     std::vector<vec2i> possibleMovements;
     std::vector<vec2i> potentialMovements;
     std::vector<vec2i> impossibleMovements;

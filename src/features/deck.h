@@ -11,11 +11,15 @@
 
 #include "../utils/hiveException.h"
 
+class Player;
+
 class Deck{
 
 private:
     std::vector<Insect *> insects;
-    int insectNb{0};
+    int insectNb = 0;
+
+    friend class Player;
 
 public:
     Deck() = default;
@@ -24,7 +28,7 @@ public:
     class Iterator {
     public:
         // Constructeur
-        Iterator(std::vector<Insect *>::iterator it) : current(it) {}
+        explicit Iterator(std::vector<Insect *>::iterator it) : current(it) {}
 
         // Opérateur de déréférencement
         Insect * & operator*() {
@@ -75,11 +79,15 @@ public:
         insectNb++;
     }
 
-    Insect * getInsectAt(const int & index_){
+    const Insect * getInsectAt(const int & index_) const{
         return insects.at(index_);
     }
 
-    bool isSlotFree(const int & index_){
+    void setInsectAtNewPosition(const int & index_, const vec2i & position_){
+        insects.at(index_)->setCoordinates(position_);
+    }
+
+    bool isSlotFree(const int & index_) const{
         return insects.at(index_) == nullptr;
     }
 
@@ -91,6 +99,10 @@ public:
         insectNb--;
         insects[index_] = insects[insectNb];
         insects[insectNb] = nullptr;
+    }
+
+    bool isEmpty() const{
+        return insectNb <= 0;
     }
 
 };

@@ -31,10 +31,10 @@ class Hive{
     int rewindNb;
     Map map;
 
-    Deck deck1;
-    Deck deck2;
+    Player player1;
+    Player player2;
 
-    Inputs inputs;
+    Player * currentPlayer;
 
     InputsManager inputsManager;
 
@@ -43,18 +43,33 @@ class Hive{
     Renderer * renderer;
 
 
+private:
+
+    void switchPlayer(){
+        if (currentPlayer == &player1){
+            currentPlayer = &player2;
+        }
+        else{
+            currentPlayer = &player1;
+        }
+    }
+
+    void resetInputs(Player & player_){
+        player_.inputs.reset();
+    }
+
 public:
 
     Hive(Mode mode_, Version version_, int rewindNb_ = 3)
             :   mode(mode_), version(version_),
                 insects(),
                 rewindNb(rewindNb_), map(trueMapSideSize,rewindNb),
-                inputs(),
-                deck1(),
-                deck2(),
-                inputsManager(mode, inputs, renderedMapSideSize, deck1, deck2),
-                solver(map, inputs, deck1, deck2, trueMapSideSize)
+                player1(1), player2(2), currentPlayer(&player1),
+                inputsManager(mode, renderedMapSideSize, map),
+                solver(map, trueMapSideSize)
     {
+
+
         switch (version) {
             case console:
                 //renderer = new ConsoleRenderer(map);
@@ -68,12 +83,21 @@ public:
         }
     };
 
-
     void run(){
-        inputsManager.updateAIInputs();
-        std::cout << inputs;
 
-        //solver.update();
+
+
+        inputsManager.updateAIInputs(*currentPlayer);
+        //std::cout << currentPlayer->inputs;
+
+        /*if(solver.update(*currentPlayer)){
+            resetInputs(*currentPlayer);
+            switchPlayer();
+        }
+        else{
+            resetInputs(*currentPlayer);
+        }*/
+
         //renderer->render(inputs);
     }
 };

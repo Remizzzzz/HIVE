@@ -6,30 +6,97 @@
 #define HIVE_INPUTS_H
 
 #include <string>
-#include "../utils/utils.h"
+#include <vector>
 
-struct Inputs{
+#include "../utils/utils.h"
+#include "../utils/hiveException.h"
+
+class Inputs{
+private:
     //le joueur a validé son action
-    bool cursor1selected;
-    bool cursor2selected;
+    bool startSelected;
+    bool destinationSelected;
 
     //Position apres la premiere validation
-    vec2i cursor1;
+    vec2i start;
     //Position apres la deuxieme validation
-    vec2i cursor2;
+    int destinationIndex;
+    std::vector<vec2i> possibleDestinations;
 
     std::string message;
 
-    //Si un curseur est en y negatif alors il est sur le deck 1
-    //S'il est en y plus grand que la taille de la map il est sur le deck 2
-    //Donc faut bien prendre en compte que ça vise une carte du deck
+public:
+
+    Inputs() = default;
 
     bool movementNeeded() const{
-        return cursor1selected && cursor2selected;
+        return startSelected && destinationSelected;
+    }
+
+    const vec2i & getStart() const {
+        return start;
+    }
+
+    const int & getDestinationIndex() const{
+        return destinationIndex;
+    }
+
+    const vec2i & getDestination() const{
+        if(destinationIndex >= possibleDestinations.size()) throw HiveException("A remplir", "");
+        return possibleDestinations[destinationIndex];
+    }
+
+    const int getPossibleDestinationsNumber() const{
+        return int (possibleDestinations.size());
+    }
+
+    void setStart(vec2i start_){
+        start = start_;
+    }
+
+    void setDestionationIndex(int destinationIndex_){
+        destinationIndex = destinationIndex_;
+    }
+
+    void setPossibleDestinations(const std::vector<vec2i> & possibleDestinations_){
+        possibleDestinations = possibleDestinations_;
+    }
+
+    bool isPossibleDestinationsEmpty() const{
+        return possibleDestinations.empty();
+    }
+
+    bool isStartSelected() const{
+        return startSelected;
+    }
+
+    bool isDestinationSelected() const{
+        return destinationSelected;
+    }
+
+    void selectStart(){
+        startSelected = true;
+    }
+
+    void selectDestination(){
+        destinationSelected = true;
+    }
+
+    void setMessage(const std::string & message_){
+        message = message_;
+    }
+
+    const std::string & getMessage() const{
+        return message;
+    }
+
+    void reset(){
+        startSelected = false;
+        destinationSelected = false;
     }
 
 };
 
-std::ostream & operator<<(std::ostream & f_, Inputs & inputs_);
+std::ostream & operator<<(std::ostream & f_, const Inputs & inputs_);
 
 #endif //HIVE_INPUTS_H
