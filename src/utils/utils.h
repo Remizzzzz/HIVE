@@ -67,4 +67,36 @@ vec2i operator-(vec2i const & v1_, vec2i const & v2_);
 vec2i operator*(int const & k, vec2i const & v_);
 std::ostream & operator<<(std::ostream & f_, vec2i const & v_);
 
+class Move {
+private:
+    vec2i startPlacement; // Position de départ
+    vec2i endPlacement;   // Position de fin
+
+public:
+    // Constructeurs
+    Move() : startPlacement(-1, -1), endPlacement(-1, -1) {}
+    Move(const vec2i& start, const vec2i& end)
+        : startPlacement(start), endPlacement(end) {}
+    Move( const vec2i& place, bool choice) {
+        if(choice) {
+            startPlacement = vec2i(-1,-1);
+            endPlacement = (place);
+        }else {
+            startPlacement = vec2i(place);
+            endPlacement = vec2i(-1,-1);
+        }
+    }
+    Move(const vec2i& place) = delete;
+
+
+
+    vec2i getStartPlacement() const { return startPlacement; }
+    vec2i getEndPlacement() const { return endPlacement; }
+
+    void setStartPlacement(const vec2i& start) { startPlacement = start; }
+    void setEndPlacement(const vec2i& end) { endPlacement = end; }
+
+};
+
+
 #endif //HIVE_UTILS_H
