@@ -34,15 +34,23 @@ public:
     //static int  get_max_instance() { return max_instance; }// A voir si utile
 
 
-    [[nodiscard]] virtual std::string getPrintableValue() const
+    [[nodiscard]] virtual std::string getPrintableValue(int idColor) const
     {
-        std::string color;
-        if(getColor() == true ) {
-            color = "\033[34m";
-        }else {
-            color = "\033[31m";
+        if(idColor == 0)
+        {
+            std::string color;
+            if(getColor() == true ) {
+                color = "\033[34m";
+            }else {
+                color = "\033[31m";
+            }
+            return color;
         }
-        return color;
+        else
+        {
+            return "\033[35m";
+        }
+
     }
     int getFormerNeighbour(vec2i newPosition, Map &m) const; //Fonctions pour detecter les anciens voisins à la nouvelle position
     virtual std::vector<vec2i> getPossibleMovements(Map &m) const = 0;
@@ -56,17 +64,27 @@ public://test
     Bee(bool col) : Insect(col, bee) {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
     bool isCircled(Map &m);
-    [[nodiscard]] std::string getPrintableValue() const override
+    [[nodiscard]] std::string getPrintableValue(int idColor) const override
     {
-        std::string color;
-        std::stringstream s;
-        if(getColor() == true ) {
-            color = "\033[34m";
-        }else {
-            color = "\033[31m";
+        if(idColor == 0)
+        {
+            std::string color;
+            std::stringstream s;
+            if(getColor() == true ) {
+                color = "\033[34m";
+            }else {
+                color = "\033[31m";
+            }
+            s << "\033[33mQ" << color << "B" << "\033[0m"; // Q affiché en jaune, B avec la couleur du joueur (pour Queen Bee)
+            return s.str();
         }
-        s << "\033[33mQ" << color << "B" << "\033[0m"; // Q affiché en jaune, B avec la couleur du joueur (pour Queen Bee)
-        return s.str();
+        else if(idColor == 1)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "QB" << "\033[0m";
+            return s.str();
+        }
     }
 };
 
@@ -81,17 +99,27 @@ public:
         return isAboveOf;
     }
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
-    [[nodiscard]] std::string getPrintableValue() const override
+    [[nodiscard]] std::string getPrintableValue(int idColor) const override
     {
-        std::string color;
-        std::stringstream s;
-        if(getColor() == true ) {
-            color = "\033[34m";
-        }else {
-            color = "\033[31m";
+        if(idColor == 0)
+        {
+            std::string color;
+            std::stringstream s;
+            if(getColor() == true ) {
+                color = "\033[34m";
+            }else {
+                color = "\033[31m";
+            }
+            s << color<< "B" << getID() << "\033[0m";
+            return s.str();
         }
-        s << color<< "B" << getID() << "\033[0m";
-        return s.str();
+        else if(idColor == 1)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "B" << getID() << "\033[0m";
+            return s.str();
+        }
     }
 };
 
@@ -100,17 +128,27 @@ class Grasshopper : public virtual Insect {
 public:
     Grasshopper(bool col) : Insect(col, grasshopper) {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
-    [[nodiscard]] std::string getPrintableValue() const override
+    [[nodiscard]] std::string getPrintableValue(int idColor) const override
     {
-        std::string color;
-        std::stringstream s;
-        if(getColor() == true ) {
-            color = "\033[34m";
-        }else {
-            color = "\033[31m";
+        if(idColor == 0)
+        {
+            std::string color;
+            std::stringstream s;
+            if(getColor() == true ) {
+                color = "\033[34m";
+            }else {
+                color = "\033[31m";
+            }
+            s << color<< "G" << getID() << "\033[0m";
+            return s.str();
         }
-        s << color<< "G" << getID() << "\033[0m";
-        return s.str();
+        else if(idColor == 1)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "G" << getID() << "\033[0m";
+            return s.str();
+        }
     }
 };
 
@@ -119,17 +157,27 @@ class Spider : public virtual Insect {
 public:
     Spider(bool col) : Insect(col, spider) {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
-    [[nodiscard]] std::string getPrintableValue() const override
+    [[nodiscard]] std::string getPrintableValue(int idColor) const override
     {
-        std::string color;
-        std::stringstream s;
-        if(getColor() == true ) {
-            color = "\033[34m";
-        }else {
-            color = "\033[31m";
+        if(idColor == 0)
+        {
+            std::string color;
+            std::stringstream s;
+            if(getColor() == true ) {
+                color = "\033[34m";
+            }else {
+                color = "\033[31m";
+            }
+            s << color<< "S" << getID() << "\033[0m";
+            return s.str();
         }
-        s << color<< "S" << getID() << "\033[0m";
-        return s.str();
+        else if(idColor == 1)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "S" << getID() << "\033[0m";
+            return s.str();
+        }
     }
 };
 
@@ -138,17 +186,27 @@ class Ant : public virtual Insect {
 public:
     Ant(bool col) : Insect(col, ant) {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
-    [[nodiscard]] std::string getPrintableValue() const override
+    [[nodiscard]] std::string getPrintableValue(int idColor) const override
     {
-        std::string color;
-        std::stringstream s;
-        if(getColor() == true ) {
-            color = "\033[34m";
-        }else {
-            color = "\033[31m";
+        if(idColor == 0)
+        {
+            std::string color;
+            std::stringstream s;
+            if(getColor() == true ) {
+                color = "\033[34m";
+            }else {
+                color = "\033[31m";
+            }
+            s << color<< "A" << getID() << "\033[0m";
+            return s.str();
         }
-        s << color<< "A" << getID() << "\033[0m";
-        return s.str();
+        else if(idColor == 1)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "A" << getID() << "\033[0m";
+            return s.str();
+        }
     }
 };
 
@@ -160,17 +218,27 @@ public:
         : Insect(col, mosquitoe), Ant(col), Bee(col), Grasshopper(col), Beetle(col), Spider(col) {}
 
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
-    [[nodiscard]] std::string getPrintableValue() const override
+    [[nodiscard]] std::string getPrintableValue(int idColor) const override
     {
-        std::string color;
-        std::stringstream s;
-        if(getColor() == true ) {
-            color = "\033[34m";
-        }else {
-            color = "\033[31m";
+        if(idColor == 0)
+        {
+            std::string color;
+            std::stringstream s;
+            if(getColor() == true ) {
+                color = "\033[34m";
+            }else {
+                color = "\033[31m";
+            }
+            s << color<< "M" << getID() << "\033[0m";
+            return s.str();
         }
-        s << color<< "M" << getID() << "\033[0m";
-        return s.str();
+        else if(idColor == 1)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "M" << getID() << "\033[0m";
+            return s.str();
+        }
     }
 };
 

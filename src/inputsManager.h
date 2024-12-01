@@ -25,6 +25,7 @@ private:
     const int renderedMapSideSize;
     Map & map;
 
+
     lv::Random random;
 
 private:

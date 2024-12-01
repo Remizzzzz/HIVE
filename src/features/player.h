@@ -26,7 +26,10 @@ private:
     friend class Solver;
 public:
 
-    explicit Player(const int & id_) : id(id_), deck(), activeInsects(), inputs(){};
+    explicit Player(const int & id_) : id(id_), deck(), activeInsects(), inputs()
+    {
+
+    };
 
     const int & getId() const{
         return id;

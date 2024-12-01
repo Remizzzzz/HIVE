@@ -3,17 +3,19 @@
 
 #include <iostream>
 #include "features/map.h"
+#include "src/features/inputs.h"
 //test
 /**
  * @brief Classe pour afficher la carte d'une partie de Hive.
  */
 class Renderer {
+    Inputs* inputs;
 public:
     /**
      * @brief Constructeur de la classe Renderer.
      * @param map_ Référence constante à la carte à afficher.
      */
-    explicit Renderer(const Map &map_) : map(map_) {}
+    explicit Renderer(const Map &map_, Inputs* inputs_) : map(map_), inputs(inputs_) {} // A voir comment initialiser l'output
 
     /**
      * @brief Affiche la carte sur la sortie standard.
@@ -28,7 +30,7 @@ public:
             displayIndentation(row);
 
             // Affiche la ligne actuelle
-            displayRow(row);
+            displayRow(row, inputs->getStart());         // A finir
 
             // Affiche un saut de ligne pour séparer les lignes
             std::cout << std::endl;
@@ -53,18 +55,27 @@ private:
      * @brief Affiche une ligne de cellules avec des insectes ou des cases vides.
      * @param rowIndex L'indice de la ligne à afficher.
      */
-    void displayRow(size_t rowIndex) const {
+    void displayRow(size_t rowIndex, vec2i start) const {
         size_t sideSize = map.getSideSize();
 
         for (size_t col = 0; col < sideSize; ++col) {
             vec2i pos(static_cast<int>(rowIndex), static_cast<int>(col));
+            if(pos==start)
+            {
+                const Insect *slot = map.getInsectAt(pos);
+                if (getSlotContent(slot, 0)==".") {
+                    std::cout << " " << getSlotContent(slot,1) << "  ";  // Trois espaces pour espacer les cases
+                } else {
+                    std::cout << "" << getSlotContent(slot,1) << "  ";// Seulement deux espaces
+                }
+            }
             const Insect *slot = map.getInsectAt(pos);
 
             // Affiche le contenu de la cellule sans espace supplémentaire
-            if (getSlotContent(slot)==".") {
-                std::cout << " "<< getSlotContent(slot) << "  ";  // Trois espaces pour espacer les cases
+            if (getSlotContent(slot,0)==".") {
+                std::cout << " " << getSlotContent(slot,0) << "  ";  // Trois espaces pour espacer les cases
             } else {
-                std::cout << "" << getSlotContent(slot) << "  ";// Seulement deux espaces
+                std::cout << "" << getSlotContent(slot,0) << "  ";// Seulement deux espaces
             }
         }
     }
@@ -74,11 +85,12 @@ private:
      * @param slot Pointeur vers l'insecte dans la case (ou nullptr si vide).
      * @return Une chaîne de caractères représentant la valeur à afficher.
      */
-    std::string getSlotContent(const Insect *slot) const {
+    std::string getSlotContent(const Insect *slot, int idColor) const {
         if (slot) {
-            return slot->getPrintableValue();  // Valeur de l'insecte sans espace supplémentaire
+            return slot->getPrintableValue(idColor);  // Valeur de l'insecte sans espace supplémentaire
         }
         return "--";  // Affiche un point si la case est vide
+
     }
 };
 
@@ -88,7 +100,7 @@ public:
      * @brief Constructeur de la classe ConsoleRenderer.
      * @param map_ Référence constante à la carte à afficher.
      */
-    explicit ConsoleRenderer(const Map &map_) : Renderer(map_) {}
+    explicit ConsoleRenderer(const Map &map_, Inputs *inputs_) : Renderer(map_,inputs_) {}
 
 
 
@@ -148,7 +160,7 @@ public:
 
 class GraphicRenderer : public Renderer {
 public:
-    explicit GraphicRenderer(const Map &map_) : Renderer(map_) {}
+    explicit GraphicRenderer(const Map &map_, Inputs* inputs_) : Renderer(map_, inputs_) {}
 };
 
 #endif // HIVE_RENDERER_H
