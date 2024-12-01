@@ -9,8 +9,8 @@
  * @brief Classe pour afficher la carte d'une partie de Hive.
  */
 class Renderer {
-    Inputs* inputs;
 public:
+    Inputs *inputs;
     /**
      * @brief Constructeur de la classe Renderer.
      * @param map_ Référence constante à la carte à afficher.

@@ -136,11 +136,11 @@ public:
 
         if (versionChoice == 1) {
             // Allocation dynamique pour ConsoleRenderer
-            renderer = new ConsoleRenderer(map);
+            renderer = new ConsoleRenderer(map, new Inputs());  // initialiser l'objet inputs correctement
             version = console;
         } else if (versionChoice == 2) {
             // Allocation dynamique pour GraphicRenderer
-            renderer = new GraphicRenderer(map);
+            renderer = new GraphicRenderer(map, new Inputs());  // initialiser l'objet inputs correctement
             version = graphic;
         }
     // mode de jeu

@@ -10,7 +10,6 @@
 
 #include "../utils/utils.h"
 #include "../utils/hiveException.h"
-#include "../renderer.h"
 
 class Inputs{
 private:

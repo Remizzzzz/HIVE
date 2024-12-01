@@ -320,7 +320,7 @@ private:
             for(nCol=1; nCol<31;nCol++)
             {
                 if(size_t index = nRow*32 + nCol && slots[index] != nullptr) {
-                    std::cout << "|" << slots[index]->getPrintableValue() << "|";
+                    std::cout << "|" << slots[index]->getPrintableValue(0) << "|";
                 } else {
                     std::cout << "|  |";
                 }
