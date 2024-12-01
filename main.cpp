@@ -5,8 +5,6 @@
 
 #include "src/hive.h"
 
-
-
 int main() {
     /*int sideSize = 8; // Taille de la carte
     int rewindLimit = 5;
@@ -28,15 +26,9 @@ int main() {
     std::cout << "Appuyez sur Entree pour quitter...";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');*/
 
-    try{
-        Hive hive(PvP,console);
-        hive.run();
-    }
-    catch (const HiveException & HE_){
-        std::cout << HE_.getInfos();
-    }
-
-
+    Hive hive(PvP,console);
+    hive.displayMenu();
+    hive.run();
 
 
     return 0;
