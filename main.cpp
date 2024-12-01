@@ -28,7 +28,7 @@ int main() {
 
     Hive hive(PvP,console);
     hive.displayMenu();
-    hive.run();
+
 
 
     return 0;
