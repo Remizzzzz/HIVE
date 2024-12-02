@@ -206,7 +206,7 @@ public:
                 break;
         }
         std::cout << std::endl;
-    } while (choice != 4);
+    } while (choice != 4 && choice != 3);
 }
 };
 
