@@ -143,71 +143,78 @@ public:
             renderer = new GraphicRenderer(map, new Inputs());  // initialiser l'objet inputs correctement
             version = graphic;
         }
-    // mode de jeu
-    int modeChoice = 0;
-    do {
-        std::cout << "=== Configuration du jeu Hive ===\n";
-        std::cout << "1. Joueur vs Joueur (PvP)\n";
-        std::cout << "2. Joueur vs IA (PvAI)\n";
-        std::cout << "Choisissez un mode de jeu (1 ou 2) : ";
-        std::cin >> modeChoice;
+        if (version == console) {
+            // mode de jeu
+            int modeChoice = 0;
+            do {
+                std::cout << "=== Configuration du jeu Hive ===\n";
+                std::cout << "1. Joueur vs Joueur (PvP)\n";
+                std::cout << "2. Joueur vs IA (PvAI)\n";
+                std::cout << "Choisissez un mode de jeu (1 ou 2) : ";
+                std::cin >> modeChoice;
 
-        if (modeChoice != 1 && modeChoice != 2) {
-            std::cout << "Option invalide, veuillez réessayer.\n";
-        }
-    } while (modeChoice != 1 && modeChoice != 2);
-
-    mode = (modeChoice == 1) ? PvP : PvAI;
-
-    //  nombre de rewinds
-
-    do {
-        std::cout << "Combien de rewinds autorisez-vous pendant la partie ? (0 à 10) : ";
-        std::cin >> rewindNb;
-
-        if (rewindNb < 0 || rewindNb > 10) {
-            std::cout << "Nombre invalide, veuillez entrer une valeur entre 0 et 10.\n";
-        }
-    } while (rewindNb < 0 || rewindNb > 10);
-
-
-    // affichage du menu principal
-    int choice = 0;
-    do {
-        std::cout << "\n=== Menu Hive ===\n";
-        std::cout << "1. Afficher la carte\n";
-        std::cout << "2. Afficher les règles\n";
-        std::cout << "3. Lancer le jeu\n";
-        std::cout << "4. Quitter\n";
-        std::cout << "Choisissez une option : ";
-        std::cin >> choice;
-
-        // Gestion des choix
-        switch (choice) {
-            case 1:
-                renderer->displayMap();
-                break;
-            case 2:
-                if (auto* consoleRenderer = dynamic_cast<ConsoleRenderer*>(renderer)) {
-                    consoleRenderer->displayRules(); // Appel à une méthode spécifique à ConsoleRenderer
-                } else {
-                    std::cout << "Affichage des règles indisponible dans ce mode.\n";
+                if (modeChoice != 1 && modeChoice != 2) {
+                    std::cout << "Option invalide, veuillez réessayer.\n";
                 }
-                break;
-            case 3:
-                std::cout << "Début de la partie...\n";
-                run(); // Lancement du jeu
-                break;
-            case 4:
-                std::cout << "Au revoir !\n";
-                break;
-            default:
-                std::cout << "Option invalide, veuillez réessayer.\n";
-                break;
+            } while (modeChoice != 1 && modeChoice != 2);
+
+            mode = (modeChoice == 1) ? PvP : PvAI;
+
+            //  nombre de rewinds
+
+            do {
+                std::cout << "Combien de rewinds autorisez-vous pendant la partie ? (0 à 10) : ";
+                std::cin >> rewindNb;
+
+                if (rewindNb < 0 || rewindNb > 10) {
+                    std::cout << "Nombre invalide, veuillez entrer une valeur entre 0 et 10.\n";
+                }
+            } while (rewindNb < 0 || rewindNb > 10);
+
+
+            // affichage du menu principal
+            int choice = 0;
+            do {
+                std::cout << "\n=== Menu Hive ===\n";
+                std::cout << "1. Afficher la carte\n";
+                std::cout << "2. Afficher les règles\n";
+                std::cout << "3. Lancer le jeu\n";
+                std::cout << "4. Quitter\n";
+                std::cout << "Choisissez une option : ";
+                std::cin >> choice;
+
+                // Gestion des choix
+                switch (choice) {
+                    case 1:
+                        renderer->displayMap();
+                    break;
+                    case 2:
+                        if (auto* consoleRenderer = dynamic_cast<ConsoleRenderer*>(renderer)) {
+                            consoleRenderer->displayRules(); // Appel à une méthode spécifique à ConsoleRenderer
+                        } else {
+                            std::cout << "Affichage des règles indisponible dans ce mode.\n";
+                        }
+                    break;
+                    case 3:
+                        std::cout << "Début de la partie...\n";
+                    run(); // Lancement du jeu
+                    break;
+                    case 4:
+                        std::cout << "Au revoir !\n";
+                    break;
+                    default:
+                        std::cout << "Option invalide, veuillez réessayer.\n";
+                    break;
+                }
+                std::cout << std::endl;
+            } while (choice != 4 && choice != 3);
+            delete renderer;
         }
-        std::cout << std::endl;
-    } while (choice != 4 && choice != 3);
-}
+        else {
+            //code pour lancer dans qt
+        }
+    }
+
 };
 
 
