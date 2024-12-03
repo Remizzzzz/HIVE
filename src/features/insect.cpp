@@ -156,7 +156,7 @@ bool Bee::isCircled(Map &m) {
 std::vector<vec2i> Bee::getPossibleMovements(Map &m) const {
     std::vector<vec2i> possibleMovements;
 
-    // Vérifie que l'abeille puisse bouger
+    // Vérifie que l'abeille puisse bouger sans casser la ruche en deux
     if(!this->isLinkingHive(m)) {
         std::list<vec2i> neighbors = m.getNeighbours(getCoordinates()); // Récupère les voisins de la case
 
@@ -176,21 +176,19 @@ std::vector<vec2i> Bee::getPossibleMovements(Map &m) const {
 // Méthodes de Beetle
 std::vector<vec2i> Beetle:: getPossibleMovements(Map &m) const{
     std::vector<vec2i> possibleMovements;
-    int breakCount = 0;
-    if(!this->isLinkingHive(m)) { // Si l'insecte ne lie pas la ruche
-        std::list<vec2i> neighbours = m.getNeighbours(getCoordinates()); // On récupère la liste des cases voisines
-        for (auto it = neighbours.begin(); it != neighbours.end(); ++it) { //On itère dans chaque case voisine
-            std::list<vec2i> neighborsPossibleMovements=m.getNeighbours(*it); // On récupère la liste des cases voisines des cases voisines
-            for (auto itPossibleMovement=neighborsPossibleMovements.begin();itPossibleMovement != neighborsPossibleMovements.end(); ++itPossibleMovement) { //On itère dans cette liste
-                if(*itPossibleMovement!=getCoordinates() && isAboveOf!=nullptr) { //Si le voisin a un autre voisin que l'insecte ET que le scarabée est au dessus d'un insecte
-                    if (getFormerNeighbour(*it,m)>1) {
-                        possibleMovements.push_back(*it);
-                    }
-                } else if (*itPossibleMovement!=getCoordinates() && isAboveOf==nullptr) {//Si le voisin a un autre voisin que l'insecte ET que le scarabée n'est pas au dessus d'un insecte
-                    if (getFormerNeighbour(*it,m)==1) {//Si la nouvelle position a exactement un ancien voisin
-                        possibleMovements.push_back(*it);
-                    }
-                }
+    std::list<vec2i> neighbors = m.getNeighbours(getCoordinates()); // Récupère la liste des cases voisines
+
+    // Si le scarabée est au-dessus d'un autre insecte
+    if (isAboveOf != nullptr) {
+        // Alors, on ajoute tous les voisins directement
+        possibleMovements.insert(possibleMovements.end(), neighbors.begin(), neighbors.end());
+    } else if (!this->isLinkingHive(m)) { // Sinon si le scarabée peut bouger sans casser la ruche en deux
+        // Alors, on boucle sur tous les voisins
+        for (const auto &neighbor : neighbors) {
+            // Et si le slot est libre ET qu'il y a exactement un ancien voisin parmi les nouveaux
+            if (m.isSlotFree(neighbor) == 1  && getFormerNeighbour(neighbor, m) == 1) {
+                // Alors, on ajoute le voisin en question
+                possibleMovements.push_back(neighbor);
             }
         }
     }

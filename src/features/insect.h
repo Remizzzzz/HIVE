@@ -91,13 +91,19 @@ public://test
 
 class Beetle : public virtual Insect {
 
-    Insect* isAboveOf;
+    // Pointe vers l'insecte sur lequel le scarabée est placé
+    // nullptr par défaut, car le scarabée ne peut pas être placé au-dessus d'une pièce
+    const Insect* isAboveOf = nullptr;
 
 public:
-    Beetle(bool col) : Insect(col, beetle) {}
-    Insect* getInsectUnder() {
+    Beetle(const bool col) : Insect(col, beetle) {}
+    const Insect* getInsectUnder() const {
         return isAboveOf;
     }
+    void setAboveOf(const Insect *insect) {
+        isAboveOf = insect;
+    }
+
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
     [[nodiscard]] std::string getPrintableValue(int idColor) const override
     {
