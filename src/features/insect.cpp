@@ -189,6 +189,8 @@ std::vector<vec2i> Beetle:: getPossibleMovements(Map &m) const{
             if (m.isSlotFree(neighbor) == 1  && getFormerNeighbour(neighbor, m) == 1) {
                 // Alors, on ajoute le voisin en question
                 possibleMovements.push_back(neighbor);
+            } else if (!m.isSlotFree(neighbor)) { // Sinon si le voisin est une pièce
+                possibleMovements.push_back(neighbor); // Alors, le scarabée peut monter dessus
             }
         }
     }
