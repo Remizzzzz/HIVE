@@ -21,4 +21,5 @@ add_executable(HIVE
         src/solver.h
         src/renderer.h
         src/hive.h
-        src/features/inputsManager.cpp)
+        src/features/inputsManager.cpp
+        src/hive.cpp)
