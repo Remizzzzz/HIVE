@@ -56,7 +56,7 @@ private:
         }
     }
 
-    void resetInputs(Player & player_){
+    void static resetInputs(Player & player_){
         player_.inputs.reset();
     }
 
@@ -103,12 +103,17 @@ public:
             case 0:
                 //le mouvement est pas bon
                 resetInputs(*currentPlayer);
+                break;
             case 1:
                 //Le travail est en cours
+                    break;
             case 2:
                 //mouvement fait
                 resetInputs(*currentPlayer);
                 switchPlayer();
+                break;
+            default:
+                throw HiveException("hive.h:Hive", "retour de run mauvais");
         }
 
 
