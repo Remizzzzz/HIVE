@@ -91,7 +91,7 @@ public:
                 throw HiveException("hive.h:Hive", "invalid version");
         }
     };
-    void displayMenu();
+
     void run(){
 
 

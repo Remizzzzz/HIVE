@@ -4,6 +4,7 @@
 #include <iostream>
 #include "features/map.h"
 #include "src/features/inputs.h"
+#include "src/features/player.h"
 //test
 /**
  * @brief Classe pour afficher la carte d'une partie de Hive.
@@ -11,18 +12,38 @@
 class Renderer {
 public:
     Inputs *inputs;
+    Player *P1;
+    Player *P2;
     /**
      * @brief Constructeur de la classe Renderer.
      * @param map_ Référence constante à la carte à afficher.
      */
-    explicit Renderer(const Map &map_, Inputs* inputs_) : map(map_), inputs(inputs_) {} // A voir comment initialiser l'output
+    explicit Renderer(const Map &map_, Inputs* inputs_, Player* P1_, Player* P2_) : map(map_), inputs(inputs_), P1(P1_), P2(P2_) {} // A voir comment initialiser l'output
 
     /**
      * @brief Affiche la carte sur la sortie standard.
      */
     virtual ~Renderer() = default; // Rendre Renderer polymorphe avec un destructeur virtuel
 
+    void displayDeck(Player* P) const
+    {
+        for(int index=0; index< P->getDeck().getInsectNb();index++)
+        {
+            // si cursor en ligne -1 ou ligne sideSize (et donc dans les decks
+            if((inputs->getStart().getI()==-1 || inputs->getStart().getI()==map.getSideSize()) && inputs->getStart().getJ()==index)
+            {
+                std::cout << " " << getSlotContent(P->getDeck().getInsectAt(index),1) << "  ";
+            }
+            else
+            {
+                std::cout << " " << getSlotContent(P->getDeck().getInsectAt(index),0) << "  ";
+            }
+        }
+    }
+
     void displayMap() const {
+        displayDeck(P1);
+        std::cout << std::endl << std::endl;
         size_t sideSize = map.getSideSize();
 
         for (size_t row = 0; row < sideSize; ++row) {
@@ -35,6 +56,8 @@ public:
             // Affiche un saut de ligne pour séparer les lignes
             std::cout << std::endl;
         }
+        std::cout << std::endl << std::endl;
+        displayDeck(P2);
     }
 
 private:
@@ -100,7 +123,7 @@ public:
      * @brief Constructeur de la classe ConsoleRenderer.
      * @param map_ Référence constante à la carte à afficher.
      */
-    explicit ConsoleRenderer(const Map &map_, Inputs *inputs_) : Renderer(map_,inputs_) {}
+    explicit ConsoleRenderer(const Map &map_, Inputs *inputs_,Player* P1_, Player* P2_) : Renderer(map_,inputs_, P1_,P2_) {}
 
 
 
@@ -160,7 +183,7 @@ public:
 
 class GraphicRenderer : public Renderer {
 public:
-    explicit GraphicRenderer(const Map &map_, Inputs* inputs_) : Renderer(map_, inputs_) {}
+    explicit GraphicRenderer(const Map &map_, Inputs *inputs_,Player* P1_, Player* P2_) : Renderer(map_,inputs_, P1_,P2_) {}
 };
 
 #endif // HIVE_RENDERER_H
