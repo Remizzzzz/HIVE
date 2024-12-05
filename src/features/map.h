@@ -132,8 +132,8 @@ public:
         }
     }
 
-    // Après qu'un scarabée se soit déplacé via moveInsect,
-    // il faut appeler updateBeetlePosition pour gérer la mise à jour de son attribut isAboveOf.
+    // Il faut appeler updateBeetlePosition à la place de moveInsect SI la pièce est un scarabée.
+    // updateBeetlePosition permet de gérer la mise à jour de l'attribut isAboveOf et de déplacer le scarabée.
     void updateBeetlePosition(Beetle *beetle, const vec2i &newPos);
 
 //------- ANTI MAP EXIT -------

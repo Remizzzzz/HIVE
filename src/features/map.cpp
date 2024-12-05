@@ -14,4 +14,7 @@ void Map::updateBeetlePosition(Beetle *beetle, const vec2i &newPos) {
     } else {
         beetle->setAboveOf(nullptr); // Aucun insecte en dessous, le scarabée n'est au-dessus de rien
     }
+
+    // Met à jour la position dans la carte
+    moveInsect(beetle->getCoordinates(), newPos); // Déplace l'insecte dans la carte
 }

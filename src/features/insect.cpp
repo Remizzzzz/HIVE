@@ -54,7 +54,7 @@ std::vector<vec2i> Insect::setRule( Map &m) const {
                         insectSet.push_back(*it);
                         i_insect++;
                     }
-                }else//Quand on trouve une case vide on l'ajoute dans la liste toCheck si pas encore dedans
+                }else//Quand on trouve une case vide, on l'ajoute dans la liste toCheck si pas encore dedans
                 {
                     if (std::find(toCheck.begin(), toCheck.end(), (*it))[0] != *it) {
                         // L'élément n'est pas trouvé, donc on l'ajoute
@@ -205,12 +205,10 @@ std::vector<vec2i> Beetle:: getPossibleMovements(Map &m) const{
     } else if (!this->isLinkingHive(m)) { // Sinon si le scarabée peut bouger sans casser la ruche en deux
         // Alors, on boucle sur tous les voisins
         for (const auto &neighbor : neighbors) {
-            // Et si le slot est libre ET qu'il y a exactement un ancien voisin parmi les nouveaux
-            if (m.isSlotFree(neighbor) == 1  && getFormerNeighbour(neighbor, m) == 1) {
+            // Et si le scarabée est au-dessus d'une pièce ou s'il y a exactement un ancien voisin parmi les nouveaux
+            if (!m.isSlotFree(neighbor) == 1  || getFormerNeighbour(neighbor, m) == 1) {
                 // Alors, on ajoute le voisin en question
                 possibleMovements.push_back(neighbor);
-            } else if (!m.isSlotFree(neighbor)) { // Sinon si le voisin est une pièce
-                possibleMovements.push_back(neighbor); // Alors, le scarabée peut monter dessus
             }
         }
     }
