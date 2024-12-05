@@ -11,7 +11,7 @@
 
 #include "../utils/utils.h"
 class Map;
-enum insectType{bee,ant,grasshopper,spider,beetle, mosquitoe};
+enum insectType{bee,ant,grasshopper,spider,beetle, mosquitoe, ladybug};
 class Insect{
     int id;
     insectType iT;
@@ -248,7 +248,33 @@ public:
     }
 };
 
-
+class Ladybug : public virtual Insect {
+public:
+    Ladybug(bool col) : Insect(col, ladybug) {}
+    std::vector<vec2i> getPossibleMovements(Map &m) const override;
+    [[nodiscard]] std::string getPrintableValue(int idColor) const override
+    {
+        if(idColor == 0)
+        {
+            std::string color;
+            std::stringstream s;
+            if(getColor() == true ) {
+                color = "\033[34m";
+            }else {
+                color = "\033[31m";
+            }
+            s << color<< "L" << getID() << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 1)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "L" << getID() << "\033[0m";
+            return s.str();
+        }
+    }
+};
 
 
 #endif //HIVE_INSECT_H
