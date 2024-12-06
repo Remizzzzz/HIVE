@@ -6,7 +6,7 @@
 #define HIVE_HIVE_H
 
 #include <vector>
-
+#include <set>
 #include "utils/hiveException.h"
 
 #include "features/insect.h"
@@ -22,7 +22,7 @@ enum Version{console, graphic};
 class Hive{
 
     bool isInit = false;
-
+    std::set<insectType> extensions;
     Mode mode;
     Version version;
 
@@ -182,7 +182,8 @@ public:
     ~Hive(){
         delete renderer;
     }
-
+    void static displayRules() ;
+    void changeSettings();
     int initIfNeeded(){
         if (!isInit){
             if (displayMenu() == 1){
