@@ -25,6 +25,46 @@ public:
      */
     virtual ~Renderer() = default; // Rendre Renderer polymorphe avec un destructeur virtuel
 
+
+
+    void displayMap(const Player & currentPlayer_) const {
+        std::cout << "\033[2J\033[1;1H";  // clear la console
+        displayDeck(P1,0);
+        std::cout << "\n" << "\n";
+
+        for (size_t row = 1; row < renderedSideSize+1; ++row) {
+            // Affiche les espaces d'indentation pour simuler les décalages
+            displayIndentation(row);
+
+            // Affiche la ligne actuelle
+            displayRow(row, currentPlayer_.getInputs().getStart());         // A finir
+
+            // Affiche un saut de ligne pour séparer les lignes
+            std::cout << "\n";
+        }
+        std::cout << "\n" << "\n";
+        displayDeck(P2,1);
+    }
+
+private:
+    const Map &map;
+
+    /**
+     * @brief Affiche les indentations pour simuler les décalages de la grille hexagonale.
+     * @param rowIndex L'indice de la ligne à afficher.
+     */
+    void displayIndentation(size_t rowIndex) const {
+        // Lignes impaires (indexées 1, 3, 5...) doivent être décalées vers la droite
+        if ((rowIndex-1) % 2 == 1) {
+            std::cout << "  ";  // Ajoute des espaces pour décaler
+        }
+    }
+
+    /**
+     * @brief Affiche les decks des deux joueurs
+     * @param P le joueur
+     * @param indexPlayer indique si le deck est affiché avant la map ou apres
+     */
     void displayDeck(Player* P, int indexPlayer) const
     {
         for(int index=0; index< P->getDeck().getInsectNb();index++)
@@ -47,48 +87,15 @@ public:
         }
     }
 
-    void displayMap(const Player & currentPlayer_) const {
-        std::cout << "\033[2J\033[1;1H";
-        displayDeck(P1,0);
-        std::cout << std::endl << std::endl;
-
-        for (size_t row = 0; row < renderedSideSize; ++row) {
-            // Affiche les espaces d'indentation pour simuler les décalages
-            displayIndentation(row);
-
-            // Affiche la ligne actuelle
-            displayRow(row, currentPlayer_.getInputs().getStart());         // A finir
-
-            // Affiche un saut de ligne pour séparer les lignes
-            std::cout << std::endl;
-        }
-        std::cout << std::endl << std::endl;
-        displayDeck(P2,1);
-    }
-
-private:
-    const Map &map;
-
-    /**
-     * @brief Affiche les indentations pour simuler les décalages de la grille hexagonale.
-     * @param rowIndex L'indice de la ligne à afficher.
-     */
-    void displayIndentation(size_t rowIndex) const {
-        // Lignes impaires (indexées 1, 3, 5...) doivent être décalées vers la droite
-        if (rowIndex % 2 == 1) {
-            std::cout << "  ";  // Ajoute des espaces pour décaler
-        }
-    }
-
     /**
      * @brief Affiche une ligne de cellules avec des insectes ou des cases vides.
      * @param rowIndex L'indice de la ligne à afficher.
      */
     void displayRow(size_t rowIndex, vec2i start) const {
 
-        for (size_t col = 0; col < renderedSideSize; ++col) {
+        for (size_t col = 1; col < renderedSideSize+1; ++col) {
             vec2i pos(static_cast<int>(rowIndex), static_cast<int>(col));
-            if(pos.getI()==start.getI() && pos.getJ()==start.getJ())
+            if(pos.getI()==start.getI()+1 && pos.getJ()==start.getJ()+1)
             {
                 const Insect *slot = map.getInsectAt(pos);
                 if (getSlotContent(slot, 0)==".") {
