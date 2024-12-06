@@ -23,7 +23,7 @@ private:
 
 public:
     Deck() = default;
-
+    const std::vector<Insect *>* getInsects() const {return &insects;}
     // Classe interne pour l'itérateur
     class Iterator {
     public:
@@ -50,6 +50,8 @@ public:
         bool operator!=(const Iterator& other) const {
             return current != other.current;
         }
+
+
 
     private:
         std::vector<Insect *>::iterator current;

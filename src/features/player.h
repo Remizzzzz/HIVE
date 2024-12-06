@@ -45,7 +45,7 @@ public:
         return deck;
     }
 
-    const std::vector<Insect *> & getActiveInsects(){
+    const std::vector<Insect *> & getActiveInsects() const{
         return activeInsects;
     }
 

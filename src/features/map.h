@@ -68,6 +68,13 @@ public:
     const int & getSideSize() const{
         return sideSize;
     }
+    const vec2i getRelativePos() const{
+        return relativePos;
+    }
+
+    std::vector<const Insect *> getSlots() const{
+        return slots;
+    }
 
     /**
      * @brief \n set the slot on position pos_ to nullptr
