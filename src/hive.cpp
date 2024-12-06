@@ -3,7 +3,7 @@
 //
 
 #include <vector>
-
+#include <fstream>
 #include "utils/hiveException.h"
 
 #include "features/insect.h"
@@ -13,7 +13,6 @@
 #include "hive.h"
 #include "solver.h"
 #include "renderer.h"
-#include "Qt/main.cpp"
 
 
 
@@ -192,5 +191,24 @@ void Hive::changeSettings() {
 }
 void saveGame(){}
 void loadGame(){}
+
+
+void saveGameState() {
+        // Création du JSON sous forme de chaîne de caractères
+        std::string json = "{\n";
+
+
+
+        // Sauvegarder le JSON dans un fichier
+        std::ofstream file("game_state.json");
+        if (file.is_open()) {
+            file << json;
+            file.close();
+            std::cout << "Game state saved successfully!" << std::endl;
+        } else {
+            std::cout << "Error opening file for saving!" << std::endl;
+        }
+    }
+
 
 
