@@ -17,7 +17,7 @@ private:
     int id;
 
     bool isHuman;
-
+    std::string name;
     Deck deck;
     std::vector<Insect *> activeInsects;
 
