@@ -35,11 +35,11 @@
 
         if (versionChoice == 1) {
             // Allocation dynamique pour ConsoleRenderer
-            renderer = new ConsoleRenderer(map, &player1, &player2);  // initialiser l'objet inputs correctement
+            renderer = new ConsoleRenderer(map, &player1, &player2, 30);  // initialiser l'objet inputs correctement
             version = console;
         } else if (versionChoice == 2) {
             // Allocation dynamique pour GraphicRenderer
-            renderer = new GraphicRenderer(map, &player1, &player2);  // initialiser l'objet inputs correctement
+            renderer = new GraphicRenderer(map, &player1, &player2, 30);  // initialiser l'objet inputs correctement
             version = graphic;
         }
         if (version == console) {

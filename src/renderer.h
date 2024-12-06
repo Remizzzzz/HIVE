@@ -13,24 +13,31 @@ class Renderer {
 public:
     Player *P1;
     Player *P2;
+    int renderedSideSize;
     /**
      * @brief Constructeur de la classe Renderer.
      * @param map_ Référence constante à la carte à afficher.
      */
-    explicit Renderer(const Map &map_,Player* P1_, Player* P2_) : map(map_), P1(P1_), P2(P2_) {} // A voir comment initialiser l'output
+    explicit Renderer(const Map &map_,Player* P1_, Player* P2_, int rendered_s_i) : map(map_), P1(P1_), P2(P2_), renderedSideSize(rendered_s_i) {} // A voir comment initialiser l'output
 
     /**
      * @brief Affiche la carte sur la sortie standard.
      */
     virtual ~Renderer() = default; // Rendre Renderer polymorphe avec un destructeur virtuel
 
-    void displayDeck(Player* P) const
+    void displayDeck(Player* P, int indexPlayer) const
     {
         for(int index=0; index< P->getDeck().getInsectNb();index++)
         {
-            // si cursor en ligne -1 ou ligne sideSize (et donc dans les decks
-            if((P->getInputs().getStart().getI()==-1 || P->getInputs().getStart().getI()==map.getSideSize()) && P->getInputs().getStart().getJ()==index)
+            // si cursor en ligne -1 donc dans le deck du joueur bleu
+            if((P->getInputs().getStart().getI()==-1 && indexPlayer==0) && P->getInputs().getStart().getJ()==index)
             {
+                std::cout << " " << getSlotContent(P->getDeck().getInsectAt(index),1) << "  ";
+            }
+            // si cursor en ligne renderedSideSize donc dans le deck joueur rouge
+            else if((P->getInputs().getStart().getI()==-1 && indexPlayer==1)&& P->getInputs().getStart().getJ()==index)
+            {
+
                 std::cout << " " << getSlotContent(P->getDeck().getInsectAt(index),1) << "  ";
             }
             else
@@ -41,11 +48,11 @@ public:
     }
 
     void displayMap(const Player & currentPlayer_) const {
-        displayDeck(P1);
+        std::cout << "\033[2J\033[1;1H";
+        displayDeck(P1,0);
         std::cout << std::endl << std::endl;
-        size_t sideSize = map.getSideSize();
 
-        for (size_t row = 0; row < sideSize; ++row) {
+        for (size_t row = 0; row < renderedSideSize; ++row) {
             // Affiche les espaces d'indentation pour simuler les décalages
             displayIndentation(row);
 
@@ -56,7 +63,7 @@ public:
             std::cout << std::endl;
         }
         std::cout << std::endl << std::endl;
-        displayDeck(P2);
+        displayDeck(P2,1);
     }
 
 private:
@@ -78,11 +85,10 @@ private:
      * @param rowIndex L'indice de la ligne à afficher.
      */
     void displayRow(size_t rowIndex, vec2i start) const {
-        size_t sideSize = map.getSideSize();
 
-        for (size_t col = 0; col < sideSize; ++col) {
+        for (size_t col = 0; col < renderedSideSize; ++col) {
             vec2i pos(static_cast<int>(rowIndex), static_cast<int>(col));
-            if(pos==start)
+            if(pos.getI()==start.getI() && pos.getJ()==start.getJ())
             {
                 const Insect *slot = map.getInsectAt(pos);
                 if (getSlotContent(slot, 0)==".") {
@@ -91,13 +97,16 @@ private:
                     std::cout << "" << getSlotContent(slot,1) << "  ";// Seulement deux espaces
                 }
             }
-            const Insect *slot = map.getInsectAt(pos);
+            else
+            {
+                const Insect *slot = map.getInsectAt(pos);
 
-            // Affiche le contenu de la cellule sans espace supplémentaire
-            if (getSlotContent(slot,0)==".") {
-                std::cout << " " << getSlotContent(slot,0) << "  ";  // Trois espaces pour espacer les cases
-            } else {
-                std::cout << "" << getSlotContent(slot,0) << "  ";// Seulement deux espaces
+                // Affiche le contenu de la cellule sans espace supplémentaire
+                if (getSlotContent(slot,0)==".") {
+                    std::cout << " " << getSlotContent(slot,0) << "  ";  // Trois espaces pour espacer les cases
+                } else {
+                    std::cout << "" << getSlotContent(slot,0) << "  ";// Seulement deux espaces
+                }
             }
         }
     }
@@ -113,7 +122,7 @@ private:
         }
         if(idColor==1)
         {
-            return "\033[35m--";
+            return "\033[35m--\033[37m";
         }
         return "--";  // Affiche un point si la case est vide
 
@@ -126,7 +135,7 @@ public:
      * @brief Constructeur de la classe ConsoleRenderer.
      * @param map_ Référence constante à la carte à afficher.
      */
-    explicit ConsoleRenderer(const Map &map_,Player* P1_, Player* P2_) : Renderer(map_,P1_,P2_) {}
+    explicit ConsoleRenderer(const Map &map_,Player* P1_, Player* P2_, int rendered_s_i) : Renderer(map_,P1_,P2_, rendered_s_i) {}
 
 
 
@@ -186,7 +195,7 @@ public:
 
 class GraphicRenderer : public Renderer {
 public:
-    explicit GraphicRenderer(const Map &map_, Player* P1_, Player* P2_) : Renderer(map_,P1_,P2_) {}
+    explicit GraphicRenderer(const Map &map_, Player* P1_, Player* P2_, int rendered_s_i) : Renderer(map_,P1_,P2_,rendered_s_i) {}
 };
 
 #endif // HIVE_RENDERER_H
