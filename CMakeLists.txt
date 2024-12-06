@@ -25,15 +25,13 @@ add_executable(HIVE
         src/renderer.h
         src/hive.h
         src/features/inputsManager.cpp
-        src/hive.cpp
 )
 
 # Projet Qt (TestQt)
 project(TestQt VERSION 0.1 LANGUAGES CXX)
 
 # Spécifier le chemin où le sous-module Qt a été cloné
-set(CMAKE_PREFIX_PATH "/Qt")
-
+set(CMAKE_PREFIX_PATH "Qt/CmakeQT")
 # Configurer Qt pour le projet
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -49,12 +47,12 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 # Fichiers sources pour le projet Qt
 set(PROJECT_SOURCES
-        main.cpp
-        hiverenderer.cpp
-        hiverenderer.h
-        hiverenderer.ui
-        hexagonalbutton.cpp
-        hexagonalbutton.h
+        Qt/main.cpp
+        Qt/hiverenderer.cpp
+        Qt/hiverenderer.h
+        Qt/hiverenderer.ui
+        Qt/hexagonalbutton.cpp
+        Qt/hexagonalbutton.h
 )
 
 # Créer l'exécutable pour Qt
