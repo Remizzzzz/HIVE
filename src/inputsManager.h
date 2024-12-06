@@ -35,8 +35,10 @@ private:
         switch (cursorId_){
             case 1:
                 if (inputs_.getStart().getI() + i_ >= -1 && inputs_.getStart().getI() + i_ <= renderedMapSideSize &&
-                        inputs_.getStart().getJ() + j_ >= -1 && inputs_.getStart().getJ() + j_ <= renderedMapSideSize){
+                        inputs_.getStart().getJ() + j_ > -1 && inputs_.getStart().getJ() + j_ < renderedMapSideSize){
+                    std::cout << inputs_.getStart() << ',' << vec2i{i_,j_} << '\n';
                     inputs_.setStart(inputs_.getStart() + vec2i{i_,j_});
+                    std::cout << inputs_.getStart();
                 }
                 break;
             case 2:
@@ -73,7 +75,7 @@ public:
 
         switch (cursorId){
             case 1:
-                /*if ((player_.deck.isEmpty() && player_.activeInsects.empty())){
+                if ((player_.deck.isEmpty() && player_.activeInsects.empty())){
                     throw HiveException("inputsManager.h:InputsManager:updateAIInputs","deck and activeInsects are empty");
                     return;
                 }
@@ -85,8 +87,7 @@ public:
                     selectedInsect = player_.getActiveInsects()[random.getRandomInt(0,int(player_.getActiveInsects().size()))];
                 }
 
-                inputs.setStart(selectedInsect->getCoordinates());*/
-                inputs.setStart(vec2i{1,1});
+                inputs.setStart(selectedInsect->getCoordinates());
 
                 inputs.needPossibleDestinationsUpdate();
 

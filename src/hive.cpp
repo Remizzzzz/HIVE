@@ -19,7 +19,7 @@
     /**
      * @brief Affiche un menu interactif pour l'utilisateur.
      */
-    void Hive::displayMenu() {
+    int Hive::displayMenu() {
         int versionChoice = 0;
         do {
             std::cout << "=== Choisissez le type d'interface ===\n";
@@ -35,11 +35,11 @@
 
         if (versionChoice == 1) {
             // Allocation dynamique pour ConsoleRenderer
-            renderer = new ConsoleRenderer(map, new Inputs());  // initialiser l'objet inputs correctement
+            renderer = new ConsoleRenderer(map, &player1, &player2);  // initialiser l'objet inputs correctement
             version = console;
         } else if (versionChoice == 2) {
             // Allocation dynamique pour GraphicRenderer
-            renderer = new GraphicRenderer(map, new Inputs());  // initialiser l'objet inputs correctement
+            renderer = new GraphicRenderer(map, &player1, &player2);  // initialiser l'objet inputs correctement
             version = graphic;
         }
         if (version == console) {
@@ -92,7 +92,8 @@
                     break;
                     case 2:
                         std::cout << "Début de la partie...\n";
-                    run(); // Lancement du jeu
+                    //run(); // Lancement du jeu
+                        return 1;
                     break;
                     case 3:
                         std::cout << "Au revoir !\n";
@@ -103,9 +104,10 @@
                 }
                 std::cout << std::endl;
             } while (choice != 2 && choice != 3);
-            delete renderer;
         }
         else {
             //code pour lancer dans qt
         }
+
+        return 0;
     }

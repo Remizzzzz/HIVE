@@ -11,14 +11,13 @@
  */
 class Renderer {
 public:
-    Inputs *inputs;
     Player *P1;
     Player *P2;
     /**
      * @brief Constructeur de la classe Renderer.
      * @param map_ Référence constante à la carte à afficher.
      */
-    explicit Renderer(const Map &map_, Inputs* inputs_, Player* P1_, Player* P2_) : map(map_), inputs(inputs_), P1(P1_), P2(P2_) {} // A voir comment initialiser l'output
+    explicit Renderer(const Map &map_,Player* P1_, Player* P2_) : map(map_), P1(P1_), P2(P2_) {} // A voir comment initialiser l'output
 
     /**
      * @brief Affiche la carte sur la sortie standard.
@@ -30,7 +29,7 @@ public:
         for(int index=0; index< P->getDeck().getInsectNb();index++)
         {
             // si cursor en ligne -1 ou ligne sideSize (et donc dans les decks
-            if((inputs->getStart().getI()==-1 || inputs->getStart().getI()==map.getSideSize()) && inputs->getStart().getJ()==index)
+            if((P->getInputs().getStart().getI()==-1 || P->getInputs().getStart().getI()==map.getSideSize()) && P->getInputs().getStart().getJ()==index)
             {
                 std::cout << " " << getSlotContent(P->getDeck().getInsectAt(index),1) << "  ";
             }
@@ -41,7 +40,7 @@ public:
         }
     }
 
-    void displayMap() const {
+    void displayMap(const Player & currentPlayer_) const {
         displayDeck(P1);
         std::cout << std::endl << std::endl;
         size_t sideSize = map.getSideSize();
@@ -51,7 +50,7 @@ public:
             displayIndentation(row);
 
             // Affiche la ligne actuelle
-            displayRow(row, inputs->getStart());         // A finir
+            displayRow(row, currentPlayer_.getInputs().getStart());         // A finir
 
             // Affiche un saut de ligne pour séparer les lignes
             std::cout << std::endl;
@@ -123,7 +122,7 @@ public:
      * @brief Constructeur de la classe ConsoleRenderer.
      * @param map_ Référence constante à la carte à afficher.
      */
-    explicit ConsoleRenderer(const Map &map_, Inputs *inputs_,Player* P1_, Player* P2_) : Renderer(map_,inputs_, P1_,P2_) {}
+    explicit ConsoleRenderer(const Map &map_,Player* P1_, Player* P2_) : Renderer(map_,P1_,P2_) {}
 
 
 
@@ -183,7 +182,7 @@ public:
 
 class GraphicRenderer : public Renderer {
 public:
-    explicit GraphicRenderer(const Map &map_, Inputs *inputs_,Player* P1_, Player* P2_) : Renderer(map_,inputs_, P1_,P2_) {}
+    explicit GraphicRenderer(const Map &map_, Player* P1_, Player* P2_) : Renderer(map_,P1_,P2_) {}
 };
 
 #endif // HIVE_RENDERER_H

@@ -16,6 +16,8 @@ class Player{
 private:
     int id;
 
+    bool isHuman;
+
     Deck deck;
     std::vector<Insect *> activeInsects;
 
@@ -26,7 +28,7 @@ private:
     friend class Solver;
 public:
 
-    explicit Player(const int & id_) : id(id_), deck(), activeInsects(), inputs()
+    explicit Player(const int & id_) : id(id_), isHuman(true), deck(), activeInsects(), inputs()
     {
 
     };
@@ -35,11 +37,11 @@ public:
         return id;
     }
 
-    const Inputs & getInputs() {
+    const Inputs & getInputs() const {
         return inputs;
     }
 
-    const Deck & getDeck(){
+    const Deck & getDeck() const{
         return deck;
     }
 
@@ -50,6 +52,10 @@ public:
     void addActiveInsectsFromDeck(const int & deckIndex_){
         Insect * insect = deck.insects.at(deckIndex_);
         activeInsects.push_back(insect);
+    }
+
+    void setHumanity(const bool & isHuman_) {
+        isHuman = isHuman_;
     }
 
 };

@@ -5,6 +5,7 @@
 
 #include "src/hive.h"
 
+#include <conio.h>  // Pour _kbhit() et _getch()
 
 
 int main() {
@@ -28,8 +29,24 @@ int main() {
     std::cout << "Appuyez sur Entree pour quitter...";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');*/
 
-    Hive hive(PvP,console);
-    hive.displayMenu();
+    bool play = true;
+
+    Hive hive;
+
+
+    while(play){
+
+        try{
+            play = hive.run();
+
+
+        }
+        catch (const HiveException & HE_){
+            std::cout << HE_.getInfos() << '\n';
+        }
+    }
+
+
 
 
 

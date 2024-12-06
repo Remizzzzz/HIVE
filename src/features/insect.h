@@ -11,7 +11,7 @@
 
 #include "../utils/utils.h"
 class Map;
-enum insectType{bee,ant,grasshopper,spider,beetle, mosquitoe, ladybug};
+enum insectType{ant,beetle, grasshopper,bee,spider, mosquitoe, ladybug};
 class Insect{
     int id;
     insectType iT;
