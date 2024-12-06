@@ -48,6 +48,11 @@ public:
         return possibleDestinations[destinationIndex];
     }
 
+    const std::vector<vec2i> & getPossibleDestinations() const
+    {
+        return possibleDestinations;
+    }
+
     const int getPossibleDestinationsNumber() const{
         return int (possibleDestinations.size());
     }

@@ -85,6 +85,20 @@ public://test
             s << color << "QB" << "\033[0m";
             return s.str();
         }
+        else if(idColor == 2)
+        {
+            std::string color="\033[32m";
+            std::stringstream s;
+            s << color << "QB" << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 3)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "QB" << "\033[0m";
+            return s.str();
+        }
     }
 };
 
@@ -126,6 +140,20 @@ public:
             s << color << "B" << getID() << "\033[0m";
             return s.str();
         }
+        else if(idColor == 2)
+        {
+            std::string color="\033[32m";
+            std::stringstream s;
+            s << color << "B" << getID() << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 3)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "B" << getID() << "\033[0m";
+            return s.str();
+        }
     }
 };
 
@@ -151,6 +179,20 @@ public:
         else if(idColor == 1)
         {
             std::string color="\033[92m";
+            std::stringstream s;
+            s << color << "G" << getID() << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 2)
+        {
+            std::string color="\033[32m";
+            std::stringstream s;
+            s << color << "G" << getID() << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 3)
+        {
+            std::string color="\033[35m";
             std::stringstream s;
             s << color << "G" << getID() << "\033[0m";
             return s.str();
@@ -184,6 +226,20 @@ public:
             s << color << "S" << getID() << "\033[0m";
             return s.str();
         }
+        else if(idColor == 2)
+        {
+            std::string color="\033[32m";
+            std::stringstream s;
+            s << color << "S" << getID() << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 3)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "S" << getID() << "\033[0m";
+            return s.str();
+        }
     }
 };
 
@@ -211,6 +267,20 @@ public:
             std::string color="\033[92m";
             std::stringstream s;
             s << color << "A" << getID() << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 2)
+        {
+            std::string color="\033[32m";
+            std::stringstream s;
+            s << color << "S" << getID() << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 3)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "S" << getID() << "\033[0m";
             return s.str();
         }
     }
@@ -245,6 +315,20 @@ public:
             s << color << "M" << getID() << "\033[0m";
             return s.str();
         }
+        else if(idColor == 2)
+        {
+            std::string color="\033[32m";
+            std::stringstream s;
+            s << color << "M" << getID() << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 3)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "M" << getID() << "\033[0m";
+            return s.str();
+        }
     }
 };
 
@@ -269,6 +353,20 @@ public:
         else if(idColor == 1)
         {
             std::string color="\033[92m";
+            std::stringstream s;
+            s << color << "L" << getID() << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 2)
+        {
+            std::string color="\033[32m";
+            std::stringstream s;
+            s << color << "L" << getID() << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 3)
+        {
+            std::string color="\033[35m";
             std::stringstream s;
             s << color << "L" << getID() << "\033[0m";
             return s.str();
