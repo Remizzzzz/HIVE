@@ -4,6 +4,10 @@
 
 #include <vector>
 #include <fstream>
+#include <iostream>
+
+#include <string>
+#include <stdexcept>
 #include "utils/hiveException.h"
 
 #include "features/insect.h"
@@ -65,7 +69,7 @@
 
             case 3:  // Resume game
                 std::cout << "Resuming the last game...\n";
-                // Insérez ici le code pour reprendre une partie
+                loadGame();
                 break;
 
             case 4:  // Change parameters
@@ -75,6 +79,7 @@
 
             case 5:  // Save game
                 std::cout << "Saving...\n";
+                saveGame("hive_parameters");
                 break;
             case 6:  // Leave
                 std::cout << "Au revoir !\n";
@@ -85,7 +90,7 @@
         }
         std::cout << std::endl;
 
-    } while (choice != 5);
+    } while (choice != 6);
 
     return 0;
 }
@@ -189,26 +194,84 @@ void Hive::changeSettings() {
         }
     } while (choice != 4);
 }
-void saveGame(){}
-void loadGame(){}
-
-
-void saveGameState() {
-        // Création du JSON sous forme de chaîne de caractères
-        std::string json = "{\n";
+//void saveGame(){}
+void Hive::loadGame(){}
 
 
 
-        // Sauvegarder le JSON dans un fichier
-        std::ofstream file("game_state.json");
-        if (file.is_open()) {
-            file << json;
-            file.close();
-            std::cout << "Game state saved successfully!" << std::endl;
-        } else {
-            std::cout << "Error opening file for saving!" << std::endl;
+
+void Hive::saveGame(const std::string& filename) const {
+    std::ofstream outFile(filename, std::ios::binary);
+
+    if (!outFile.is_open()) {
+        throw std::runtime_error("Impossible d'ouvrir le fichier pour la sauvegarde : " + filename);
+    }
+
+    // Sauvegarde des attributs de Hive
+    outFile.write(reinterpret_cast<const char*>(&mode), sizeof(mode));
+    outFile.write(reinterpret_cast<const char*>(&version), sizeof(version));
+    outFile.write(reinterpret_cast<const char*>(&trueMapSideSize), sizeof(trueMapSideSize));
+        outFile.write(reinterpret_cast<const char*>(&renderedMapSideSize), sizeof(renderedMapSideSize));
+    outFile.write(reinterpret_cast<const char*>(&rewindNb), sizeof(rewindNb));
+
+    // Sauvegarde des joueurs
+    for (const Player& player : {player1, player2}) {;
+        outFile.write(reinterpret_cast<const char*>(&player.deck), sizeof(player.deck));
+        outFile.write(reinterpret_cast<const char*>(&player.id), sizeof(player.id));
+        outFile.write(reinterpret_cast<const char*>(&player.isHuman), sizeof(player.isHuman));
+        outFile.write(reinterpret_cast<const char*>(&player.name), sizeof(player.name));
+
+
+        // Sauvegarde du deck
+        size_t deckSize = player.getDeck().getInsects()->size();
+        outFile.write(reinterpret_cast<const char*>(&deckSize), sizeof(deckSize));
+        for (const Insect* insect : *player.getDeck().getInsects()) {
+            int insectId = insect ? insect->getID() : -1; // Sauvegarde uniquement les IDs des insectes
+            outFile.write(reinterpret_cast<const char*>(&insectId), sizeof(insectId));
+        }
+
+        // Sauvegarde des insects actifs
+        size_t activeInsectsCount = player.getActiveInsects().size();
+        outFile.write(reinterpret_cast<const char*>(&activeInsectsCount), sizeof(activeInsectsCount));
+        for (const Insect* insect : player.getActiveInsects()) {
+            int insectId = insect ? insect->getID() : -1;
+            outFile.write(reinterpret_cast<const char*>(&insectId), sizeof(insectId));
         }
     }
+
+    // Sauvegarde des insects globaux
+    size_t insectCount = insects.size();
+        int id2, coorI, coorJ;
+        bool col;
+
+    outFile.write(reinterpret_cast<const char*>(&insectCount), sizeof(insectCount));
+    for (const auto& insect : insects) {
+        id2 = insect->getID();
+        col = insect->getColor();
+        coorI = insect->getCoordinates().getI();
+        coorJ = insect->getCoordinates().getJ();
+        outFile.write(reinterpret_cast<const char*>(&id2), sizeof(id2));
+        outFile.write(reinterpret_cast<const char*>(&col), sizeof(col));
+        outFile.write(reinterpret_cast<const char*>(&coorI), sizeof(coorI));
+        outFile.write(reinterpret_cast<const char*>(&coorJ), sizeof(coorJ));
+    }
+
+    // Sauvegarde de la carte
+    size_t slotCount = map.getSlots().size();
+    outFile.write(reinterpret_cast<const char*>(&slotCount), sizeof(slotCount));
+    for (const auto& slot : map.getSlots()) {
+        int insectId = slot ? slot->getID() : -1;
+        outFile.write(reinterpret_cast<const char*>(&insectId), sizeof(insectId));
+    }
+        vec2i relativePos = map.getRelativePos();
+    outFile.write(reinterpret_cast<const char*>(&relativePos), sizeof(relativePos));
+    outFile.write(reinterpret_cast<const char*>(&map.getSideSize()), sizeof(map.getSideSize()));
+
+    outFile.close();
+}
+
+
+
 
 
 
