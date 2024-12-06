@@ -22,8 +22,7 @@ private:
     bool destinationSelected{};
     //Position apres la deuxieme validation
     int destinationIndex{};
-    // false = affichage
-    bool needPossibleDestinations{true};
+    bool needPossibleDestinations{false};
     std::vector<vec2i> possibleDestinations;
 
     std::string message;
