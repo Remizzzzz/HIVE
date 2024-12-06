@@ -30,23 +30,28 @@ private:
 
 private:
 
-    void moveCursor(Inputs & inputs_,const int cursorId_, const int i_, const int j_) const{
+    void moveCursor(Player & player, const int cursorId_, const int i_, const int j_) const{
+
+        Inputs & inputs = player.inputs;
 
         switch (cursorId_){
             case 1:
-                if (inputs_.getStart().getI() + i_ >= -1 && inputs_.getStart().getI() + i_ <= renderedMapSideSize &&
-                        inputs_.getStart().getJ() + j_ > -1 && inputs_.getStart().getJ() + j_ < renderedMapSideSize){
-                    std::cout << inputs_.getStart() << ',' << vec2i{i_,j_} << '\n';
-                    inputs_.setStart(inputs_.getStart() + vec2i{i_,j_});
-                    std::cout << inputs_.getStart();
+                if ((inputs.getStart().getI() + i_ >= 0 && inputs.getStart().getI() + i_ < renderedMapSideSize &&
+                        inputs.getStart().getJ() + j_ >= 0 && inputs.getStart().getJ() + j_ < renderedMapSideSize)
+                        || ((inputs.getStart().getI() + i_ == -1 || inputs.getStart().getI() + i_ == renderedMapSideSize) && inputs.getStart().getJ() + j_ < player.getDeck().getInsectNb()))
+                    {
+                    std::cout << "----------\n ";
+                    std::cout << inputs.getStart() << ',' << vec2i{i_,j_} << '\n';
+                    inputs.setStart(inputs.getStart() + vec2i{i_,j_});
+                    std::cout << inputs.getStart();
                 }
                 break;
             case 2:
                 if (i_ + j_ > 0){
-                    inputs_.setDestionationIndex((inputs_.getDestinationIndex() + 1) % inputs_.getPossibleDestinationsNumber());
+                    inputs.setDestionationIndex((inputs.getDestinationIndex() + 1) % inputs.getPossibleDestinationsNumber());
                 }
                 else{
-                    inputs_.setDestionationIndex((inputs_.getDestinationIndex() - 1) % inputs_.getPossibleDestinationsNumber());
+                    inputs.setDestionationIndex((inputs.getDestinationIndex() - 1) % inputs.getPossibleDestinationsNumber());
                 }
                 break;
 
@@ -120,13 +125,13 @@ public:
 
             switch (key) {
                 case 72:
-                    moveCursor(inputs,cursorId,-1,0); std::cout << "Flèche Haut\n"; break;
+                    moveCursor(player_,cursorId,-1,0); std::cout << "Flèche Haut\n"; break;
                 case 80:
-                    moveCursor(inputs,cursorId,1,0); std::cout << "Flèche Bas\n"; break;
+                    moveCursor(player_,cursorId,1,0); std::cout << "Flèche Bas\n"; break;
                 case 75:
-                    moveCursor(inputs,cursorId,0,-1); std::cout << "Flèche Gauche\n"; break;
+                    moveCursor(player_,cursorId,0,-1); std::cout << "Flèche Gauche\n"; break;
                 case 77:
-                    moveCursor(inputs,cursorId,0,1); std::cout << "Flèche Droite\n"; break;
+                    moveCursor(player_,cursorId,0,1); std::cout << "Flèche Droite\n"; break;
                 default: std::cout << "Autre touche spéciale: Code " << key << "\n"; break;
             }
         }
