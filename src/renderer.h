@@ -23,7 +23,7 @@ public:
      * @brief Affiche la carte sur la sortie standard.
      */
     virtual ~Renderer() = default; // Rendre Renderer polymorphe avec un destructeur virtuel
-
+    virtual void displayMap(const Player & currentPlayer_) const=0;
 
 protected:
     Player *P1;
@@ -130,7 +130,7 @@ public:
         }
     }
 
-    void displayMap(const Player & currentPlayer_) const {
+    void displayMap(const Player & currentPlayer_) const override{
         system("cls"); // clear console windows
         std::cout << "\033[2J\033[1;1H";  // clear console linux
         displayDeck(P1,0);
@@ -207,6 +207,7 @@ public:
 class GraphicRenderer : public Renderer {
 public:
     explicit GraphicRenderer(const Map &map_, Player* P1_, Player* P2_, int rendered_s_i) : Renderer(map_,P1_,P2_,rendered_s_i) {}
+    void displayMap(const Player & currentPlayer_) const override{}
 };
 
 #endif // HIVE_RENDERER_H
