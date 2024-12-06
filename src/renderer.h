@@ -11,9 +11,6 @@
  */
 class Renderer {
 public:
-    Player *P1;
-    Player *P2;
-    int renderedSideSize;
     /**
      * @brief Constructeur de la classe Renderer.
      * @param map_ Référence constante à la carte à afficher.
@@ -28,7 +25,8 @@ public:
 
 
     void displayMap(const Player & currentPlayer_) const {
-        std::cout << "\033[2J\033[1;1H";  // clear la console
+        system("cls"); // clear console windows
+        std::cout << "\033[2J\033[1;1H";  // clear console linux
         displayDeck(P1,0);
         std::cout << "\n" << "\n";
 
@@ -47,6 +45,9 @@ public:
     }
 
 private:
+    Player *P1;
+    Player *P2;
+    int renderedSideSize;
     const Map &map;
 
     /**
@@ -123,7 +124,7 @@ private:
      * @param slot Pointeur vers l'insecte dans la case (ou nullptr si vide).
      * @return Une chaîne de caractères représentant la valeur à afficher.
      */
-    std::string getSlotContent(const Insect *slot, int idColor) const {
+    static std::string getSlotContent(const Insect *slot, int idColor) {
         if (slot) {
             return slot->getPrintableValue(idColor);  // Valeur de l'insecte sans espace supplémentaire
         }
@@ -150,7 +151,7 @@ public:
     /**
      * @brief Affiche les règles de Hive.
      */
-    void displayRules() const {
+    static void displayRules() {
     std::cout << "\n=== Règles du jeu Hive ===\n\n";
 
     std::cout << "Objectif du jeu :\n";
