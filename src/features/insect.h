@@ -48,7 +48,7 @@ public:
         }
         else
         {
-            return "\033[35m";
+            return "\033[92m";
         }
 
     }
@@ -80,7 +80,7 @@ public://test
         }
         else if(idColor == 1)
         {
-            std::string color="\033[35m";
+            std::string color="\033[92m";
             std::stringstream s;
             s << color << "QB" << "\033[0m";
             return s.str();
@@ -121,7 +121,7 @@ public:
         }
         else if(idColor == 1)
         {
-            std::string color="\033[35m";
+            std::string color="\033[92m";
             std::stringstream s;
             s << color << "B" << getID() << "\033[0m";
             return s.str();
@@ -150,7 +150,7 @@ public:
         }
         else if(idColor == 1)
         {
-            std::string color="\033[35m";
+            std::string color="\033[92m";
             std::stringstream s;
             s << color << "G" << getID() << "\033[0m";
             return s.str();
@@ -179,7 +179,7 @@ public:
         }
         else if(idColor == 1)
         {
-            std::string color="\033[35m";
+            std::string color="\033[92m";
             std::stringstream s;
             s << color << "S" << getID() << "\033[0m";
             return s.str();
@@ -208,7 +208,7 @@ public:
         }
         else if(idColor == 1)
         {
-            std::string color="\033[35m";
+            std::string color="\033[92m";
             std::stringstream s;
             s << color << "A" << getID() << "\033[0m";
             return s.str();
@@ -240,7 +240,7 @@ public:
         }
         else if(idColor == 1)
         {
-            std::string color="\033[35m";
+            std::string color="\033[92m";
             std::stringstream s;
             s << color << "M" << getID() << "\033[0m";
             return s.str();
@@ -268,7 +268,7 @@ public:
         }
         else if(idColor == 1)
         {
-            std::string color="\033[35m";
+            std::string color="\033[92m";
             std::stringstream s;
             s << color << "L" << getID() << "\033[0m";
             return s.str();
