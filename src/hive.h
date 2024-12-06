@@ -43,9 +43,6 @@ class Hive{
     Solver solver;
 
     Renderer * renderer;
-    /*~Hive() {
-        delete renderer;
-    }*/
 
 private:
 
@@ -181,6 +178,10 @@ public:
                 solver(map, trueMapSideSize)
     {
     };*/
+
+    ~Hive(){
+        delete renderer;
+    }
 
     int initIfNeeded(){
         if (!isInit){
