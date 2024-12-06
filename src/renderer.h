@@ -25,32 +25,28 @@ public:
     virtual ~Renderer() = default; // Rendre Renderer polymorphe avec un destructeur virtuel
 
 
-
-    void displayMap(const Player & currentPlayer_) const {
-        system("cls"); // clear console windows
-        std::cout << "\033[2J\033[1;1H";  // clear console linux
-        displayDeck(P1,0);
-        std::cout << "\n" << "\n";
-
-        for (size_t row = 1; row < renderedSideSize+1; ++row) {
-            // Affiche les espaces d'indentation pour simuler les décalages
-            displayIndentation(row);
-
-            // Affiche la ligne actuelle
-            displayRow(row, currentPlayer_.getInputs().getStart());         // A finir
-
-            // Affiche un saut de ligne pour séparer les lignes
-            std::cout << "\n";
-        }
-        std::cout << "\n" << "\n";
-        displayDeck(P2,1);
-    }
-
-private:
+protected:
     Player *P1;
     Player *P2;
     int renderedSideSize;
     const Map &map;
+
+
+
+};
+
+class ConsoleRenderer : public Renderer {
+public:
+    /**
+     * @brief Constructeur de la classe ConsoleRenderer.
+     * @param map_ Référence constante à la carte à afficher.
+     */
+    explicit ConsoleRenderer(const Map &map_,Player* P1_, Player* P2_, int rendered_s_i) : Renderer(map_,P1_,P2_, rendered_s_i) {}
+
+
+
+
+
 
     /**
      * @brief Affiche les indentations pour simuler les décalages de la grille hexagonale.
@@ -63,32 +59,7 @@ private:
         }
     }
 
-    /**
-     * @brief Affiche les decks des deux joueurs
-     * @param P le joueur
-     * @param indexPlayer indique si le deck est affiché avant la map ou apres
-     */
-    void displayDeck(Player* P, int indexPlayer) const
-    {
-        for(int index=0; index< P->getDeck().getInsectNb();index++)
-        {
-            // si cursor en ligne -1 donc dans le deck du joueur bleu
-            if((P->getInputs().getStart().getI()==-1 && indexPlayer==0) && P->getInputs().getStart().getJ()==index)
-            {
-                std::cout << " " << getSlotContent(P->getDeck().getInsectAt(index),1) << "  ";
-            }
-            // si cursor en ligne renderedSideSize donc dans le deck joueur rouge
-            else if((P->getInputs().getStart().getI()==-1 && indexPlayer==1)&& P->getInputs().getStart().getJ()==index)
-            {
 
-                std::cout << " " << getSlotContent(P->getDeck().getInsectAt(index),1) << "  ";
-            }
-            else
-            {
-                std::cout << " " << getSlotContent(P->getDeck().getInsectAt(index),0) << "  ";
-            }
-        }
-    }
 
     /**
      * @brief Affiche une ligne de cellules avec des insectes ou des cases vides.
@@ -137,17 +108,47 @@ private:
         return "--";  // Affiche un point si la case est vide
 
     }
-};
 
-class ConsoleRenderer : public Renderer {
-public:
-    /**
-     * @brief Constructeur de la classe ConsoleRenderer.
-     * @param map_ Référence constante à la carte à afficher.
-     */
-    explicit ConsoleRenderer(const Map &map_,Player* P1_, Player* P2_, int rendered_s_i) : Renderer(map_,P1_,P2_, rendered_s_i) {}
+    void displayDeck(Player* P, int indexPlayer) const
+    {
+        for(int index=0; index< P->getDeck().getInsectNb();index++)
+        {
+            // si cursor en ligne -1 donc dans le deck du joueur bleu
+            if((P->getInputs().getStart().getI()==-1 && indexPlayer==0) && P->getInputs().getStart().getJ()==index)
+            {
+                std::cout << " " << getSlotContent(P->getDeck().getInsectAt(index),1) << "  ";
+            }
+            // si cursor en ligne renderedSideSize donc dans le deck joueur rouge
+            else if((P->getInputs().getStart().getI()==-1 && indexPlayer==1)&& P->getInputs().getStart().getJ()==index)
+            {
+                std::cout << " " << getSlotContent(P->getDeck().getInsectAt(index),1) << "  ";
+            }
+            else
+            {
+                std::cout << " " << getSlotContent(P->getDeck().getInsectAt(index),0) << "  ";
+            }
+        }
+    }
 
+    void displayMap(const Player & currentPlayer_) const {
+        system("cls"); // clear console windows
+        std::cout << "\033[2J\033[1;1H";  // clear console linux
+        displayDeck(P1,0);
+        std::cout << "\n" << "\n";
 
+        for (size_t row = 1; row < renderedSideSize+1; ++row) {
+            // Affiche les espaces d'indentation pour simuler les décalages
+            displayIndentation(row);
+
+            // Affiche la ligne actuelle
+            displayRow(row, currentPlayer_.getInputs().getStart());         // A finir
+
+            // Affiche un saut de ligne pour séparer les lignes
+            std::cout << "\n";
+        }
+        std::cout << "\n" << "\n";
+        displayDeck(P2,1);
+    }
 
 
     /**
