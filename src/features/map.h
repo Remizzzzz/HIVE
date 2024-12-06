@@ -54,7 +54,7 @@ public:
     }
 
     /**
-     * @brief \n put in the slot on position pos_ the instect instect_
+     * @brief \n put in the slot on position pos_ the insect insect_
      * @param insect_ : insect to put
      * @param pos_ : position of the slot in which the insect will be put
      */

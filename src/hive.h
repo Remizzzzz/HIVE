@@ -184,6 +184,8 @@ public:
     }
     void static displayRules() ;
     void changeSettings();
+    void saveGame();
+    void loadGame();
     int initIfNeeded(){
         if (!isInit){
             if (displayMenu() == 1){
