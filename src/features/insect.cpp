@@ -87,7 +87,10 @@ std::vector<vec2i> Insect::setRule( Map &m) const {
             }
         }
     return possiblePlace;
-    } catch (const HiveException& e) {
+    } catch (const std::string& e) {
+        throw HiveException("Insect::setRule", e);
+    }
+    catch (...) {
         throw HiveException("Insect::setRule", "Erreur dans la fonction pour récupérer les mouvement d'un insecte dans un deck");
     }
 }
@@ -127,7 +130,10 @@ bool Insect:: isLinkingHive(Map &m) const {
         }
     }
     return i_insect != nbInsect;
-    } catch (const HiveException& e) {
+    } catch (const std::string& e) {
+        throw HiveException("Insect::isLinkingHive", e);
+    }
+    catch (...) {
         throw HiveException("Insect::isLinkingHive", "Erreur dans isLinkingHive");
     }
 }
@@ -145,7 +151,10 @@ int Insect::getFormerNeighbour(vec2i newPosition, Map &m) const{
         }
     }
     return count;
-    } catch (const HiveException& e) {
+    } catch (const std::string& e) {
+        throw HiveException("Insect::getFormerNeighbor", e);
+    }
+    catch (...) {
         throw HiveException("Insect::getFormerNeighbor", "Erreur dans getFormerNeighbor");
     }
 }
@@ -163,7 +172,10 @@ bool Bee::isCircled(Map &m) {
     }
     // La reine est encerclée.
     return true;
-    } catch (const HiveException& e) {
+    } catch (const std::string& e) {
+        throw HiveException("Bee::isCircled", e);
+    }
+    catch (...) {
         throw HiveException("Bee::isCircled", "Erreur dans isCircled de Bee");
     }
 }
@@ -185,7 +197,10 @@ std::vector<vec2i> Bee::getPossibleMovements(Map &m) const {
         }
     }
     return possibleMovements;
-    } catch (const HiveException& e) {
+    } catch (const std::string& e) {
+        throw HiveException("Bee::getPossibleMovements", e);
+    }
+    catch (...) {
         throw HiveException("Bee::getPossibleMovements", "Erreur dans la fonction pour récupérer les mouvements de Bee");
     }
 }
@@ -213,7 +228,9 @@ std::vector<vec2i> Beetle:: getPossibleMovements(Map &m) const{
         }
     }
     return possibleMovements;
-    } catch (const HiveException& e) {
+    } catch (const std::string& e) {
+        throw HiveException("Beetle::getPossibleMovements", e);
+    }catch (...) {
         throw HiveException("Beetle::getPossibleMovements", "Erreur dans la fonction pour récupérer les mouvements de Beetle");
     }
 }
@@ -221,37 +238,41 @@ std::vector<vec2i> Beetle:: getPossibleMovements(Map &m) const{
 
 
 // Méthodes de Grasshoper
-std::vector<vec2i> Grasshopper:: getPossibleMovements(Map &m) const{
+std::vector<vec2i> Grasshopper:: getPossibleMovements(Map &m) const {
     try{
-    std::vector<vec2i> possibleMovements;
-    int breakCount = 0;
-    if(!this->isLinkingHive(m)) {
-        std::list<vec2i> neighboursList = m.getNeighbours(getCoordinates());
-        std::vector<vec2i> neighbors(neighboursList.begin(), neighboursList.end()); //Conversion en vector
-        int i = 0;
-        vec2i it2;
-        bool goOn = true;
-        for (auto it = neighbors.begin(); it != neighbors.end(); ++it) {
-            //On itère dans chaque voisin
-            if( !m.isSlotFree(*it)) {
-                // S'il y a un voisin
-                it2 = neighbors.at(i++);
-                while(goOn) {
-                    // On itère dans le voisin de position x du voisin x du voisin x etc jusqu'à trouver une case vide
-                    it2 =  std::vector<vec2i>(m.getNeighbours(it2).begin(),m.getNeighbours(it2).end()).at(i);
-                    if(m.isSlotFree(*it)) {
-                        possibleMovements.push_back(it2); // On ajoute la position de la case vide dans possibleMovement
-                        goOn = false; // On arrête la boucle
+        std::vector<vec2i> possibleMovements;
+        int breakCount = 0;
+        if(!this->isLinkingHive(m)) {
+            std::list<vec2i> neighboursList = m.getNeighbours(getCoordinates());
+            std::vector<vec2i> neighbors(neighboursList.begin(), neighboursList.end()); //Conversion en vector
+            int i = 0;
+            vec2i it2;
+            bool goOn = true;
+            for (auto it = neighbors.begin(); it != neighbors.end(); ++it) {
+                //On itère dans chaque voisin
+                if( !m.isSlotFree(*it)) {
+                    // S'il y a un voisin
+                    it2 = neighbors.at(i++);
+                    while(goOn) {
+                        // On itère dans le voisin de position x du voisin x du voisin x etc jusqu'à trouver une case vide
+                        it2 =  std::vector<vec2i>(m.getNeighbours(it2).begin(),m.getNeighbours(it2).end()).at(i);
+                        if(m.isSlotFree(*it)) {
+                            possibleMovements.push_back(it2); // On ajoute la position de la case vide dans possibleMovement
+                            goOn = false; // On arrête la boucle
+                        }
                     }
                 }
             }
         }
+        return possibleMovements; // Retourne le vector des coups possibles
+    } catch (const std::string& e) {
+        throw HiveException("Grasshoper::getPossibleMovements", e);
     }
-    return possibleMovements; // Retourne le vector des coups possibles
-    } catch (const HiveException& e) {
+    catch (...) {
         throw HiveException("Grasshoper::getPossibleMovements", "Erreur dans lafonction pour récupérer les mouvements de Grasshoper");
     }
 }
+
 
 
 
@@ -308,7 +329,10 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const {
     }
 
     return possibleMovements;
-    } catch (const HiveException& e) {
+    } catch (const std::string& e) {
+        throw HiveException("Ant::getPossibleMovements", e);
+    }
+    catch (...) {
         throw HiveException("Ant::getPossibleMovements", "Erreur dans lafonction pour récupérer les mouvements de Ant");
     }
 }
@@ -350,7 +374,9 @@ std::vector<vec2i> Spider::getPossibleMovements(Map &m) const {
     }
 
     return possibleMovements;
-    } catch (const HiveException& e) {
+    } catch (const std::string& e) {
+        throw HiveException("Spider::getPossibleMovements", e);
+    }catch (...) {
         throw HiveException("Spider::getPossibleMovements", "Erreur dans lafonction pour récupérer les mouvements de Spider");
     }
 }
@@ -399,7 +425,10 @@ std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) const{
     // Converti l'ensemble en vector
     std::vector<vec2i> possibleMovementsVector(possibleMovements.begin(), possibleMovements.end());
     return possibleMovementsVector;
-    } catch (const HiveException& e) {
+    } catch (const std::string& e) {
+        throw HiveException("Mosquitoe::getPossibleMovements", e);
+    }
+    catch (...) {
         throw HiveException("Mosquitoe::getPossibleMovements", "Erreur dans lafonction pour récupérer les mouvements de Mosquitoe");
     }
 }
@@ -437,9 +466,12 @@ std::vector<vec2i> Ladybug::getPossibleMovements(Map &m) const {
             }
         }
         return possibleMovements;
-    } catch (const HiveException& e) {
-        throw HiveException("Spider::getPossibleMovements", "Erreur dans lafonction pour récupérer les mouvements de Spider");
+    } catch (const std::string& e) {
+        throw HiveException("Spider::getPossibleMovements", e);
     }
+    catch (...) {
+    throw HiveException("Spider::getPossibleMovements", "Erreur dans lafonction pour récupérer les mouvements de Spider");
+}
 }
 
 
