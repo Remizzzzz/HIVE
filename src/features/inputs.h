@@ -22,7 +22,8 @@ private:
     bool destinationSelected{};
     //Position apres la deuxieme validation
     int destinationIndex{};
-    bool needPossibleDestinations{false};
+    // false = affichage
+    bool needPossibleDestinations{true};
     std::vector<vec2i> possibleDestinations;
 
     std::string message;
@@ -46,6 +47,11 @@ public:
     const vec2i & getDestination() const{
         if(destinationIndex >= possibleDestinations.size()) throw HiveException("A remplir", "");
         return possibleDestinations[destinationIndex];
+    }
+
+    const std::vector<vec2i> & getPossibleDestinations() const
+    {
+        return possibleDestinations;
     }
 
     const int getPossibleDestinationsNumber() const{
