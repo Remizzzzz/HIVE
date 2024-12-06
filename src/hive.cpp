@@ -13,6 +13,7 @@
 #include "hive.h"
 #include "solver.h"
 #include "renderer.h"
+#include "Qt/main.cpp"
 
 
 
@@ -106,7 +107,7 @@
             } while (choice != 2 && choice != 3);
         }
         else {
-            //code pour lancer dans qt
+            mainQT();
         }
 
         return 0;

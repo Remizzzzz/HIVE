@@ -6,3 +6,6 @@
 !src/**
 !Qt
 !Qt/**
+!Qt/main.cpp
+!Qt/hiverenderer.cpp
+!Qt/hiverenderer.ui
