@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "../utils/utils.h"
+#include "src/utils/hiveException.h"
 class Map;
 enum insectType{ant,beetle, grasshopper,bee,spider, mosquitoe, ladybug,none};
 class Insect{
@@ -85,6 +86,21 @@ public://test
             s << color << "QB" << "\033[0m";
             return s.str();
         }
+        else if(idColor == 2)
+        {
+            std::string color="\033[32m";
+            std::stringstream s;
+            s << color << "QB" << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 3)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "QB" << "\033[0m";
+            return s.str();
+        }
+        throw HiveException("Bee: Unknown color", "Insect.h : Insect::Bee::getPrintableValue");
     }
 };
 
@@ -126,6 +142,21 @@ public:
             s << color << "B" << getID() << "\033[0m";
             return s.str();
         }
+        else if(idColor == 2)
+        {
+            std::string color="\033[32m";
+            std::stringstream s;
+            s << color << "B" << getID() << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 3)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "B" << getID() << "\033[0m";
+            return s.str();
+        }
+        throw HiveException("Beettle: Unknown color", "Insect.h : Insect::Beettle::getPrintableValue");
     }
 };
 
@@ -155,6 +186,21 @@ public:
             s << color << "G" << getID() << "\033[0m";
             return s.str();
         }
+        else if(idColor == 2)
+        {
+            std::string color="\033[32m";
+            std::stringstream s;
+            s << color << "G" << getID() << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 3)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "G" << getID() << "\033[0m";
+            return s.str();
+        }
+        throw HiveException("Grasshopper: Unknown color", "Insect.h : Insect::Grasshopper::getPrintableValue");
     }
 };
 
@@ -184,6 +230,21 @@ public:
             s << color << "S" << getID() << "\033[0m";
             return s.str();
         }
+        else if(idColor == 2)
+        {
+            std::string color="\033[32m";
+            std::stringstream s;
+            s << color << "S" << getID() << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 3)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "S" << getID() << "\033[0m";
+            return s.str();
+        }
+        throw HiveException("Spider: Unknown color", "Insect.h : Insect::Spider::getPrintableValue");
     }
 };
 
@@ -213,6 +274,21 @@ public:
             s << color << "A" << getID() << "\033[0m";
             return s.str();
         }
+        else if(idColor == 2)
+        {
+            std::string color="\033[32m";
+            std::stringstream s;
+            s << color << "A" << getID() << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 3)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "A" << getID() << "\033[0m";
+            return s.str();
+        }
+        throw HiveException("Ant: Unknown color", "Insect.h : Insect::Ant::getPrintableValue");
     }
 };
 
@@ -245,6 +321,22 @@ public:
             s << color << "M" << getID() << "\033[0m";
             return s.str();
         }
+        else if(idColor == 2)
+        {
+            std::string color="\033[32m";
+            std::stringstream s;
+            s << color << "M" << getID() << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 3)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "M" << getID() << "\033[0m";
+            return s.str();
+        }
+        throw HiveException("Mosquitoe: Unknown color", "Insect.h : Insect::Mosquitoe::getPrintableValue");
+
     }
 };
 
@@ -273,6 +365,21 @@ public:
             s << color << "L" << getID() << "\033[0m";
             return s.str();
         }
+        else if(idColor == 2)
+        {
+            std::string color="\033[32m";
+            std::stringstream s;
+            s << color << "L" << getID() << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 3)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "L" << getID() << "\033[0m";
+            return s.str();
+        }
+        throw HiveException("Ladybug: Unknown color", "Insect.h : Insect::Ladybug::getPrintableValue");
     }
 };
 
