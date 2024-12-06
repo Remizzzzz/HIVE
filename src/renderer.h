@@ -111,6 +111,10 @@ private:
         if (slot) {
             return slot->getPrintableValue(idColor);  // Valeur de l'insecte sans espace supplémentaire
         }
+        if(idColor==1)
+        {
+            return "\033[35m--";
+        }
         return "--";  // Affiche un point si la case est vide
 
     }
