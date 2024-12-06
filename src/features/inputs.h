@@ -14,14 +14,14 @@
 class Inputs{
 private:
     //le joueur a validé son action
-    bool startSelected;
+    bool startSelected{};
     //Position apres la premiere validation
     vec2i start;
 
     //le joueur a validé son action
-    bool destinationSelected;
+    bool destinationSelected{};
     //Position apres la deuxieme validation
-    int destinationIndex;
+    int destinationIndex{};
     bool needPossibleDestinations{false};
     std::vector<vec2i> possibleDestinations;
 
