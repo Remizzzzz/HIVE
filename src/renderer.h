@@ -5,7 +5,9 @@
 #include "features/map.h"
 #include "src/features/inputs.h"
 #include "src/features/player.h"
-//test
+
+// Dans tout le renderer, idColor = 0, affiche sans couleur spécifique, idColor = 1, cursor Start avant selec
+// idColor = 2, cursor start apres select, idColor = 1, cursor parmi les possibles, idColor = 3, movement possibles
 /**
  * @brief Classe pour afficher la carte d'une partie de Hive.
  */
@@ -130,7 +132,7 @@ private:
         }
         if(idColor==1)
         {
-            return "\033[35m--\033[37m";
+            return "\033[92m--\033[37m";
         }
         return "--";  // Affiche un point si la case est vide
 
