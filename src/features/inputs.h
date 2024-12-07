@@ -113,6 +113,9 @@ public:
         startSelected = false;
         destinationSelected = false;
         needPossibleDestinations = false;
+        start = {0,0};
+        possibleDestinations.clear();
+        destinationIndex = 0;
     }
 
 };
