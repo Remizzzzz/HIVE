@@ -185,7 +185,7 @@ public:
     void static displayRules() ;
     void changeSettings();
     void saveGame(const std::string& filename)const;
-    void loadGame();
+    void loadGame(const std::string& filename);
     int initIfNeeded(){
         if (!isInit){
             if (displayMenu() == 1){
