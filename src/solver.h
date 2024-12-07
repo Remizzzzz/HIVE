@@ -18,30 +18,30 @@ class Solver{
 private:
     Map & map;
 
-    const int & trueMapSideSize;
+    const int & renderedMapSideSize;
 
 public:
 
-    Solver(Map & map_, const int & trueMapSideSize_) :
-        map(map_), trueMapSideSize(trueMapSideSize_){};
+    Solver(Map & map_, const int & renderedMapSideSize_) :
+            map(map_), renderedMapSideSize(renderedMapSideSize_){};
 
 
 private:
     //0 -> map, 1 -> deck 1, -> 1 deck 2
     int getStartLocation(Player & player_) const{
-        return 1 * (player_.inputs.getStart().getI() == -1) + 2 * (player_.inputs.getStart().getI() == trueMapSideSize);
+        return 1 * (player_.inputs.getStart().getI() == -1) + 2 * (player_.inputs.getStart().getI() == renderedMapSideSize);
     }
 
     bool isStartValid(Player & player_) const{
 
-        if (player_.inputs.getStart().getI() >= 0 && player_.inputs.getStart().getI() < trueMapSideSize &&
-            player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < trueMapSideSize
+        if (player_.inputs.getStart().getI() >= 0 && player_.inputs.getStart().getI() < renderedMapSideSize &&
+            player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < renderedMapSideSize
             && !map.isSlotFree(player_.inputs.getStart())){
             return true;
         }
 
-        if ((player_.inputs.getStart().getI() == -1 or player_.inputs.getStart().getI() == trueMapSideSize) &&
-                (player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < player_.getDeck().getInsectNb())){
+        if ((player_.inputs.getStart().getI() == -1 || player_.inputs.getStart().getI() == renderedMapSideSize) &&
+            (player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < player_.getDeck().getInsectNb())){
             return true;
         }
 
@@ -49,8 +49,8 @@ private:
     }
 
     bool isDestinationValid(Player & player_) const{
-        return player_.inputs.getDestination().getI() >= 0 && player_.inputs.getDestination().getI() < trueMapSideSize &&
-                player_.inputs.getDestination().getJ() >= 0 && player_.inputs.getDestination().getJ() < trueMapSideSize;
+        return player_.inputs.getDestination().getI() >= 0 && player_.inputs.getDestination().getI() < renderedMapSideSize &&
+               player_.inputs.getDestination().getJ() >= 0 && player_.inputs.getDestination().getJ() < renderedMapSideSize;
     }
 
     void deckToMapMovement(Player & player_) {
