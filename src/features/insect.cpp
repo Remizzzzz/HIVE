@@ -1,10 +1,8 @@
 //
 // Created by Thiba on 29/10/2024.
 //
-#include <set>
 #ifndef HIVE_INSECT_CPP
 #define HIVE_INSECT_CPP
-#define MAP_SIZE 32
 
 #include "insect.h"
 #include "map.h"
@@ -21,12 +19,12 @@ int Insect::counter = 0;
 // Renvoie tous les slots dispos sur la map pour poser une pièce
 std::vector<vec2i> Insect::setRule( Map &m) const {
     try{
-    std::vector<vec2i> possiblePlace;
-     // On cherche les endroits possibles
+        std::vector<vec2i> possiblePlace;
+        // On cherche les endroits possibles
         // Trouver un insecte sur la map en iterant dessus en sortant de la boucle des qu'il est trouvé
         int found_i = -1, found_j;
-        for(int i = 0; i < MAP_SIZE; i++) {
-            for(int j = 0; j < MAP_SIZE; j++) {
+        for(int i = 0; i < m.getSideSize(); i++) {
+            for(int j = 0; j < m.getSideSize(); j++) {
                 if(m.isSlotFree(vec2i{i,j}) == 0) {
                     found_i = i;
                     found_j = j;
@@ -38,7 +36,7 @@ std::vector<vec2i> Insect::setRule( Map &m) const {
             }
         }
         if(found_i == -1) {
-            possiblePlace.push_back({MAP_SIZE/2,MAP_SIZE/2});
+            possiblePlace.emplace_back(m.getSideSize()/2,m.getSideSize()/2);
         }
         std::vector<vec2i> insectSet = {vec2i(found_i,found_j)} , toCheck;
         std::list<vec2i> neighbors;
@@ -100,8 +98,8 @@ bool Insect:: isLinkingHive(Map &m) const {
     try{
     // On parcourt toute la map pour compter son nombre d'insecte et garder une valeur d'insect
     int found_i = -1, found_j, nbInsect = 0;
-    for(int i = 0; i < MAP_SIZE; i++) {
-        for(int j = 0; j < MAP_SIZE; j++) {
+    for(int i = 0; i < m.getSideSize(); i++) {
+        for(int j = 0; j < m.getSideSize(); j++) {
             if(m.isSlotFree(vec2i{i,j}) == 0 && getCoordinates() != vec2i{i,j}) {
                 found_i = i;
                 found_j = j;

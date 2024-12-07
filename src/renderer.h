@@ -24,6 +24,7 @@ public:
      */
     virtual ~Renderer() = default; // Rendre Renderer polymorphe avec un destructeur virtuel
     virtual void displayMap(const Player & currentPlayer_) const=0;
+    virtual void render(const Player & currentPlayer_) const = 0;
 
 protected:
     Player *P1;
@@ -36,16 +37,15 @@ protected:
 };
 
 class ConsoleRenderer : public Renderer {
+private:
+
+
 public:
     /**
      * @brief Constructeur de la classe ConsoleRenderer.
      * @param map_ Référence constante à la carte à afficher.
      */
     explicit ConsoleRenderer(const Map &map_,Player* P1_, Player* P2_, int rendered_s_i) : Renderer(map_,P1_,P2_, rendered_s_i) {}
-
-
-
-
 
 
     /**
@@ -109,8 +109,8 @@ public:
 
     }
 
-    void displayDeck(Player* P, int indexPlayer) const
-    {
+    void displayDeck(Player* P, int indexPlayer) const{
+
         for(int index=0; index< P->getDeck().getInsectNb();index++)
         {
             // si cursor en ligne -1 donc dans le deck du joueur bleu
@@ -131,7 +131,7 @@ public:
     }
 
     void displayMap(const Player & currentPlayer_) const override{
-        system("cls"); // clear console windows
+        //system("cls"); // clear console windows
         std::cout << "\033[2J\033[1;1H";  // clear console linux
         displayDeck(P1,0);
         std::cout << "\n" << "\n";
@@ -148,6 +148,132 @@ public:
         }
         std::cout << "\n" << "\n";
         displayDeck(P2,1);
+    }
+
+    void renderDeck1(const Player & currentPlayer_) const{
+        std::cout << "\033[31m";
+        if (currentPlayer_.getInputs().getStart().getI() == -1){
+            for(const auto & insect: P1->getDeck()){
+                if (insect->getCoordinates().getJ() == currentPlayer_.getInputs().getStart().getJ()){
+                    if (currentPlayer_.getInputs().isStartSelected()){
+                        std::cout << "\033[92m" << insect->getPV() << "\033[31m ";
+                    }
+                    else{
+                        std::cout << "\033[35m" << insect->getPV() << "\033[31m ";
+                    }
+                }
+                else if (insect->getCoordinates().getJ() == currentPlayer_.getInputs().getDestination().getJ()){
+                    if (!currentPlayer_.getInputs().isDestinationSelected()){
+                        std::cout << "\033[35m" << insect->getPV() << "\033[31m ";
+                    }
+                }
+                else std::cout << insect->getPV() << " ";
+            }
+        }
+        else{
+            for(const auto & insect: P1->getDeck()){
+                std::cout << insect->getPV() <<" ";
+            }
+        }
+        std::cout << '\n';
+    }
+
+    void renderDeck2(const Player & currentPlayer_) const{
+        std::cout << "\033[34m";
+        if (currentPlayer_.getInputs().getStart().getI() == renderedSideSize){
+            for(const auto & insect: P2->getDeck()){
+                if (insect->getCoordinates().getJ() == currentPlayer_.getInputs().getStart().getJ()){
+                    if (currentPlayer_.getInputs().isStartSelected()){
+                        std::cout << "\033[92m" << insect->getPV() << "\033[34m ";
+                    }
+                    else{
+                        std::cout << "\033[35m" << insect->getPV() << "\033[34m ";
+                    }
+                }
+                else if (insect->getCoordinates().getJ() == currentPlayer_.getInputs().getDestination().getJ()){
+                    if (!currentPlayer_.getInputs().isDestinationSelected()){
+                        std::cout << "\033[35m" << insect->getPV() << "\033[34m ";
+                    }
+                }
+                else std::cout << insect->getPV() <<" ";
+            }
+        }
+        else{
+            for(const auto & insect: P2->getDeck()){
+                std::cout << insect->getPV() <<" ";
+            }
+        }
+        std::cout << "\n\033[37m";
+    }
+
+    void renderMap(const Player & currentPlayer_) const{
+        std::cout << "\033[37m";
+        for (int i = 0; i < renderedSideSize; ++i){
+            if (i%2 == 0) {
+                std::cout << "\033[37m--";
+            }
+            else {
+                std::cout << "\033[37m --";
+            }
+
+            for (int j = 0; j < renderedSideSize; ++j) {
+
+                const vec2i insectPos{i,j};
+
+                const Insect * insect = map.getInsectAt(insectPos);
+
+                if (insect){
+                    if (currentPlayer_.getInputs().getStart() == insectPos){
+                        if (currentPlayer_.getInputs().isStartSelected()){
+                            std::cout << "\033[92m" << insect->getPV() << "\033[37m --";
+                        }
+                        else{
+                            std::cout << "\033[35m" << insect->getPV() << "\033[37m --";
+                        }
+                    }
+                    else if (currentPlayer_.getInputs().getDestination() == insectPos){
+                        if (!currentPlayer_.getInputs().isDestinationSelected()){
+                            std::cout << "\033[35m" << insect->getPV() << "\033[37m --";
+                        }
+                    }
+                    else{
+                        std::cout << insect->getPV() << "--";
+                    }
+                }
+                else{
+                    if (currentPlayer_.getInputs().getStart() == insectPos){
+                        if (currentPlayer_.getInputs().isStartSelected()){
+                            std::cout << "\033[92m" << " --" << "\033[37m --";
+                        }
+                        else{
+                            std::cout << "\033[35m" << " --" << "\033[37m --";
+                        }
+                    }
+                    else if (currentPlayer_.getInputs().getDestination() == insectPos){
+                        if (!currentPlayer_.getInputs().isDestinationSelected()){
+                            std::cout << "\033[35m" << " --" << "\033[37m --";
+                        }
+                    }
+                    else{
+                        std::cout << " --";
+                    }
+                }
+
+            }
+
+            std::cout << '\n';
+
+        }
+
+    }
+
+    void render(const Player & currentPlayer_) const{
+        //system("cls");
+        std::cout << '\n';
+        renderDeck1(currentPlayer_);
+        renderMap(currentPlayer_);
+        renderDeck2(currentPlayer_);
+        std::cout << '\n';
     }
 
 
@@ -208,6 +334,7 @@ class GraphicRenderer : public Renderer {
 public:
     explicit GraphicRenderer(const Map &map_, Player* P1_, Player* P2_, int rendered_s_i) : Renderer(map_,P1_,P2_,rendered_s_i) {}
     void displayMap(const Player & currentPlayer_) const override{}
+    void render(const Player & currentPlayer_) const override{}
 };
 
 #endif // HIVE_RENDERER_H

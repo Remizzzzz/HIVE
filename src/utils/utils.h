@@ -30,9 +30,6 @@ public:
     };
 
     /** Comparaison entre vecteurs */
-    bool operator==(vec2i const & v_) const {
-        return i == v_.i && j == v_.j;
-    };
     bool operator!=(vec2i const & v_) const {
         return i != v_.i || j != v_.j;
     }
@@ -65,6 +62,7 @@ public:
 vec2i operator+(vec2i const & v1_, vec2i const & v2_);
 vec2i operator-(vec2i const & v1_, vec2i const & v2_);
 vec2i operator*(int const & k, vec2i const & v_);
+bool operator==(vec2i const & v1_, vec2i const & v2_);
 std::ostream & operator<<(std::ostream & f_, vec2i const & v_);
 
 class Move {

@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 # Inclure les répertoires nécessaires
 include_directories(.)
+
 add_executable(HIVE
         main.cpp
         src/utils/hiveException.h
@@ -25,7 +26,4 @@ add_executable(HIVE
         src/renderer.h
         src/hive.h
         src/hive.cpp
-        src/features/inputsManager.cpp
-)
-
-
+        src/features/inputsManager.cpp)

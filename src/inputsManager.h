@@ -47,22 +47,23 @@ private:
                 }
                 break;
             case 2:
-                if (i_ + j_ > 0){
-                    inputs.setDestionationIndex((inputs.getDestinationIndex() + 1) % inputs.getPossibleDestinationsNumber());
+                std::cout << "laaaaa";
+                if (inputs.getPossibleDestinationsNumber() > 1){
+                    if (i_ + j_ > 0){
+                        inputs.setDestionationIndex((inputs.getDestinationIndex() + 1) % inputs.getPossibleDestinationsNumber());
+                    }
+                    else{
+                        inputs.setDestionationIndex(((inputs.getDestinationIndex() - 1) < 0) * (inputs.getPossibleDestinationsNumber() - 1) +
+                                                            ((inputs.getDestinationIndex() - 1) >= 0) * (inputs.getDestinationIndex() - 1));
+                    }
                 }
-                else{
-                    inputs.setDestionationIndex((inputs.getDestinationIndex() - 1) % inputs.getPossibleDestinationsNumber());
-                }
+
                 break;
 
             default:
                 throw HiveException("inputsManager.h:InputsManager:moveCursor", "cursorId_ invalid");
                 break;
         }
-    }
-
-    void updatePossibleMovements(Player & player_){
-
     }
 
 public:
@@ -139,6 +140,7 @@ public:
             switch (key) {
                 case 13:
                     if (!inputs.isStartSelected()){
+                        std::cout << "here";
                         inputs.selectStart();
                         inputs.needPossibleDestinationsUpdate();
                     }

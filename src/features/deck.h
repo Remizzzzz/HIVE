@@ -12,6 +12,8 @@
 #include "../utils/hiveException.h"
 
 class Player;
+class Solver;
+
 
 class Deck{
 
@@ -20,10 +22,13 @@ private:
     int insectNb = 0;
 
     friend class Player;
+    friend class Solver;
 
 public:
     Deck() = default;
+
     const std::vector<Insect *>* getInsects() const {return &insects;}
+
     // Classe interne pour l'itérateur
     class Iterator {
     public:
@@ -51,10 +56,37 @@ public:
             return current != other.current;
         }
 
-
-
     private:
         std::vector<Insect *>::iterator current;
+    };
+    class ConstIterator {
+    public:
+        // Constructeur
+        explicit ConstIterator(std::vector<Insect *>::const_iterator it) : current(it) {}
+
+        // Opérateur de déréférencement
+        const Insect * operator*() const {
+            return *current;
+        }
+
+        // Opérateur d'incrémentation préfixé
+        ConstIterator& operator++() {
+            ++current;
+            return *this;
+        }
+
+        // Opérateur de comparaison (égalité)
+        bool operator==(const ConstIterator& other) const {
+            return current == other.current;
+        }
+
+        // Opérateur de comparaison (inégalité)
+        bool operator!=(const ConstIterator& other) const {
+            return current != other.current;
+        }
+
+    private:
+        std::vector<Insect *>::const_iterator current;
     };
 
     Iterator begin() {
@@ -63,6 +95,14 @@ public:
 
     Iterator end() {
         return Iterator(insects.begin() + insectNb);
+    }
+
+    ConstIterator begin() const {
+        return ConstIterator(insects.cbegin());
+    }
+
+    ConstIterator end() const {
+        return ConstIterator(insects.cbegin() + insectNb);
     }
 
     const int & getInsectNb() const{
@@ -94,6 +134,8 @@ public:
     }
 
     bool isIndexValid(const int & index_) const{
+        std::cout << '(' << insectNb << "," << index_ << ')';
+        std::cout << (index_ >= 0 && index_ < insectNb);
         return index_ >= 0 && index_ < insectNb ;
     }
 

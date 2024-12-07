@@ -21,10 +21,11 @@ class Insect{
     //bool relie_ruche   sûr qu'on en ai besoin?
     static int counter; // pour définir les identifiants à init dans le .cpp
     //static int const max_instance = MI; // A voir si utile
+    char PV;
 
 
 public:
-    Insect( bool col, insectType type) : id(counter++), iT(type), color(col),coordinates({-1,-1}) {};//Ici -1 c'est pour NULL, mais la valeur doit être int
+    Insect( bool col, insectType type, char PV_) : id(counter++), iT(type), color(col),coordinates({-1,-1}), PV(PV_) {};//Ici -1 c'est pour NULL, mais la valeur doit être int
 
     int  getID() const { return id; }
     int  getIT() const { return iT; }
@@ -35,12 +36,16 @@ public:
     //static int  get_max_instance() { return max_instance; }// A voir si utile
 
 
+    const char & getPV() const {
+        return PV;
+    }
+
     [[nodiscard]] virtual std::string getPrintableValue(int idColor) const
     {
         if(idColor == 0)
         {
             std::string color;
-            if(getColor() == true ) {
+            if(getColor()) {
                 color = "\033[34m";
             }else {
                 color = "\033[31m";
@@ -62,7 +67,7 @@ public:
 
 class Bee : public virtual Insect {
 public://test
-    Bee(bool col) : Insect(col, bee) {}
+    Bee(bool col) : Insect(col, bee, 'Q') {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
     bool isCircled(Map &m);
     [[nodiscard]] std::string getPrintableValue(int idColor) const override
@@ -112,7 +117,7 @@ class Beetle : public virtual Insect {
     const Insect* isAboveOf = nullptr;
 
 public:
-    Beetle(const bool col) : Insect(col, beetle) {}
+    Beetle(const bool col) : Insect(col, beetle, 'B') {}
     const Insect* getInsectUnder() const {
         return isAboveOf;
     }
@@ -163,7 +168,7 @@ public:
 
 class Grasshopper : public virtual Insect {
 public:
-    Grasshopper(bool col) : Insect(col, grasshopper) {}
+    Grasshopper(bool col) : Insect(col, grasshopper, 'G') {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
     [[nodiscard]] std::string getPrintableValue(int idColor) const override
     {
@@ -207,7 +212,7 @@ public:
 
 class Spider : public virtual Insect {
 public:
-    Spider(bool col) : Insect(col, spider) {}
+    Spider(bool col) : Insect(col, spider, 'S') {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
     [[nodiscard]] std::string getPrintableValue(int idColor) const override
     {
@@ -251,7 +256,7 @@ public:
 
 class Ant : public virtual Insect {
 public:
-    Ant(bool col) : Insect(col, ant) {}
+    Ant(bool col) : Insect(col, ant, 'A') {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
     [[nodiscard]] std::string getPrintableValue(int idColor) const override
     {
@@ -297,7 +302,7 @@ class Mosquitoe : public virtual Insect, public virtual Ant, public virtual Bee,
 public virtual Beetle, public virtual Spider  {
 public:
     Mosquitoe(bool col)
-        : Insect(col, mosquitoe), Ant(col), Bee(col), Grasshopper(col), Beetle(col), Spider(col) {}
+        : Insect(col, mosquitoe, 'M'), Ant(col), Bee(col), Grasshopper(col), Beetle(col), Spider(col) {}
 
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
     [[nodiscard]] std::string getPrintableValue(int idColor) const override
@@ -342,7 +347,7 @@ public:
 
 class Ladybug : public virtual Insect {
 public:
-    Ladybug(bool col) : Insect(col, ladybug) {}
+    Ladybug(bool col) : Insect(col, ladybug, 'L') {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
     [[nodiscard]] std::string getPrintableValue(int idColor) const override
     {

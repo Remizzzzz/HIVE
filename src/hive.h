@@ -48,16 +48,23 @@ private:
 
     void generateAllInsects(){
 
+        int cpt1 = 0;
+        int cpt2 = 0;
+
         for (int i = 0; i < 6; ++i) {
             bool color = bool(int (float (i) / 3.f));
             Insect * insect = new Ant(color);
             insects.push_back(insect);
 
             if (color){
+                insect->setCoordinates({-1,cpt1});
                 player1.deck.addInsect(insect);
+                cpt1++;
             }
             else{
+                insect->setCoordinates({renderedMapSideSize,cpt2});
                 player2.deck.addInsect(insect);
+                cpt2++;
             }
         }
 
@@ -68,10 +75,14 @@ private:
             insects.push_back(insect);
 
             if (color){
+                insect->setCoordinates({-1,cpt1});
                 player1.deck.addInsect(insect);
+                cpt1++;
             }
             else{
+                insect->setCoordinates({renderedMapSideSize,cpt2});
                 player2.deck.addInsect(insect);
+                cpt2++;
             }
         }
 
@@ -82,10 +93,14 @@ private:
             insects.push_back(insect);
 
             if (color){
+                insect->setCoordinates({-1,cpt1});
                 player1.deck.addInsect(insect);
+                cpt1++;
             }
             else{
+                insect->setCoordinates({renderedMapSideSize,cpt2});
                 player2.deck.addInsect(insect);
+                cpt2++;
             }
         }
 
@@ -95,10 +110,14 @@ private:
             insects.push_back(insect);
 
             if (color){
+                insect->setCoordinates({-1,cpt1});
                 player1.deck.addInsect(insect);
+                cpt1++;
             }
             else{
+                insect->setCoordinates({renderedMapSideSize,cpt2});
                 player2.deck.addInsect(insect);
+                cpt2++;
             }
         }
 
@@ -109,10 +128,14 @@ private:
             insects.push_back(insect);
 
             if (color){
+                insect->setCoordinates({-1,cpt1});
                 player1.deck.addInsect(insect);
+                cpt1++;
             }
             else{
+                insect->setCoordinates({renderedMapSideSize,cpt2});
                 player2.deck.addInsect(insect);
+                cpt2++;
             }
         }
 
@@ -123,10 +146,14 @@ private:
             insects.push_back(insect);
 
             if (color){
+                insect->setCoordinates({-1,cpt1});
                 player1.deck.addInsect(insect);
+                cpt1++;
             }
             else{
+                insect->setCoordinates({renderedMapSideSize,cpt2});
                 player2.deck.addInsect(insect);
+                cpt2++;
             }
         }
 
@@ -137,10 +164,14 @@ private:
             insects.push_back(insect);
 
             if (color){
+                insect->setCoordinates({-1,cpt1});
                 player1.deck.addInsect(insect);
+                cpt1++;
             }
             else{
+                insect->setCoordinates({renderedMapSideSize,cpt2});
                 player2.deck.addInsect(insect);
+                cpt2++;
             }
         }
 
@@ -186,6 +217,7 @@ public:
     void changeSettings();
     void saveGame(const std::string& filename)const;
     void loadGame();
+
     int initIfNeeded(){
         if (!isInit){
             if (displayMenu() == 1){
@@ -194,7 +226,7 @@ public:
                 }
                 generateAllInsects();
                 std::cout << insects.size();
-                renderer->displayMap(*currentPlayer);
+                renderer->render(*currentPlayer);
                 isInit = true;
                 return 1;
             }
@@ -218,18 +250,20 @@ public:
             inputsManager.updateAIInputs(*currentPlayer);
         }
 
-        std::cout << "\n:" <<currentPlayer->inputs.getStart();
+        std::cout << "\n:" <<currentPlayer->inputs;
 
         switch (solver.update(*currentPlayer)) {
-            case 0:
+            case -1:
+                std::cout << "\n---Reset---\n";
                 //le mouvement est pas bon
                 resetInputs(*currentPlayer);
                 break;
-            case 1:
+            case 0:
                 //Le travail est en cours
                     break;
-            case 2:
+            case 1:
                 //mouvement fait
+                std::cout << "\n---Deplacement---\n";
                 resetInputs(*currentPlayer);
                 switchPlayer();
                 break;
@@ -238,7 +272,7 @@ public:
         }
         std::cout << "\n:" <<currentPlayer->inputs.getStart();
 
-        renderer->displayMap(*currentPlayer);
+        renderer->render(*currentPlayer);
 
         return 1;
     }
