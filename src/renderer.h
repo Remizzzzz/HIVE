@@ -65,31 +65,88 @@ public:
      * @brief Affiche une ligne de cellules avec des insectes ou des cases vides.
      * @param rowIndex L'indice de la ligne à afficher.
      */
-    void displayRow(size_t rowIndex, vec2i start) const {
-
-        for (size_t col = 1; col < renderedSideSize+1; ++col) {
-            vec2i pos(static_cast<int>(rowIndex), static_cast<int>(col));
-            if(pos.getI()==start.getI()+1 && pos.getJ()==start.getJ()+1)
-            {
-                const Insect *slot = map.getInsectAt(pos);
-                if (getSlotContent(slot, 0)==".") {
-                    std::cout << " " << getSlotContent(slot,1) << "  ";  // Trois espaces pour espacer les cases
-                } else {
-                    std::cout << "" << getSlotContent(slot,1) << "  ";// Seulement deux espaces
+    void displayRow(size_t rowIndex, vec2i start,vec2i cursorAfterSelection, std::vector<vec2i> vectorPossibles) const {
+        // si le seul curseur a afficher est le vec2i start
+        if(cursorAfterSelection.getI()==-1 || cursorAfterSelection.getJ()==-1)
+        {
+            for (size_t col = 1; col < renderedSideSize+1; ++col) {
+                vec2i pos(static_cast<int>(rowIndex), static_cast<int>(col));
+                if(pos.getI()==start.getI()+1 && pos.getJ()==start.getJ()+1)
+                {
+                    const Insect *slot = map.getInsectAt(pos);
+                    if (getSlotContent(slot, 0)==".") {
+                        std::cout << " " << getSlotContent(slot,1) << "  ";  // Trois espaces pour espacer les cases
+                    } else {
+                        std::cout << "" << getSlotContent(slot,1) << "  ";// Seulement deux espaces
+                    }
                 }
-            }
-            else
-            {
-                const Insect *slot = map.getInsectAt(pos);
+                else
+                {
+                    const Insect *slot = map.getInsectAt(pos);
 
-                // Affiche le contenu de la cellule sans espace supplémentaire
-                if (getSlotContent(slot,0)==".") {
-                    std::cout << " " << getSlotContent(slot,0) << "  ";  // Trois espaces pour espacer les cases
-                } else {
-                    std::cout << "" << getSlotContent(slot,0) << "  ";// Seulement deux espaces
+                    // Affiche le contenu de la cellule sans espace supplémentaire
+                    if (getSlotContent(slot,0)==".") {
+                        std::cout << " " << getSlotContent(slot,0) << "  ";  // Trois espaces pour espacer les cases
+                    } else {
+                        std::cout << "" << getSlotContent(slot,0) << "  ";// Seulement deux espaces
+                    }
                 }
             }
         }
+        else
+        //sinon on prend en compte tous les affichages
+        {
+            for (size_t col = 1; col < renderedSideSize+1; ++col) {
+                vec2i pos(static_cast<int>(rowIndex), static_cast<int>(col));
+                if(pos.getI()==start.getI()+1 && pos.getJ()==start.getJ()+1)
+                {
+                    // est l'ancien pointeur actif
+                    const Insect *slot = map.getInsectAt(pos);
+                    if (getSlotContent(slot, 0)==".") {
+                        std::cout << " " << getSlotContent(slot,2) << "  ";  // Trois espaces pour espacer les cases
+                    } else {
+                        std::cout << "" << getSlotContent(slot,2) << "  ";// Seulement deux espaces
+                    }
+                }
+                else if(pos.getI()==cursorAfterSelection.getI()+1 && pos.getJ()==cursorAfterSelection.getJ()+1)
+                {
+                    const Insect *slot = map.getInsectAt(pos);
+                    if (getSlotContent(slot, 0)==".") {
+                        std::cout << " " << getSlotContent(slot,1) << "  ";  // Trois espaces pour espacer les cases
+                    } else {
+                        std::cout << "" << getSlotContent(slot,1) << "  ";// Seulement deux espaces
+                    }
+                }
+                else
+                {
+                    for(auto it = vectorPossibles.begin(); it != vectorPossibles.end(); ++it)
+                    {
+                        if(*it == pos)
+                        {
+                            const Insect *slot = map.getInsectAt(pos);
+                            // Affiche le contenu de la cellule sans espace supplémentaire
+                            if (getSlotContent(slot,0)==".") {
+                                std::cout << " " << getSlotContent(slot,3) << "  ";  // Trois espaces pour espacer les cases
+                            } else {
+                                std::cout << "" << getSlotContent(slot,3) << "  ";// Seulement deux espaces
+                            }
+                        }
+                        else
+                        {
+                            const Insect *slot = map.getInsectAt(pos);
+                            // Affiche le contenu de la cellule sans espace supplémentaire
+                            if (getSlotContent(slot,0)==".") {
+                                std::cout << " " << getSlotContent(slot,0) << "  ";  // Trois espaces pour espacer les cases
+                            } else {
+                                std::cout << "" << getSlotContent(slot,0) << "  ";// Seulement deux espaces
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
     }
 
     /**
@@ -130,7 +187,7 @@ public:
         }
     }
 
-    void displayMap(const Player & currentPlayer_) const override{
+    void displayMap(const Player & currentPlayer_) const {
         system("cls"); // clear console windows
         std::cout << "\033[2J\033[1;1H";  // clear console linux
         displayDeck(P1,0);
@@ -141,7 +198,16 @@ public:
             displayIndentation(row);
 
             // Affiche la ligne actuelle
-            displayRow(row, currentPlayer_.getInputs().getStart());         // A finir
+            if(currentPlayer_.getInputs().isPossibleDestinationsNeeded() || currentPlayer_.getInputs().getPossibleDestinations().empty())
+            {
+                std::vector<vec2i> vec;
+                displayRow(row, currentPlayer_.getInputs().getStart(), vec2i(-1,-1), vec);
+            }
+            else
+            {
+                displayRow(row, currentPlayer_.getInputs().getStart(), currentPlayer_.getInputs().getDestination(),currentPlayer_.getInputs().getPossibleDestinations());         // A finir
+
+            }
 
             // Affiche un saut de ligne pour séparer les lignes
             std::cout << "\n";
