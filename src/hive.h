@@ -194,11 +194,11 @@ private:
 
 public:
     Hive() : mode(PvP), version(console),
-                insects(),
-                rewindNb(1), map(trueMapSideSize,rewindNb),
-                player1(1), player2(2), currentPlayer(&player1),
-                inputsManager(mode, renderedMapSideSize, map),
-                solver(map, trueMapSideSize),renderer( nullptr){}
+             insects(),
+             rewindNb(1), map(trueMapSideSize,rewindNb),
+             player1(1), player2(2), currentPlayer(&player1),
+             inputsManager(mode, renderedMapSideSize, map),
+             solver(map, renderedMapSideSize),renderer( nullptr){}
 
     /*Hive(Mode mode_, Version version_, int rewindNb_ = 3)
             :   mode(mode_), version(version_),
@@ -260,7 +260,7 @@ public:
                 break;
             case 0:
                 //Le travail est en cours
-                    break;
+                break;
             case 1:
                 //mouvement fait
                 std::cout << "\n---Deplacement---\n";
