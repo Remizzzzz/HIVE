@@ -153,9 +153,11 @@ public:
     void renderDeck1(const Player & currentPlayer_) const{
         std::cout << "\033[31m";
         if (currentPlayer_.getInputs().getStart().getI() == -1){
+            std::cout << "caca";
             for(const auto & insect: P1->getDeck()){
-                std::cout << "caca"
+                std::cout << insect->getCoordinates();
                 if (insect->getCoordinates().getJ() == currentPlayer_.getInputs().getStart().getJ()){
+                    std::cout << "caca2";
                     if (currentPlayer_.getInputs().isStartSelected()){
                         std::cout << "\033[92m" << insect->getPV() << "\033[31m ";
                     }
@@ -207,14 +209,21 @@ public:
         std::cout << "\n\033[37m";
     }
 
+    bool isVec2iInVector(const std::vector<vec2i> & vector_, const vec2i & vec2i_) const{
+        for(const auto & elt : vector_){
+            if (elt == vec2i_) return true;
+        }
+        return false;
+    }
+
     void renderMap(const Player & currentPlayer_) const{
         std::cout << "\033[37m";
         for (int i = 0; i < renderedSideSize; ++i){
             if (i%2 == 0) {
-                std::cout << "\033[37m--";
+                std::cout << "\033[37m  -";
             }
             else {
-                std::cout << "\033[37m --";
+                std::cout << "\033[37m-";
             }
 
             for (int j = 0; j < renderedSideSize; ++j) {
@@ -226,43 +235,54 @@ public:
                 if (insect){
                     if (currentPlayer_.getInputs().getStart() == insectPos){
                         if (currentPlayer_.getInputs().isStartSelected()){
-                            std::cout << "\033[92m" << insect->getPV() << "\033[37m --";
+                            std::cout << "\033[92m-" << insect->getPV() << "-\033[37m";
                         }
                         else{
-                            std::cout << "\033[35m" << insect->getPV() << "\033[37m --";
+                            std::cout << "\033[35m-" << insect->getPV() << "-\033[37m";
                         }
                     }
                     else if (currentPlayer_.getInputs().getDestination() == insectPos){
                         if (!currentPlayer_.getInputs().isDestinationSelected()){
-                            std::cout << "\033[35m" << insect->getPV() << "\033[37m --";
+                            std::cout << "\033[35m-" << insect->getPV() << "-\033[37m";
                         }
                     }
+                    else if (isVec2iInVector(currentPlayer_.getInputs().getPossibleDestinations(), insectPos)){
+                        std::cout << "\033[33m-" << insect->getPV() << "-\033[37m";
+                    }
                     else{
-                        std::cout << insect->getPV() << "--";
+                        if (insect->getColor()) {
+                            std::cout << "\033[31m-" << insect->getPV() << "-\033[37m";
+                        }
+                        else{
+                            std::cout << "\033[34m-" << insect->getPV() << "-\033[37m";
+                        }
                     }
                 }
                 else{
                     if (currentPlayer_.getInputs().getStart() == insectPos){
                         if (currentPlayer_.getInputs().isStartSelected()){
-                            std::cout << "\033[92m" << " --" << "\033[37m --";
+                            std::cout << "\033[92m-" << "  " << "-\033[37m";
                         }
                         else{
-                            std::cout << "\033[35m" << " --" << "\033[37m --";
+                            std::cout << "\033[35m-" << "  " << "-\033[37m";
                         }
                     }
                     else if (currentPlayer_.getInputs().getDestination() == insectPos){
                         if (!currentPlayer_.getInputs().isDestinationSelected()){
-                            std::cout << "\033[35m" << " --" << "\033[37m --";
+                            std::cout << "\033[35m-" << "  " << "-\033[37m";
                         }
                     }
+                    else if (isVec2iInVector(currentPlayer_.getInputs().getPossibleDestinations(), insectPos)){
+                        std::cout << "\033[33m-" << "  " << "-\033[37m";
+                    }
                     else{
-                        std::cout << " --";
+                        std::cout << "-  -";
                     }
                 }
 
             }
 
-            std::cout << '\n';
+            std::cout << "-\n";
 
         }
 

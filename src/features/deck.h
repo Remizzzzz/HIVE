@@ -141,6 +141,7 @@ public:
 
     void removeAt(const int & index_){
         insectNb--;
+        insects[insectNb]->setCoordinates({insects[insectNb]->getCoordinates().getI(),index_});
         insects[index_] = insects[insectNb];
         insects[insectNb] = nullptr;
     }
