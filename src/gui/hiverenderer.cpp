@@ -3,6 +3,7 @@
 #include "./ui_hiverenderer.h"
 #include <QPixmap>
 #include <QIcon>
+#include "hive.h"
 hiveRenderer::hiveRenderer(QWidget *parent)
     : QMainWindow(parent),
     centralWidget(new QWidget(this)),
@@ -26,6 +27,7 @@ hiveRenderer::hiveRenderer(QWidget *parent)
 
 void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
     int padding = 50;  // padding
+    int xconv=0, yconv=0;
     // ajuste la largeur et la hauteur d'un hexagone en fonction de la taille
     qreal hexWidth = buttonSize * 0.50; // Largeur de l'hexagone (ajustée pour l'espacement)
     qreal hexHeight = buttonSize*1.4;       // Hauteur de l'hexagone
@@ -34,7 +36,8 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
         for (int col = 0; col < cols; ++col) {
             // Créer un bouton hexagonal
             HexagonalButton *button = new HexagonalButton(buttonSize, this);
-            button->setText(QString("%1,%2").arg(row*2).arg(col/2));
+            button->setText(QString("%1,%2").arg(xconv).arg(yconv));
+
 
             // Décalage des colonnes impaires pour un motif hexagonal
             int offset = (col % 2 == 0) ? 0 : hexHeight / 2;
@@ -50,7 +53,15 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
             // Connecter le bouton à son slot
             connect(button, &QPushButton::clicked, this, &hiveRenderer::handleButtonClick);
             buttons[row][col]=button;
+            if (col%2 == 1) {
+                xconv--;
+                yconv++;
+            } else {
+                xconv++;
+            }
         }
+        xconv+=2;
+        yconv=0;
     }
 }
 
