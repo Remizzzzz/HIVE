@@ -54,7 +54,7 @@ public:
     }
 
     /**
-     * @brief \n put in the slot on position pos_ the instect instect_
+     * @brief \n put in the slot on position pos_ the insect insect_
      * @param insect_ : insect to put
      * @param pos_ : position of the slot in which the insect will be put
      */
@@ -67,6 +67,13 @@ public:
 
     const int & getSideSize() const{
         return sideSize;
+    }
+    const vec2i getRelativePos() const{
+        return relativePos;
+    }
+
+    std::vector<const Insect *> getSlots() const{
+        return slots;
     }
 
     /**
@@ -131,6 +138,10 @@ public:
             historic.pop_front();               // Erase the head of historic again (here, the move we just rewinded)
         }
     }
+
+    // Il faut appeler updateBeetlePosition à la place de moveInsect SI la pièce est un scarabée.
+    // updateBeetlePosition permet de gérer la mise à jour de l'attribut isAboveOf et de déplacer le scarabée.
+    void updateBeetlePosition(Beetle *beetle, const vec2i &newPos);
 
 //------- ANTI MAP EXIT -------
 private:
@@ -320,7 +331,7 @@ private:
             for(nCol=1; nCol<31;nCol++)
             {
                 if(size_t index = nRow*32 + nCol && slots[index] != nullptr) {
-                    std::cout << "|" << slots[index]->getPrintableValue() << "|";
+                    std::cout << "|" << slots[index]->getPrintableValue(0) << "|";
                 } else {
                     std::cout << "|  |";
                 }

@@ -1,6 +1,6 @@
-# Ignorer tout par défaut
 *
-# Inclure uniquement les fichiers nécessaires au projet HIVE
-!main.cpp
+
 !src
+!CMakeLists.txt
 !src/**
+!.gitignore
