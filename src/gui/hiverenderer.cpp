@@ -34,7 +34,7 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
         for (int col = 0; col < cols; ++col) {
             // Créer un bouton hexagonal
             HexagonalButton *button = new HexagonalButton(buttonSize, this);
-            button->setText(QString("%1,%2").arg(row).arg(col));
+            button->setText(QString("%1,%2").arg(row*2).arg(col/2));
 
             // Décalage des colonnes impaires pour un motif hexagonal
             int offset = (col % 2 == 0) ? 0 : hexHeight / 2;
