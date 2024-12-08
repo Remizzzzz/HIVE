@@ -4,4 +4,5 @@
 !CMakeLists.txt
 !src/**
 !.gitignore
-!assets/
+!assets
+!assets/ant.PNG
