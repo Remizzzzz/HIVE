@@ -30,6 +30,7 @@ void HexagonalButton::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     QPen pen(Qt::black,2);
     painter.setPen(pen);
+    qDebug() << "Painting button: currentEvent=" << currentEvent << "iT=" << iT;
     // Définir la couleur en fonction de l'état
     switch (currentEvent) {
     case 0: // La case est un insecte
@@ -44,12 +45,29 @@ void HexagonalButton::paintEvent(QPaintEvent *event) {
     default:
         break;
     }
-
     painter.setRenderHint(QPainter::Antialiasing);
     painter.drawPolygon(hexagon);
+    if (iT==ant) {
+        QPixmap buttonImage("C:/Users/rzong/Desktop/UTC/Cours/GI01/LO21/Projet/HIVE/src/gui/assets/ant.PNG");
+        if (buttonImage.isNull()) {
+            qDebug() << "Failed to load image!";
+            return;  // Évitez de dessiner si l'image est invalide
+        }
+        QSize newSize(25, 25);
+        // Redimensionner l'image pour qu'elle s'adapte au bouton
+        QSize buttonSize = rect().size(); // Taille du bouton
+        QPixmap scaledImage = buttonImage.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+        // Calculer la position centrale pour afficher l'image
+        QPoint center = rect().center();
+        QPoint topLeft(3, center.y() - scaledImage.height() / 2);
+
+        painter.drawPixmap(topLeft, scaledImage);
+    }
 }
 void HexagonalButton::setInsectType(insectType IT){
     iT=IT;
+    update();
 }
 
 insectType HexagonalButton::getInsectType(){ return iT;}

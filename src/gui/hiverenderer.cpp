@@ -1,7 +1,8 @@
 #include "hiverenderer.h"
 #include "hexagonalbutton.h"
 #include "./ui_hiverenderer.h"
-
+#include <QPixmap>
+#include <QIcon>
 hiveRenderer::hiveRenderer(QWidget *parent)
     : QMainWindow(parent),
     centralWidget(new QWidget(this)),
@@ -54,7 +55,7 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
 }
 
 void hiveRenderer::setupDeck(int buttonSize){
-    int sizeDeck=12;
+    int sizeDeck=11;
     for (int num=0;num<2;num++){
 
         if (num==0) {
@@ -69,15 +70,28 @@ void hiveRenderer::setupDeck(int buttonSize){
             // Créer un bouton hexagonal
             HexagonalButton *button = new HexagonalButton(buttonSize, this);
             button->setText(QString("%1").arg(num*(-13)+i-13));
-            button->setInsectType(bee);
             qreal x = num*35*buttonSize+60;
             qreal y = i*buttonSize+100;
+            QPixmap pixmap(":/assets/ant.png"); // Remplacez par le chemin de votre image
+            button->setIcon(QIcon(pixmap));
+            button->setIconSize(pixmap.size());
             button->setParent(centralWidget);
             button->move(x,y);
             button->updateState(0);//Le bouton est un insecte
             connect(button,&QPushButton::clicked, this, &hiveRenderer::handleButtonClick);
-            buttons[30][i+num*12]=button;
+            buttons[30][i+num*sizeDeck]=button;
         }
+        buttons[30][0+num*sizeDeck]->setInsectType(bee);
+        buttons[30][1+num*sizeDeck]->setInsectType(ant);
+        buttons[30][2+num*sizeDeck]->setInsectType(ant);
+        buttons[30][3+num*sizeDeck]->setInsectType(ant);
+        buttons[30][4+num*sizeDeck]->setInsectType(beetle);
+        buttons[30][5+num*sizeDeck]->setInsectType(beetle);
+        buttons[30][6+num*sizeDeck]->setInsectType(grasshopper);
+        buttons[30][7+num*sizeDeck]->setInsectType(grasshopper);
+        buttons[30][8+num*sizeDeck]->setInsectType(grasshopper);
+        buttons[30][9+num*sizeDeck]->setInsectType(spider);
+        buttons[30][10+num*sizeDeck]->setInsectType(spider);
     }
 }
 
@@ -95,10 +109,10 @@ void hiveRenderer::handleButtonClick() {
         if (!getInput()){//Si c'est la deuxième selection
             if (lastClicked!=nullptr){
                 if (lastClicked->getInsectType()!=none){
+                    button->setInsectType(lastClicked->getInsectType());
                     lastClicked->setInsectType(none);
                     lastClicked->updateState(2);//La case devient vide
                     button->updateState(0);
-                    button->setInsectType(bee);
                 }
             }
             lastClicked=nullptr;
