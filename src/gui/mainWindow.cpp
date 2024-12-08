@@ -36,6 +36,7 @@ void MainWindow::openSecondaryWindow()
     // Créer et afficher la fenêtre secondaire
     hiveRenderer *hive = new hiveRenderer();
     hive->show();
+    this->close();
 }
 
 void MainWindow::launchConsoleApp()

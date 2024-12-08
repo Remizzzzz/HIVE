@@ -48,21 +48,22 @@ void HexagonalButton::paintEvent(QPaintEvent *event) {
     painter.setRenderHint(QPainter::Antialiasing);
     painter.drawPolygon(hexagon);
     if (iT==ant) {
-        QPixmap buttonImage("C:/Users/rzong/Desktop/UTC/Cours/GI01/LO21/Projet/HIVE/src/gui/assets/ant.PNG");
+        QPixmap buttonImage("../assets/ant.PNG");
+
         if (buttonImage.isNull()) {
-            qDebug() << "Failed to load image!";
-            return;  // Évitez de dessiner si l'image est invalide
+            painter.setBrush(QBrush(Qt::blue));
+            painter.drawPolygon(hexagon);
+        } else {
+            QSize newSize(25, 25);
+            // Redimensionner l'image pour qu'elle s'adapte au bouton
+            QPixmap scaledImage = buttonImage.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+            // Calculer la position centrale pour afficher l'image
+            QPoint center = rect().center();
+            QPoint topLeft(3, center.y() - scaledImage.height() / 2);
+
+            painter.drawPixmap(topLeft, scaledImage);
         }
-        QSize newSize(25, 25);
-        // Redimensionner l'image pour qu'elle s'adapte au bouton
-        QSize buttonSize = rect().size(); // Taille du bouton
-        QPixmap scaledImage = buttonImage.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
-        // Calculer la position centrale pour afficher l'image
-        QPoint center = rect().center();
-        QPoint topLeft(3, center.y() - scaledImage.height() / 2);
-
-        painter.drawPixmap(topLeft, scaledImage);
     }
 }
 void HexagonalButton::setInsectType(insectType IT){
