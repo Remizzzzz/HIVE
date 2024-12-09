@@ -69,7 +69,7 @@
 
             case 3:  // Resume game
                 std::cout << "Resuming the last game...\n";
-                loadGame();
+                loadGame("hive_parameters");
                 break;
 
             case 4:  // Change parameters
@@ -79,7 +79,7 @@
 
             case 5:  // Save game
                 std::cout << "Saving...\n";
-                saveGame("hive_parameters");
+                saveGame("hive_game");
                 break;
             case 6:  // Leave
                 std::cout << "Au revoir !\n";
@@ -195,8 +195,90 @@ void Hive::changeSettings() {
     } while (choice != 4);
 }
 //void saveGame(){}
-void Hive::loadGame(){}
+//void Hive::loadGame(){}
 
+/*void Hive::loadGame(const std::string& filename) {
+    std::ifstream inFile(filename, std::ios::binary);
+
+    if (!inFile.is_open()) {
+        throw std::runtime_error("Impossible d'ouvrir le fichier pour le chargement : " + filename);
+    }
+        // Chargement des attributs de Hive
+    inFile.read(reinterpret_cast<char *>(&version), sizeof(version));
+    inFile.read(reinterpret_cast<char *>(&rewindNb), sizeof(rewindNb));
+
+    // Chargement des joueurs
+    for (Player& player : {player1, player2}) {
+        inFile.read(reinterpret_cast<char*>(&player.deck), sizeof(player.deck));
+        inFile.read(reinterpret_cast<char*>(&player.id), sizeof(player.id));
+        inFile.read(reinterpret_cast<char*>(&player.isHuman), sizeof(player.isHuman));
+        inFile.read(reinterpret_cast<char*>(&player.name), sizeof(player.name));
+
+        // Chargement du deck
+        size_t deckSize;
+        inFile.read(reinterpret_cast<char*>(&deckSize), sizeof(deckSize));
+
+        // Chargement des insectes du deck
+        for (size_t i = 0; i < deckSize; ++i) {
+            int insectId;
+            inFile.read(reinterpret_cast<char*>(&insectId), sizeof(insectId));
+            // Utilisez l'ID pour récupérer l'insecte dans votre collection d'insectes
+            // player.getDeck().addInsect(insectId); // Si vous avez une méthode pour ajouter l'insecte au deck
+        }
+
+        // Chargement des insectes actifs
+        size_t activeInsectsCount;
+        inFile.read(reinterpret_cast<char*>(&activeInsectsCount), sizeof(activeInsectsCount));
+        for (size_t i = 0; i < activeInsectsCount; ++i) {
+            int insectId;
+            inFile.read(reinterpret_cast<char*>(&insectId), sizeof(insectId));
+            // Ajoutez l'insecte actif en utilisant l'ID (si vous avez une méthode pour cela)
+            // player.addActiveInsect(insectId);
+        }
+    }
+
+    // Chargement des insectes globaux
+    size_t insectCount;
+    inFile.read(reinterpret_cast<char*>(&insectCount), sizeof(insectCount));
+    for (size_t i = 0; i < insectCount; ++i) {
+        int id2, coorI, coorJ;
+        bool col;
+        inFile.read(reinterpret_cast<char*>(&id2), sizeof(id2));
+        inFile.read(reinterpret_cast<char*>(&col), sizeof(col));
+        inFile.read(reinterpret_cast<char*>(&coorI), sizeof(coorI));
+        inFile.read(reinterpret_cast<char*>(&coorJ), sizeof(coorJ));
+
+        // Créez et ajoutez l'insecte avec les informations lues
+        // Insect* insect = createInsect(id2, col, coorI, coorJ); // Exemple de création d'un insecte
+        // insects.push_back(insect); // Ajoutez l'insecte au conteneur
+    }
+
+    // Chargement de la carte
+    size_t slotCount;
+    inFile.read(reinterpret_cast<char*>(&slotCount), sizeof(slotCount));
+    for (size_t i = 0; i < slotCount; ++i) {
+        int insectId;
+        inFile.read(reinterpret_cast<char*>(&insectId), sizeof(insectId));
+        // Ajoutez l'insecte dans le slot correspondant (ou affectez l'ID de l'insecte)
+        // map.addInsectToSlot(insectId, i); // Exemple de méthode pour ajouter un insecte à une case de la carte
+    }
+
+    // Chargement de la position relative de la carte
+    vec2i relativePos;
+    inFile.read(reinterpret_cast<char*>(&relativePos), sizeof(relativePos));
+
+    // Chargement de la taille de la carte
+    int sideSize;
+    inFile.read(reinterpret_cast<char*>(&sideSize), sizeof(sideSize));
+
+    // Si vous avez des fonctions pour définir la carte avec ces valeurs :
+    // map.setRelativePos(relativePos);
+    // map.setSideSize(sideSize);
+
+    inFile.close();
+}
+
+*/
 
 
 
@@ -210,8 +292,6 @@ void Hive::saveGame(const std::string& filename) const {
     // Sauvegarde des attributs de Hive
     outFile.write(reinterpret_cast<const char*>(&mode), sizeof(mode));
     outFile.write(reinterpret_cast<const char*>(&version), sizeof(version));
-    outFile.write(reinterpret_cast<const char*>(&trueMapSideSize), sizeof(trueMapSideSize));
-        outFile.write(reinterpret_cast<const char*>(&renderedMapSideSize), sizeof(renderedMapSideSize));
     outFile.write(reinterpret_cast<const char*>(&rewindNb), sizeof(rewindNb));
 
     // Sauvegarde des joueurs
