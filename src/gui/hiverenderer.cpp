@@ -39,8 +39,8 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
             // Créer un bouton hexagonal
             HexagonalButton *button = new HexagonalButton(buttonSize, this);
             button->setText(QString("%1,%2").arg(xconv).arg(yconv));
-
-
+            vec2i pos(xconv, yconv);
+            button->setCoordinates(pos);
             // Décalage des colonnes impaires pour un motif hexagonal
             int offset = (col % 2 == 0) ? 0 : hexHeight / 2;
 
@@ -134,6 +134,7 @@ void hiveRenderer::handleButtonClick() {
             if (button->getInsectType()!=none){
                 button->updateState(1); //Insect a été sélectionné
                 lastClicked=button;
+                inputManager->updatePlayerInputsStart()
             } else if (button->getInsectType()==none){
                 lastClicked=nullptr;
             }
