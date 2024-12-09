@@ -6,7 +6,7 @@
 #include "src/hive.h"
 
 #include <conio.h>  // Pour _kbhit() et _getch()
-
+#include <fstream>
 
 int main() {
     /*int sideSize = 8; // Taille de la carte
@@ -28,6 +28,9 @@ int main() {
 
     std::cout << "Appuyez sur Entree pour quitter...";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');*/
+
+
+
 
     bool play = true;
 
@@ -52,3 +55,5 @@ int main() {
 
     return 0;
 }
+
+

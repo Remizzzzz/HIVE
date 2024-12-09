@@ -20,6 +20,17 @@ private:
         vec2i from{};
         vec2i to{};
 
+        // Getter pour 'from'
+        const vec2i& getFrom() const {
+            return from;
+        }
+
+        // Getter pour 'to'
+        const vec2i& getTo() const {
+            return to;
+        }
+
+
         movement(const vec2i & from_, const vec2i & to_) : from(from_), to(to_) {};
         movement() = default;
     };
@@ -68,12 +79,19 @@ public:
     const int & getSideSize() const{
         return sideSize;
     }
+    const int & getRewind() const{
+        return rewind;
+    }
     const vec2i getRelativePos() const{
         return relativePos;
     }
 
     std::vector<const Insect *> getSlots() const{
         return slots;
+    }
+
+    const std::list<movement>& getHistoric() const {
+        return historic;
     }
 
     /**

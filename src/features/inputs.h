@@ -38,6 +38,15 @@ public:
     const vec2i & getStart() const {
         return start;
     }
+    const bool & getStartSelected() const {
+        return startSelected;
+    }
+    const bool & getNeedPossibleDestinations() const {
+        return needPossibleDestinations;
+    }
+    const bool & getDestinationSelected() const {
+        return destinationSelected;
+    }
 
     const int & getDestinationIndex() const{
         return destinationIndex;

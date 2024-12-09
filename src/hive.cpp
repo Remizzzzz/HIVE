@@ -79,7 +79,7 @@
 
             case 5:  // Save game
                 std::cout << "Saving...\n";
-                saveGame("hive_game");
+                saveGame("hive_parameters");
                 break;
             case 6:  // Leave
                 std::cout << "Au revoir !\n";
@@ -194,161 +194,119 @@ void Hive::changeSettings() {
         }
     } while (choice != 4);
 }
-//void saveGame(){}
-//void Hive::loadGame(){}
-
-/*void Hive::loadGame(const std::string& filename) {
-    std::ifstream inFile(filename, std::ios::binary);
-
-    if (!inFile.is_open()) {
-        throw std::runtime_error("Impossible d'ouvrir le fichier pour le chargement : " + filename);
-    }
-        // Chargement des attributs de Hive
-    inFile.read(reinterpret_cast<char *>(&version), sizeof(version));
-    inFile.read(reinterpret_cast<char *>(&rewindNb), sizeof(rewindNb));
-
-    // Chargement des joueurs
-    for (Player& player : {player1, player2}) {
-        inFile.read(reinterpret_cast<char*>(&player.deck), sizeof(player.deck));
-        inFile.read(reinterpret_cast<char*>(&player.id), sizeof(player.id));
-        inFile.read(reinterpret_cast<char*>(&player.isHuman), sizeof(player.isHuman));
-        inFile.read(reinterpret_cast<char*>(&player.name), sizeof(player.name));
-
-        // Chargement du deck
-        size_t deckSize;
-        inFile.read(reinterpret_cast<char*>(&deckSize), sizeof(deckSize));
-
-        // Chargement des insectes du deck
-        for (size_t i = 0; i < deckSize; ++i) {
-            int insectId;
-            inFile.read(reinterpret_cast<char*>(&insectId), sizeof(insectId));
-            // Utilisez l'ID pour récupérer l'insecte dans votre collection d'insectes
-            // player.getDeck().addInsect(insectId); // Si vous avez une méthode pour ajouter l'insecte au deck
-        }
-
-        // Chargement des insectes actifs
-        size_t activeInsectsCount;
-        inFile.read(reinterpret_cast<char*>(&activeInsectsCount), sizeof(activeInsectsCount));
-        for (size_t i = 0; i < activeInsectsCount; ++i) {
-            int insectId;
-            inFile.read(reinterpret_cast<char*>(&insectId), sizeof(insectId));
-            // Ajoutez l'insecte actif en utilisant l'ID (si vous avez une méthode pour cela)
-            // player.addActiveInsect(insectId);
-        }
-    }
-
-    // Chargement des insectes globaux
-    size_t insectCount;
-    inFile.read(reinterpret_cast<char*>(&insectCount), sizeof(insectCount));
-    for (size_t i = 0; i < insectCount; ++i) {
-        int id2, coorI, coorJ;
-        bool col;
-        inFile.read(reinterpret_cast<char*>(&id2), sizeof(id2));
-        inFile.read(reinterpret_cast<char*>(&col), sizeof(col));
-        inFile.read(reinterpret_cast<char*>(&coorI), sizeof(coorI));
-        inFile.read(reinterpret_cast<char*>(&coorJ), sizeof(coorJ));
-
-        // Créez et ajoutez l'insecte avec les informations lues
-        // Insect* insect = createInsect(id2, col, coorI, coorJ); // Exemple de création d'un insecte
-        // insects.push_back(insect); // Ajoutez l'insecte au conteneur
-    }
-
-    // Chargement de la carte
-    size_t slotCount;
-    inFile.read(reinterpret_cast<char*>(&slotCount), sizeof(slotCount));
-    for (size_t i = 0; i < slotCount; ++i) {
-        int insectId;
-        inFile.read(reinterpret_cast<char*>(&insectId), sizeof(insectId));
-        // Ajoutez l'insecte dans le slot correspondant (ou affectez l'ID de l'insecte)
-        // map.addInsectToSlot(insectId, i); // Exemple de méthode pour ajouter un insecte à une case de la carte
-    }
-
-    // Chargement de la position relative de la carte
-    vec2i relativePos;
-    inFile.read(reinterpret_cast<char*>(&relativePos), sizeof(relativePos));
-
-    // Chargement de la taille de la carte
-    int sideSize;
-    inFile.read(reinterpret_cast<char*>(&sideSize), sizeof(sideSize));
-
-    // Si vous avez des fonctions pour définir la carte avec ces valeurs :
-    // map.setRelativePos(relativePos);
-    // map.setSideSize(sideSize);
-
-    inFile.close();
-}
-
-*/
-
 
 
 void Hive::saveGame(const std::string& filename) const {
-    std::ofstream outFile(filename, std::ios::binary);
+        std::ofstream file(filename, std::ios::trunc);
 
-    if (!outFile.is_open()) {
-        throw std::runtime_error("Impossible d'ouvrir le fichier pour la sauvegarde : " + filename);
-    }
-
-    // Sauvegarde des attributs de Hive
-    outFile.write(reinterpret_cast<const char*>(&mode), sizeof(mode));
-    outFile.write(reinterpret_cast<const char*>(&version), sizeof(version));
-    outFile.write(reinterpret_cast<const char*>(&rewindNb), sizeof(rewindNb));
-
-    // Sauvegarde des joueurs
-    for (const Player& player : {player1, player2}) {;
-        outFile.write(reinterpret_cast<const char*>(&player.deck), sizeof(player.deck));
-        outFile.write(reinterpret_cast<const char*>(&player.id), sizeof(player.id));
-        outFile.write(reinterpret_cast<const char*>(&player.isHuman), sizeof(player.isHuman));
-        outFile.write(reinterpret_cast<const char*>(&player.name), sizeof(player.name));
-
-
-        // Sauvegarde du deck
-        size_t deckSize = player.getDeck().getInsects()->size();
-        outFile.write(reinterpret_cast<const char*>(&deckSize), sizeof(deckSize));
-        for (const Insect* insect : *player.getDeck().getInsects()) {
-            int insectId = insect ? insect->getID() : -1; // Sauvegarde uniquement les IDs des insectes
-            outFile.write(reinterpret_cast<const char*>(&insectId), sizeof(insectId));
+        if (!file.is_open()) {
+            throw HiveException("saveGame", "Impossible d'ouvrir le fichier de sauvegarde.");
         }
 
-        // Sauvegarde des insects actifs
-        size_t activeInsectsCount = player.getActiveInsects().size();
-        outFile.write(reinterpret_cast<const char*>(&activeInsectsCount), sizeof(activeInsectsCount));
-        for (const Insect* insect : player.getActiveInsects()) {
-            int insectId = insect ? insect->getID() : -1;
-            outFile.write(reinterpret_cast<const char*>(&insectId), sizeof(insectId));
+        // Sauvegarder les informations de base (exemple : mode, version)
+        file << "Mode: " << static_cast<int>(mode) << std::endl;
+        file << "Version: " << static_cast<int>(version) << std::endl;
+        file << "isInit: " << static_cast<bool>(isInit) << std::endl;
+        file << "trueMapSideSize: " << trueMapSideSize << std::endl;
+        file << "renderedMapSideSize: " << renderedMapSideSize << std::endl;
+        // Sauvegarder insects
+        file << "Insects_Hive:" << std::endl;
+        for (const auto& insect : insects) {
+            file << insect->getID() << " " << insect->getIT() << " " << insect->getCoordinates().getI()
+            << ","<< insect->getCoordinates().getJ()<< " "<< insect->getColor()<< std::endl;
         }
+        file << "counter:"<< Insect::get_counter() << std::endl;
+        file << "Fin_Insects_Hive:" << std::endl;
+        file << "Extensions:" << std::endl;
+        for (const auto& extension : extensions) {
+            file << extension << std::endl;
+        }
+        file << "Fin_Extensions:" << std::endl;
+
+        // Sauvegarder l'état de la carte (Map)
+        file << "Map:" << std::endl;
+        for (const auto& movement : map.getHistoric()) {
+            file << movement.getFrom().getI() << "," <<movement.getFrom().getJ() << " "  <<
+                movement.getTo().getI() << "," <<movement.getTo().getJ() << std::endl;
+        }
+        file << map.getRelativePos().getI() << "," <<map.getRelativePos().getJ() << std::endl;
+        file << "sideSize "<< map.getSideSize() << std::endl;
+        file << "rewind "<< map.getRewind() << std::endl;
+        file << "Fin_Map: " << std::endl;
+
+        file << "Joueur1:" << std::endl;
+        // Sauvegarder les joueurs
+        file << "ID: " << player1.getId() << std::endl;
+        file << "isHuman: " << player1.isHuman << std::endl;
+        file << "Player Name: " << player1.getName() << std::endl;
+
+        // Sauvegarder les éléments du Deck du Player
+        file << "Deck Size: " << player1.getDeck().getInsects()->size() << std::endl;
+
+        // Sauvegarder les id des Insects actifs du Player
+        file << "Active Insects Count: " << player1.getActiveInsects().size() << std::endl;
+        for (Insect* insect : player1.getActiveInsects()) {
+            file << "Insect ID: " << insect->getID() << std::endl;
+        }
+
+        // Sauvegarder de Input
+        const Inputs input = player1.getInputs();
+        file << "Start Position: " << input.getStart().getI() << ", " << input.getStart().getJ()<< std::endl;
+        for (const auto& dest : input.getPossibleDestinations()) {
+            file  << dest.getI() << "," << dest.getJ() << std::endl;
+        }
+        file << "startSelected: " << input.getStartSelected() << std::endl;
+        file << "destinationSelected: " << input.getDestinationSelected() << std::endl;
+        file << "destinationIndex: " << input.getDestinationIndex() << std::endl;
+        file << "needPossibleDestinations: " << input.getNeedPossibleDestinations() << std::endl;
+        file << "message: " << input.getMessage() << std::endl;
+        file << "Fin_Joueur1: " << std::endl;
+
+
+        file << "Joueur2:" << std::endl;
+        // Sauvegarder les joueurs
+        file << "ID: " << player2.getId() << std::endl;
+        file << "isHuman: " << player2.isHuman << std::endl;
+        file << "Player Name: " << player2.getName() << std::endl;
+
+        // Sauvegarder les éléments du Deck du Player
+        file << "Deck Size: " << player2.getDeck().getInsects()->size() << std::endl;
+
+        // Sauvegarder les id des Insects actifs du Player
+        file << "Active Insects Count: " << player2.getActiveInsects().size() << std::endl;
+        for (Insect* insect : player2.getActiveInsects()) {
+            file << "Insect ID: " << insect->getID() << std::endl;
+        }
+
+        // Sauvegarder de Input
+        const Inputs input2 = player2.getInputs();
+        file << "Start Position: " << input2.getStart().getI() << ", " << input2.getStart().getJ() << std::endl;
+        for (const auto& dest : input2.getPossibleDestinations()) {
+            file << dest.getI() << "," << dest.getJ() << std::endl;
+        }
+        file << "startSelected: " << input2.getStartSelected() << std::endl;
+        file << "destinationSelected: " << input2.getDestinationSelected() << std::endl;
+        file << "destinationIndex: " << input2.getDestinationIndex() << std::endl;
+        file << "needPossibleDestinations: " << input2.getNeedPossibleDestinations() << std::endl;
+        file << "message: " << input2.getMessage() << std::endl;
+        file << "Fin_Joueur2: " << std::endl;
+        file << "Current_Player: " << std::endl;
+        file << "ID: " << player2.getId() << std::endl;
+        file << "Fin_Current_Player: " << std::endl;
+        file << "InputManager: " << std::endl;
+        file << "InputManager_Fin: " << std::endl;
+
+
+
+
+
+
+
+        file.close();
+        std::cout << "Partie sauvegardée avec succès dans " << filename << std::endl;
     }
+void Hive::loadGame(const std::string& filename){}
 
-    // Sauvegarde des insects globaux
-    size_t insectCount = insects.size();
-        int id2, coorI, coorJ;
-        bool col;
-
-    outFile.write(reinterpret_cast<const char*>(&insectCount), sizeof(insectCount));
-    for (const auto& insect : insects) {
-        id2 = insect->getID();
-        col = insect->getColor();
-        coorI = insect->getCoordinates().getI();
-        coorJ = insect->getCoordinates().getJ();
-        outFile.write(reinterpret_cast<const char*>(&id2), sizeof(id2));
-        outFile.write(reinterpret_cast<const char*>(&col), sizeof(col));
-        outFile.write(reinterpret_cast<const char*>(&coorI), sizeof(coorI));
-        outFile.write(reinterpret_cast<const char*>(&coorJ), sizeof(coorJ));
-    }
-
-    // Sauvegarde de la carte
-    size_t slotCount = map.getSlots().size();
-    outFile.write(reinterpret_cast<const char*>(&slotCount), sizeof(slotCount));
-    for (const auto& slot : map.getSlots()) {
-        int insectId = slot ? slot->getID() : -1;
-        outFile.write(reinterpret_cast<const char*>(&insectId), sizeof(insectId));
-    }
-        vec2i relativePos = map.getRelativePos();
-    outFile.write(reinterpret_cast<const char*>(&relativePos), sizeof(relativePos));
-    outFile.write(reinterpret_cast<const char*>(&map.getSideSize()), sizeof(map.getSideSize()));
-
-    outFile.close();
-}
 
 
 

@@ -44,6 +44,9 @@ public:
     const Deck & getDeck() const{
         return deck;
     }
+    const std::string getName() const{
+        return name;
+    }
 
     const std::vector<Insect *> & getActiveInsects() const{
         return activeInsects;
