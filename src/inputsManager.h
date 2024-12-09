@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <conio.h>
+#include <features/map.h>
 
 
 enum Mode{PvP,PvAI};
@@ -156,7 +157,11 @@ public:
         }
     }
 
-    void updatePlayerInputsQt(Player & player_, vec2i clickedPos) {
+    void updatePlayerInputsQt(Player & player_, vec2i clickedPos, bool input) {
+        Inputs & inputs = player_.inputs;
+        if (input) {//Si c'est la première sélection
+            inputs.setStart(clickedPos);
+        }
 
     }
 };
