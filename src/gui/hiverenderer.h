@@ -45,6 +45,8 @@ private:
     InputsManager *inputManager;   // Gestionnaire des inputs
     int rewind;
     Mode gameMode = PvP;           // Mode du jeu
+    Player *P1;
+    Player *P2;
 
 private slots : //Private slots, c'est pour détecter les signaux des boutons
     void handleButtonClick(); // Slot pour gérer les clics de bouton

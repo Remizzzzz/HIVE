@@ -134,7 +134,7 @@ void hiveRenderer::handleButtonClick() {
             if (button->getInsectType()!=none){
                 button->updateState(1); //Insect a été sélectionné
                 lastClicked=button;
-                inputManager->updatePlayerInputsStart()
+
             } else if (button->getInsectType()==none){
                 lastClicked=nullptr;
             }

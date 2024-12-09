@@ -155,6 +155,10 @@ public:
             }
         }
     }
+
+    void updatePlayerInputsQt(Player & player_, vec2i clickedPos) {
+
+    }
 };
 
 
