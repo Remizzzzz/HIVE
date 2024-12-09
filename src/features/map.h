@@ -11,7 +11,6 @@
 
 #include "insect.h"
 #include "../utils/utils.h"
-class Insect;
 class Map{
 private:
 
@@ -26,7 +25,7 @@ private:
 
     //friend class renderer;
 
-    std::vector<const Insect *> slots{};
+    std::vector<const Insect *> slot{};
     std::list<movement> historic{};
     vec2i relativePos{};
     const int sideSize;
@@ -49,7 +48,7 @@ public:
 
     explicit Map(const int & sideSize_,int &n) : sideSize(sideSize_),rewind(n){
         for(int i = 0; i < sideSize * sideSize; i++){
-            slots.push_back(nullptr);
+            slot.push_back(nullptr);
         }
     }
 
@@ -59,10 +58,10 @@ public:
      * @param pos_ : position of the slot in which the insect will be put
      */
     void putInsectTo(const Insect * insect_, const vec2i & pos_){
-        slots[posToIndex(pos_)] = insect_;
+        slot[posToIndex(pos_)] = insect_;
     }
     const Insect * getInsectAt(const vec2i & pos_) const{
-        return slots[posToIndex(pos_)];
+        return slot[posToIndex(pos_)];
     }
 
     const int & getSideSize() const{
@@ -73,7 +72,7 @@ public:
     }
 
     std::vector<const Insect *> getSlots() const{
-        return slots;
+        return slot;
     }
 
     /**
@@ -81,7 +80,7 @@ public:
      * @param pos_ : position of the slot to remove
      */
     void removeInsectAt(const vec2i & pos_){
-        slots[posToIndex(pos_)] = nullptr;
+        slot[posToIndex(pos_)] = nullptr;
     }
 
     /**
@@ -89,13 +88,13 @@ public:
      * @param pos_ : position of the slot to check
      */
     bool isSlotFree(const vec2i & pos_){
-        return slots[posToIndex(pos_)] == nullptr;
+        return slot[posToIndex(pos_)] == nullptr;
     }
 
     /**@brief move the insect on pos1_ to the pos2_.*/
     void moveInsect(const vec2i & pos1_, const vec2i & pos2_){
         if(!(isSlotFree(pos1_) || pos1_ == pos2_)){
-            putInsectTo(slots[posToIndex(pos1_)], pos2_);
+            putInsectTo(slot[posToIndex(pos1_)], pos2_);
             removeInsectAt(pos1_);
         }
         addToHistoric(pos1_,pos2_);//If the movement is a rewind, goBack will manage the historic
@@ -153,7 +152,7 @@ private:
         bool b = false;
 
         for(int i = 0; i < sideSize * sideSize ; i += sideSize){
-            b = b || (slots[i] != nullptr);
+            b = b || (slot[i] != nullptr);
         }
         return b;
     }
@@ -165,7 +164,7 @@ private:
         bool b = false;
 
         for(int i = sideSize - 1; i < sideSize * sideSize ; i += sideSize){
-            b = b || (slots[i] != nullptr);
+            b = b || (slot[i] != nullptr);
         }
         return b;
     }
@@ -177,7 +176,7 @@ private:
         bool b = false;
 
         for(int i = 0; i < sideSize; i++){
-            b = b || (slots[i] == nullptr);
+            b = b || (slot[i] == nullptr);
         }
         return b;
     }
@@ -189,7 +188,7 @@ private:
         bool b = false;
 
         for(int i = sideSize * (sideSize - 1); i < sideSize; i++){
-            b = b || (slots[i] == nullptr);
+            b = b || (slot[i] == nullptr);
         }
         return b;
     }
@@ -330,8 +329,8 @@ private:
             }
             for(nCol=1; nCol<31;nCol++)
             {
-                if(size_t index = nRow*32 + nCol && slots[index] != nullptr) {
-                    std::cout << "|" << slots[index]->getPrintableValue(0) << "|";
+                if(size_t index = nRow*32 + nCol && slot[index] != nullptr) {
+                    std::cout << "|" << slot[index]->getPrintableValue(0) << "|";
                 } else {
                     std::cout << "|  |";
                 }

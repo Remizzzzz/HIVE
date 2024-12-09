@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include "hexagonalbutton.h"
+#include "../hive.h"
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class hiveRenderer;
@@ -29,8 +30,9 @@ public:
 
 private:
     int buttonSize=25;
-    int rows=15; //30 lignes
-    int cols=60; //30 colonnes
+    int renderedMapSize = 30;// Taille de la map
+    int rows=renderedMapSize/2; //30 lignes
+    int cols=renderedMapSize*2; //30 colonnes
     HexagonalButton* lastClicked=nullptr;
     bool input=true;
     HexagonalButton* buttons[31][30]; //Le 31 est pour les decks
@@ -39,6 +41,10 @@ private:
     QLabel *infoLabel;           // Label pour afficher les infos
     void setupHexagonalGrid(int rows, int cols, int buttonSize);
     void setupDeck(int buttonSize);
+    Map map;                       // Instance de la map
+    InputsManager *inputManager;   // Gestionnaire des inputs
+    int rewind;
+    Mode gameMode = PvP;           // Mode du jeu
 
 private slots : //Private slots, c'est pour détecter les signaux des boutons
     void handleButtonClick(); // Slot pour gérer les clics de bouton

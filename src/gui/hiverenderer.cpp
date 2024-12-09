@@ -8,7 +8,9 @@ hiveRenderer::hiveRenderer(QWidget *parent)
     : QMainWindow(parent),
     centralWidget(new QWidget(this)),
     infoLabel(new QLabel("Cliquez sur un bouton", this)),
-    ui(new Ui::hiveRenderer)
+    ui(new Ui::hiveRenderer),
+    map(renderedMapSize,rewind),
+    inputManager(new InputsManager(gameMode, renderedMapSize, map))
 {ui->setupUi(this);
     infoLabel->setAlignment(Qt::AlignCenter);
     infoLabel->setGeometry(0, 0, width(), 30);  // Placer le label en haut
@@ -139,89 +141,3 @@ void hiveRenderer::handleButtonClick() {
         }
     }
 }
-
-/*
- * #include "hiverenderer.h"
-#include "hexagonalbutton.h"
-#include "./ui_hiverenderer.h"
-
-hiveRenderer::hiveRenderer(QWidget *parent)
-    : QMainWindow(parent),
-    centralWidget(new QWidget(this)),
-    gridLayout(new QGridLayout()),
-    infoLabel(new QLabel("Cliquez sur un bouton", this))
-    , ui(new Ui::hiveRenderer)
-{
-    ui->setupUi(this);
-    infoLabel->setAlignment(Qt::AlignCenter);
-    gridLayout->addWidget(infoLabel, 0, 0, 1, 30); // Span sur 32 colonnes
-
-    // Ajoutez une grille de boutons
-    for (int row = 1; row <= 30; ++row) {
-        for (int col = 0; col < 30; ++col) {
-
-            QPushButton *button = new QPushButton(QString("(%1, %2)").arg(row).arg(col));
-            button->setStyleSheet(
-                "QPushButton {"
-                "    background-color: #b5c02d;"   // Couleur de fond
-                "    color: white;"               // Couleur du texte
-                "    border: 2px solid #b5c021;"  // Bordure
-                "    border-radius: 10px;"        // Coins arrondis
-                "    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);" // Forme hexagonale
-                "}"
-                "QPushButton:hover {"
-                "    background-color: #b5c021;"  // Couleur au survol
-                "}"
-                );
-            button->setFixedSize(15,15);
-            gridLayout->addWidget(button, row, col);
-
-            // Connectez chaque bouton au slot
-            connect(button, &QPushButton::clicked, this, &hiveRenderer::handleButtonClick);
-setupHexagonalGrid(30,30,15);
-
-}
-}
-
-// Configurez le widget central et son layout
-centralWidget->setLayout(gridLayout);
-setCentralWidget(centralWidget);
-
-// Configurez la fenêtre
-setWindowTitle("Test Hive");
-resize(800, 800);
-}
-
-hiveRenderer::~hiveRenderer()
-{
-    delete ui;
-}
-
-void hiveRenderer::handleButtonClick() {
-    // Récupérez le bouton qui a déclenché le signal
-    QPushButton *button = qobject_cast<QPushButton *>(sender());
-    if (button) {
-        // Affichez le texte du bouton dans le label
-        infoLabel->setText(QString("Bouton cliqué : %1").arg(button->text()));
-    }
-}
-
-void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
-    for (int row = 0; row < rows; ++row) {
-        for (int col = 0; col < cols; ++col) {
-            HexagonalButton *button = new HexagonalButton(buttonSize, this);
-            button->setText(QString("%1,%2").arg(row).arg(col));
-
-            // Décalage des colonnes impaires
-            int offset = (col % 2 == 0) ? 0 : buttonSize / 2;
-
-            // Ajouter le bouton au layout
-            gridLayout->addWidget(button, row, col);
-
-            // Ajuster la position pour une grille hexagonale réaliste
-            button->move(col * (buttonSize * 0.85), row * buttonSize + offset);
-            connect(button, &QPushButton::clicked, this, &hiveRenderer::handleButtonClick);
-        }
-    }
-}
-*/
