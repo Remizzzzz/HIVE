@@ -3,7 +3,7 @@
 #include "./ui_hiverenderer.h"
 #include <QPixmap>
 #include <QIcon>
-#include "hive.h"
+//#include "hive.h" -> Déclenche ENORMEMENT d'erreur
 hiveRenderer::hiveRenderer(QWidget *parent)
     : QMainWindow(parent),
     centralWidget(new QWidget(this)),
