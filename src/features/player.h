@@ -32,6 +32,9 @@ public:
     {
 
     };
+    Player(int id, bool isHuman, const std::string& name, const Deck& deck, const std::vector<Insect*>& activeInsects)
+        : id(id), isHuman(isHuman), name(name), deck(deck), activeInsects(activeInsects) {}
+
 
     const int & getId() const{
         return id;

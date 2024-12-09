@@ -13,8 +13,7 @@
 #include "../utils/utils.h"
 class Insect;
 class Map{
-private:
-
+    public:
     class movement{
     public:
         vec2i from{};
@@ -34,6 +33,8 @@ private:
         movement(const vec2i & from_, const vec2i & to_) : from(from_), to(to_) {};
         movement() = default;
     };
+private:
+
 
     //friend class renderer;
 
@@ -58,10 +59,23 @@ private:
 
 public:
 
+
+
     explicit Map(const int & sideSize_,int &n) : sideSize(sideSize_),rewind(n){
         for(int i = 0; i < sideSize * sideSize; i++){
             slots.push_back(nullptr);
         }
+    }
+    Map(int sideSize, int rewind, const vec2i& relativePos, std::list<movement> his)
+        : sideSize(sideSize), rewind(rewind), relativePos(relativePos), slots(sideSize * sideSize, nullptr),historic(his) {
+        // Initialisation de la carte avec les attributs
+
+        // Vous pouvez ajouter des insectes ou d'autres éléments ici selon votre logique
+        // Exemple pour ajouter un historique vide
+    }
+
+    Map & operator=(const Map &) {
+        return *this;
     }
 
     /**

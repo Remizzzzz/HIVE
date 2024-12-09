@@ -28,8 +28,8 @@ class Hive{
 
     std::vector<Insect *> insects;
 
-    const int trueMapSideSize{32};
-    const int renderedMapSideSize{30};
+    int trueMapSideSize{32};
+    int renderedMapSideSize{30};
     int rewindNb;
     Map map;
 
