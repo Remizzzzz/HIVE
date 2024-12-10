@@ -89,6 +89,25 @@ public:
         insects.at(index_)->setCoordinates(position_);
     }
 
+    int returnIndex(insectType type_) const {
+        int index=0;
+        for (auto it : insects) {
+            if (it->getIT() == type_) {
+                return index;
+            }
+            index++;
+        }
+        index++;
+        if (index > insectNb) {
+            return -1;
+        }
+
+
+        if (true) {
+            return -1;
+        }
+    }
+
     bool isSlotFree(const int & index_) const{
         return insects.at(index_) == nullptr;
     }

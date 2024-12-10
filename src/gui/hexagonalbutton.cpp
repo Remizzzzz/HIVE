@@ -33,32 +33,98 @@ void HexagonalButton::paintEvent(QPaintEvent *event) {
     qDebug() << "Painting button: currentEvent=" << currentEvent << "iT=" << iT;
     // Définir la couleur en fonction de l'état
     switch (currentEvent) {
-    case 0: // La case est un insecte
-        painter.setBrush(QBrush(Qt::red));
+        case 0: // La case est un insecte
+            painter.setBrush(QBrush(Qt::red));
         break;
-    case 1: // Un insecte a été sélectionné
-        painter.setBrush(QBrush(Qt::blue));
+        case 1: // Un insecte a été sélectionné
+            painter.setBrush(QBrush(Qt::blue));
         break;
-    case 2: // La case est vide
-        painter.setBrush(QBrush(Qt::darkYellow));
+        case 2: // La case est vide
+            painter.setBrush(QBrush(Qt::darkYellow));
         break;
-    case 3: // La case est une destination possible
-        painter.setBrush(QBrush(Qt::green));
-    default:
-        break;
+        case 3: // La case est une destination possible
+            painter.setBrush(QBrush(Qt::green));
+        case 4: //Debug
+            painter.setBrush(QBrush(Qt::darkRed));
+        default:
+            break;
     }
     painter.setRenderHint(QPainter::Antialiasing);
     painter.drawPolygon(hexagon);
     if (iT==ant) {
-        QPixmap buttonImage("../assets/ant.PNG");
+        QPixmap buttonImageAnt("../assets/ant.PNG");
 
-        if (buttonImage.isNull()) {
+        if (buttonImageAnt.isNull()) {
             painter.setBrush(QBrush(Qt::blue));
             painter.drawPolygon(hexagon);
         } else {
             QSize newSize(25, 25);
             // Redimensionner l'image pour qu'elle s'adapte au bouton
-            QPixmap scaledImage = buttonImage.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            QPixmap scaledImage = buttonImageAnt.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+            // Calculer la position centrale pour afficher l'image
+            QPoint center = rect().center();
+            QPoint topLeft(3, center.y() - scaledImage.height() / 2);
+
+            painter.drawPixmap(topLeft, scaledImage);
+        }
+    } else if (iT==bee) {
+        QPixmap buttonImageBee("../assets/bee.PNG");
+        if (buttonImageBee.isNull()) {
+            painter.setBrush(QBrush(Qt::blue));
+            painter.drawPolygon(hexagon);
+        } else {
+            QSize newSize(25, 25);
+            // Redimensionner l'image pour qu'elle s'adapte au bouton
+            QPixmap scaledImage = buttonImageBee.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+            // Calculer la position centrale pour afficher l'image
+            QPoint center = rect().center();
+            QPoint topLeft(1, center.y() - scaledImage.height() / 2);
+
+            painter.drawPixmap(topLeft, scaledImage);
+        }
+    }else if (iT==spider) {
+        QPixmap buttonImageSpider("../assets/spider.PNG");
+        if (buttonImageSpider.isNull()) {
+            painter.setBrush(QBrush(Qt::blue));
+            painter.drawPolygon(hexagon);
+        } else {
+            QSize newSize(25, 25);
+            // Redimensionner l'image pour qu'elle s'adapte au bouton
+            QPixmap scaledImage = buttonImageSpider.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+            // Calculer la position centrale pour afficher l'image
+            QPoint center = rect().center();
+            QPoint topLeft(2, center.y() - scaledImage.height() / 2);
+
+            painter.drawPixmap(topLeft, scaledImage);
+        }
+    } else if (iT==beetle){
+        QPixmap buttonImageBeetle("../assets/beetle.PNG");
+        if (buttonImageBeetle.isNull()) {
+            painter.setBrush(QBrush(Qt::blue));
+            painter.drawPolygon(hexagon);
+        } else {
+            QSize newSize(25, 25);
+            // Redimensionner l'image pour qu'elle s'adapte au bouton
+            QPixmap scaledImage = buttonImageBeetle.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+            // Calculer la position centrale pour afficher l'image
+            QPoint center = rect().center();
+            QPoint topLeft(2, center.y() - scaledImage.height() / 2);
+
+            painter.drawPixmap(topLeft, scaledImage);
+        }
+    } else if (iT==grasshopper) {
+        QPixmap buttonImageGrasshopper("../assets/grasshopper.png");
+        if (buttonImageGrasshopper.isNull()) {
+            painter.setBrush(QBrush(Qt::blue));
+            painter.drawPolygon(hexagon);
+        } else {
+            QSize newSize(25, 25);
+            // Redimensionner l'image pour qu'elle s'adapte au bouton
+            QPixmap scaledImage = buttonImageGrasshopper.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
             // Calculer la position centrale pour afficher l'image
             QPoint center = rect().center();

@@ -158,13 +158,17 @@ public:
 
     void updatePlayerInputsQt(Player * player_, vec2i clickedPos, bool inputT) {
         Inputs & inputs = player_->inputs;
-        const vec2i deck(-1,-1);
+        const int deck=-1;
         if (inputT) {//Si c'est la première sélection
-            if (clickedPos!=deck) {//Si la position n'est pas dans le deck
-                inputs.setStart(clickedPos);
+            inputs.setStart(clickedPos);
+            if (clickedPos.getI()!=deck) {//Si la position n'est pas dans le deck
                 inputs.setPossibleDestinations(map.getInsectAt(clickedPos)->getPossibleMovements(map));
-            } else {
-                inputs.setStart(deck);
+            } else { //Ne marche pas, test à la place
+                vec2i test1(15,15);
+                vec2i test2(15,16);
+                vec2i test3(15,17);
+                std::vector<vec2i> test={test1,test2,test3};
+                inputs.setPossibleDestinations(test);
             }
         } else {//Si c'est la deuxième sélection
             auto it = std::find(inputs.getPossibleDestinations().begin(), inputs.getPossibleDestinations().end(), clickedPos);

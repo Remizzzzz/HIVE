@@ -47,20 +47,19 @@ public:
         const vec2i & start = player_.inputs.getStart();
         const vec2i & destination = player_.inputs.getDestination();
 
-        if (!player_.getDeck().isIndexValid(start.getJ())) {
+        if (player_.getDeck().isIndexValid(start.getJ())){
             if (map.isSlotFree(destination)) {
                 map.putInsectTo(player_.getDeck().getInsectAt(start.getJ()), destination);
                 player_.addActiveInsectsFromDeck(start.getJ());
                 player_.deck.removeAt(start.getJ());
-            } else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {
+            } else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {//Ca sert a quoi ça ?
                 //---------------A FAIRE--------------------
                 /*
                  deck1.getInsectAt(cursor1.getJ())
                 map.putInsect(deck1.getInsectAt(cursor1.getJ()),destination);
                 deck1.deleteAt(cursor1.getJ());
                  */
-            }
-            else{
+            } else {
                 player_.inputs.setMessage("Can't put your insect here");
             }
         } else throw HiveException("solver.h:Solver:deckToMapGestion", "cursor1 is invalid for deck1");
@@ -74,7 +73,7 @@ public:
             if (map.isSlotFree(destination)){
                 map.moveInsect(start,destination);
             }
-            else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {
+            else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {//???
                 //---------------A FAIRE--------------------
                 /*
                  deck2.getInsectAt(cursor1.getJ())
