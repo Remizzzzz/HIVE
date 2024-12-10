@@ -20,7 +20,7 @@ hiveRenderer::hiveRenderer(QWidget *parent)
     // Configurez la fenêtre
     setWindowTitle("Test Hive");
     resize(1000,600);
-    hive.runQt();
+    //hive.runQt();
     // Ajoutez le widget central sans layout
     setCentralWidget(centralWidget);
 }
