@@ -17,10 +17,13 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # Ajouter les fichiers source de la partie console
 file(GLOB CONSOLE_SOURCES
-        src/mainConsole.cpp
         src/utils/*.cpp
         src/features/*.cpp
         src/hive.cpp
+        src/hive.h
+        src/inputsManager.h
+        src/renderer.h
+        src/solver.h
 )
 
 # Ajouter les fichiers sources de la partie Qt
@@ -30,8 +33,8 @@ file(GLOB QT_SOURCES
 )
 
 # Créer l'exécutable pour l'interface Qt
-add_executable(HiveQt ${QT_SOURCES})
-add_executable(HiveConsole ${CONSOLE_SOURCES})
+add_executable(HiveQt ${QT_SOURCES} ${CONSOLE_SOURCES})
+add_executable(HiveConsole ${CONSOLE_SOURCES} src/mainConsole.cpp)
 
 if (WIN32)#Pour empêcher l'ouverture de la console
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
