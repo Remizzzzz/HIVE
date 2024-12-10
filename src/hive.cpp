@@ -209,6 +209,18 @@ void Hive::saveGame(const std::string& filename) const {
         file << "isInit: " << static_cast<bool>(isInit) << std::endl;
         file << "trueMapSideSize: " << trueMapSideSize << std::endl;
         file << "renderedMapSideSize: " << renderedMapSideSize << std::endl;
+
+        // Sauvegarder l'état de la carte (Map)
+        file << "Map:" << std::endl;
+        for (const auto& movement : map.getHistoric()) {
+            file << movement.getFrom().getI() << "," <<movement.getFrom().getJ() << " "  <<
+                movement.getTo().getI() << "," <<movement.getTo().getJ() << std::endl;
+        }
+        file << map.getRelativePos().getI() << "," <<map.getRelativePos().getJ() << std::endl;
+        file << "sideSize "<< map.getSideSize() << std::endl;
+        file << "rewind "<< map.getRewind() << std::endl;
+        file << "Fin_Map: " << std::endl;
+
         // Sauvegarder insects
         file << "Insects_Hive:" << std::endl;
         for (const auto& insect : insects) {
@@ -223,16 +235,7 @@ void Hive::saveGame(const std::string& filename) const {
         }
         file << "Fin_Extensions:" << std::endl;
 
-        // Sauvegarder l'état de la carte (Map)
-        file << "Map:" << std::endl;
-        for (const auto& movement : map.getHistoric()) {
-            file << movement.getFrom().getI() << "," <<movement.getFrom().getJ() << " "  <<
-                movement.getTo().getI() << "," <<movement.getTo().getJ() << std::endl;
-        }
-        file << map.getRelativePos().getI() << "," <<map.getRelativePos().getJ() << std::endl;
-        file << "sideSize "<< map.getSideSize() << std::endl;
-        file << "rewind "<< map.getRewind() << std::endl;
-        file << "Fin_Map: " << std::endl;
+
 
         file << "Joueur1:" << std::endl;
         // Sauvegarder les joueurs
@@ -248,6 +251,7 @@ void Hive::saveGame(const std::string& filename) const {
         for (Insect* insect : player1.getActiveInsects()) {
             file << "Insect ID: " << insect->getID() << std::endl;
         }
+        file << "Fin_Active_Insect: " << std::endl;
 
         // Sauvegarder de Input
         const Inputs input = player1.getInputs();
@@ -277,6 +281,8 @@ void Hive::saveGame(const std::string& filename) const {
         for (Insect* insect : player2.getActiveInsects()) {
             file << "Insect ID: " << insect->getID() << std::endl;
         }
+        file << "Fin_Active_Insect: " << std::endl;
+
 
         // Sauvegarder de Input
         const Inputs input2 = player2.getInputs();
@@ -302,139 +308,166 @@ void Hive::saveGame(const std::string& filename) const {
 //void Hive::loadGame(const std::string& filename) {}
 
 void Hive::loadGame(const std::string& filename) {
-    std::ifstream file(filename);
+        std::ifstream file(filename);
 
-    if (!file.is_open()) {
-        throw HiveException("loadGame", "Impossible d'ouvrir le fichier de sauvegarde.");
+        if (!file.is_open()) {
+            throw HiveException("loadGame", "Impossible d'ouvrir le fichier de sauvegarde.");
+        }
+
+        std::string line;
+        // Charger les informations de base
+        while (std::getline(file, line)) {
+            if (line.find("Mode:") != std::string::npos) {
+                int modeValue;
+                file >> modeValue;
+                mode = static_cast<Mode>(modeValue);
+            }
+            else if (line.find("Version:") != std::string::npos) {
+                int versionValue;
+                file >> versionValue;
+                version = static_cast<Version>(versionValue);
+            }
+            else if (line.find("isInit:") != std::string::npos) {
+                bool isInitValue;
+                file >> isInitValue;
+                isInit = isInitValue;
+            }
+            else if (line.find("trueMapSideSize:") != std::string::npos) {
+                file >> trueMapSideSize;
+            }
+            else if (line.find("renderedMapSideSize:") != std::string::npos) {
+                file >> renderedMapSideSize;
+            }
+
+            // Charger l'état de la carte (Map)
+            else if (line == "Map:") {
+                // Variables nécessaires pour créer la nouvelle carte
+                int relativePosI, relativePosJ, sideSize, rewind;
+                std::list<Map::movement> historic;
+
+                // Charger les mouvements historiques
+                while (std::getline(file, line) && line != "Fin_Map:") {
+                    int fromI, fromJ, toI, toJ;
+                    std::istringstream stream(line);
+                    stream >> fromI >> fromJ >> toI >> toJ;
+
+                    // Créer un mouvement avec les coordonnées de départ et d'arrivée
+                    Map::movement m(vec2i(fromI, fromJ), vec2i(toI, toJ));
+                    historic.push_back(m);  // Ajouter le mouvement à la liste historique
+                }
+
+                // Charger les autres informations de la carte
+                file >> relativePosI >> relativePosJ >> sideSize >> rewind;
+
+                // Créer une nouvelle instance de la carte avec les valeurs chargées
+                vec2i relativePos(relativePosI, relativePosJ);
+                Map newMap(sideSize, rewind, relativePos, historic);  // Créer la nouvelle carte
+                map = newMap;  // Assigner la nouvelle carte à l'objet actuel
+            }
+            // Charger les Insects
+            else if (line == "Insects_Hive:") {
+                while (std::getline(file, line) && line != "Fin_Insects_Hive:") {
+
+                    int id, it, i, j;
+                    std::string color;
+                    std::istringstream stream(line);
+                    stream >> id >> it >> i >> j >> color;
+
+                    vec2i coor ;
+                    for (const auto& insect : insects) {
+                        if(insect->getID() == id) {
+                            coor = insect->getCoordinates();
+                        }
+                        //On les pose au bon endroit sur la map
+                        map.moveInsect(coor, vec2i(i, j));
+                    }
+                }
+            }
+            // Charger les Extensions
+            else if (line == "Extensions:") {
+                while (std::getline(file, line) && line != "Fin_Extensions:") {
+                    std::istringstream stream(line);
+                    insectType extension;
+                    extensions.insert(extension);  // Ajouter l'extension au set
+                }
+            }
+
+            // Charger les informations des joueurs
+            else if (line == "Joueur1:") {
+                int id = 0;
+                bool isHuman = false;
+                std::string name;
+                Deck deck;  // Vous devrez charger le deck à partir du fichier
+                std::vector<Insect*> activeInsects;  // Liste des insectes actifs à charger
+
+                while (std::getline(file, line) && line != "Fin_Joueur1:") {
+                    if (line.find("ID:") != std::string::npos) {
+                        file >> id;  // Lire l'ID du joueur
+                    }
+                    else if (line.find("isHuman:") != std::string::npos) {
+                        file >> isHuman;  // Lire si le joueur est humain
+                    }
+                    else if (line.find("Player Name:") != std::string::npos) {
+                        file >> name;  // Lire le nom du joueur
+                    }
+                    else if (line.find("Deck Size:") != std::string::npos) {
+                        int deckSize;
+                        file >> deckSize;
+                        deck = Deck();
+                    }
+                    else if(line.find("Active Insects Count: ") != std::string::npos) {
+                        while (std::getline(file, line) && line != "Fin_Active_Insect: ") {
+                            for (const auto& insect : insects) {
+                                if(insect->getID() == id) {
+                                    activeInsects.push_back(insect);
+                                }
+                            }
+                        }
+                    }
+                }
+                Player joueur1 = Player(id, isHuman,name, deck,activeInsects);
+            }
+            // Charger les informations de Joueur2 de manière similaire à Joueur1
+            // Charger les informations des joueurs
+            else if (line == "Joueur2:") {
+                int id = 0;
+                bool isHuman = false;
+                std::string name;
+                Deck deck;  // Vous devrez charger le deck à partir du fichier
+                std::vector<Insect*> activeInsects;  // Liste des insectes actifs à charger
+
+                while (std::getline(file, line) && line != "Fin_Joueur2:") {
+                    if (line.find("ID:") != std::string::npos) {
+                        file >> id;  // Lire l'ID du joueur
+                    }
+                    else if (line.find("isHuman:") != std::string::npos) {
+                        file >> isHuman;  // Lire si le joueur est humain
+                    }
+                    else if (line.find("Player Name:") != std::string::npos) {
+                        file >> name;  // Lire le nom du joueur
+                    }
+                    else if (line.find("Deck Size:") != std::string::npos) {
+                        int deckSize;
+                        file >> deckSize;
+                        deck = Deck();
+                    }
+                    else if(line.find("Active Insects Count: ") != std::string::npos){
+                        while (std::getline(file, line) && line != "Fin_Active_Insect: ") {
+                            for (const auto& insect : insects) {
+                                if(insect->getID() == id) {
+                                    activeInsects.push_back(insect);
+                                }
+                            }
+                        }
+                    }
+                }
+                Player joueur2 = Player(id, isHuman, name, deck, activeInsects);
+            }
+
+            file.close();
+            std::cout << "Partie chargée avec succès depuis " << filename << std::endl;
+        }
     }
-
-    std::string line;
-    // Charger les informations de base
-    while (std::getline(file, line)) {
-        if (line.find("Mode:") != std::string::npos) {
-            int modeValue;
-            file >> modeValue;
-            mode = static_cast<Mode>(modeValue);
-        }
-        else if (line.find("Version:") != std::string::npos) {
-            int versionValue;
-            file >> versionValue;
-            version = static_cast<Version>(versionValue);
-        }
-        else if (line.find("isInit:") != std::string::npos) {
-            bool isInitValue;
-            file >> isInitValue;
-            isInit = isInitValue;
-        }
-        else if (line.find("trueMapSideSize:") != std::string::npos) {
-            file >> trueMapSideSize;
-        }
-        else if (line.find("renderedMapSideSize:") != std::string::npos) {
-            file >> renderedMapSideSize;
-        }
-        // Charger les Insects
-        else if (line == "Insects_Hive:") {
-            while (std::getline(file, line) && line != "Fin_Insects_Hive:") {
-                int id, it, i, j;
-                std::string color;
-                std::istringstream stream(line);
-                stream >> id >> it >> i >> j >> color;
-
-                // Créez un insecte avec les bons paramètres (id, type, position et couleur)
-                Insect* insect = new Insect(id, it, vec2i(i, j), color);
-                insects.push_back(insect);  // Ajout à la collection des insectes
-            }
-        }
-        // Charger les Extensions
-        else if (line == "Extensions:") {
-            while (std::getline(file, line) && line != "Fin_Extensions:") {
-                std::istringstream stream(line);
-                insectType extension;
-                extensions.insert(extension);  // Ajouter l'extension au set
-            }
-        }
-        // Charger l'état de la carte (Map)
-        else if (line == "Map:") {
-            // Variables nécessaires pour créer la nouvelle carte
-            int relativePosI, relativePosJ, sideSize, rewind;
-            std::list<Map::movement> historic;
-
-            // Charger les mouvements historiques
-            while (std::getline(file, line) && line != "Fin_Map:") {
-                int fromI, fromJ, toI, toJ;
-                std::istringstream stream(line);
-                stream >> fromI >> fromJ >> toI >> toJ;
-
-                // Créer un mouvement avec les coordonnées de départ et d'arrivée
-                Map::movement m(vec2i(fromI, fromJ), vec2i(toI, toJ));
-                historic.push_back(m);  // Ajouter le mouvement à la liste historique
-            }
-
-            // Charger les autres informations de la carte
-            file >> relativePosI >> relativePosJ >> sideSize >> rewind;
-
-            // Créer une nouvelle instance de la carte avec les valeurs chargées
-            vec2i relativePos(relativePosI, relativePosJ);
-            Map newMap(sideSize, rewind, relativePos, historic);  // Créer la nouvelle carte
-            map = newMap;  // Assigner la nouvelle carte à l'objet actuel
-        }
-        // Charger les informations des joueurs
-        else if (line == "Joueur1:") {
-            int id = 0;
-            bool isHuman = false;
-            std::string name;
-            Deck deck;  // Vous devrez charger le deck à partir du fichier
-            std::vector<Insect*> activeInsects;  // Liste des insectes actifs à charger
-
-            while (std::getline(file, line) && line != "Fin_Joueur1:") {
-                if (line.find("ID:") != std::string::npos) {
-                    file >> id;  // Lire l'ID du joueur
-                }
-                else if (line.find("isHuman:") != std::string::npos) {
-                    file >> isHuman;  // Lire si le joueur est humain
-                }
-                else if (line.find("Player Name:") != std::string::npos) {
-                    file >> name;  // Lire le nom du joueur
-                }
-                else if (line.find("Deck Size:") != std::string::npos) {
-                    int deckSize;
-                    file >> deckSize;
-                    deck =
-                }
-            }
-            Player joueur1 = Player(id, isHuman,name, deck , );
-        }
-        // Charger les informations de Joueur2 de manière similaire à Joueur1
-        else if (line == "Joueur2:") {
-            int id2 = 0;
-            bool isHuman2 = false;
-            std::string name2;
-            Deck deck2;  // Vous devrez charger le deck à partir du fichier
-            std::vector<Insect*> activeInsects;  // Liste des insectes actifs à charger
-            while (std::getline(file, line) && line != "Fin_Joueur2:") {  // Remplacer "Fin_Joueur1" par "Fin_Joueur2"
-                if (line.find("ID:") != std::string::npos) {
-                    file >> id2;  // Lire l'ID du joueur
-                }
-                else if (line.find("isHuman:") != std::string::npos) {
-                    file >> isHuman2;  // Lire si le joueur est humain
-                }
-                else if (line.find("Player Name:") != std::string::npos) {
-                    file >> name2;  // Lire le nom du joueur
-                }
-                else if (line.find("Deck Size:") != std::string::npos) {
-                    int deckSize;
-                    file >> deckSize;
-                    deck2 = loadDeckFromFile(file, deckSize);  // Charger le deck à partir du fichier
-                }
-            }
-
-            // Charger les informations de Joueur2
-            Player joueur2 = Player(id2, isHuman2, name2, deck2);  // Création de joueur2 à la place de joueur1
-    }
-
-    file.close();
-    std::cout << "Partie chargée avec succès depuis " << filename << std::endl;
-}
 
 
 

@@ -181,6 +181,9 @@ public:
 
     ~Hive(){
         delete renderer;
+        for (const auto& insect : insects) {
+            delete insect;
+        }
     }
     void static displayRules() ;
     void changeSettings();

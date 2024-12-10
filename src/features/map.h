@@ -78,6 +78,15 @@ public:
         return *this;
     }
 
+    /**@brief move the insect on pos1_ to the pos2_.*/
+    void moveInsect(const vec2i & pos1_, const vec2i & pos2_){
+        if(!(isSlotFree(pos1_) || pos1_ == pos2_)){
+            putInsectTo(slots[posToIndex(pos1_)], pos2_);
+            removeInsectAt(pos1_);
+        }
+        addToHistoric(pos1_,pos2_);//If the movement is a rewind, goBack will manage the historic
+    }
+
     /**
      * @brief \n put in the slot on position pos_ the insect insect_
      * @param insect_ : insect to put
@@ -124,14 +133,7 @@ public:
         return slots[posToIndex(pos_)] == nullptr;
     }
 
-    /**@brief move the insect on pos1_ to the pos2_.*/
-    void moveInsect(const vec2i & pos1_, const vec2i & pos2_){
-        if(!(isSlotFree(pos1_) || pos1_ == pos2_)){
-            putInsectTo(slots[posToIndex(pos1_)], pos2_);
-            removeInsectAt(pos1_);
-        }
-        addToHistoric(pos1_,pos2_);//If the movement is a rewind, goBack will manage the historic
-    }
+
 
     //return positions of the filled slots around pos_
     std::list<vec2i> getNeighbours(const vec2i & pos_) const{
