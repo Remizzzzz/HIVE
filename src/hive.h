@@ -168,11 +168,11 @@ public:
                 player1(1), player2(2), currentPlayer(&player1),
                 inputsManager(mode, renderedMapSideSize, map),
                 solver(map, trueMapSideSize),renderer( nullptr){}
-
-    /*Hive(Mode mode_, Version version_, int rewindNb_ = 3)
-            :   mode(mode_), version(version_),
+/*
+    Hive(Version version_=console)
+            :   mode(PvP), version(version_),
                 insects(),
-                rewindNb(rewindNb_), map(trueMapSideSize,rewindNb),
+                rewindNb(1), map(trueMapSideSize,rewindNb),
                 player1(1), player2(2), currentPlayer(&player1),
                 inputsManager(mode, renderedMapSideSize, map),
                 solver(map, trueMapSideSize)
@@ -242,7 +242,13 @@ public:
 
         return 1;
     }
-
+    void runQt() {
+        generateAllInsects();
+    }
+    Player* getPlayer1() {return &player1;}
+    Player* getPlayer2() {return &player2;}
+    InputsManager* getInputsManager() {return &inputsManager;}
+    Solver* getSolver() {return &solver;}
 
 };
 

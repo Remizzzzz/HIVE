@@ -42,7 +42,7 @@ private:
         return player_.inputs.getDestination().getI() >= 0 && player_.inputs.getDestination().getI() < trueMapSideSize &&
                 player_.inputs.getDestination().getJ() >= 0 && player_.inputs.getDestination().getJ() < trueMapSideSize;
     }
-
+public:
     void deckToMapMovement(Player & player_) {
         const vec2i & start = player_.inputs.getStart();
         const vec2i & destination = player_.inputs.getDestination();
@@ -88,7 +88,6 @@ private:
         }
     }
 
-public:
 
     int update(Player & player_){
 

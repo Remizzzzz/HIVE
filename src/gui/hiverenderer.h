@@ -19,34 +19,31 @@ class hiveRenderer : public QMainWindow
 public:
     hiveRenderer(QWidget *parent = nullptr);
     ~hiveRenderer();
-    void updateInput(){
-        if (input){
-            input=false;
-        }else {
-            input=true;
+    void updateInputT(){
+        if (inputT){
+            inputT=false;
+        } else {
+            inputT=true;
         }
     }
-    bool getInput(){return input;}
-
+    bool getInputT(){return inputT;}
+    void updateTurn(){turn++;}
+    int getTurn(){return turn;}
 private:
+    Hive hive;
     int buttonSize=25;
     int renderedMapSize = 30;// Taille de la map
     int rows=renderedMapSize/2; //30 lignes
     int cols=renderedMapSize*2; //30 colonnes
     HexagonalButton* lastClicked=nullptr;
-    bool input=true;
+    bool inputT=true;
     HexagonalButton* buttons[31][30]; //Le 31 est pour les decks
     Ui::hiveRenderer *ui;
     QWidget *centralWidget;      // Conteneur principal
     QLabel *infoLabel;           // Label pour afficher les infos
     void setupHexagonalGrid(int rows, int cols, int buttonSize);
     void setupDeck(int buttonSize);
-    Map map;                       // Instance de la map
-    InputsManager *inputManager;   // Gestionnaire des inputs
-    int rewind;
-    Mode gameMode = PvP;           // Mode du jeu
-    Player *P1;
-    Player *P2;
+    int turn=0;
 
 private slots : //Private slots, c'est pour détecter les signaux des boutons
     void handleButtonClick(); // Slot pour gérer les clics de bouton

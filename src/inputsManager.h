@@ -12,16 +12,15 @@
 #include "utils/utils.h"
 #include "utils/hiveException.h"
 #include "utils/random.hpp"
-
 #include <iostream>
 #include <conio.h>
+#include <solver.h>
 #include <features/map.h>
-
+#include <algorithm>
 
 enum Mode{PvP,PvAI};
 
 class InputsManager{
-
 private:
     const int renderedMapSideSize;
     Map & map;
@@ -49,10 +48,10 @@ private:
                 break;
             case 2:
                 if (i_ + j_ > 0){
-                    inputs.setDestionationIndex((inputs.getDestinationIndex() + 1) % inputs.getPossibleDestinationsNumber());
+                    inputs.setDestinationIndex((inputs.getDestinationIndex() + 1) % inputs.getPossibleDestinationsNumber());
                 }
                 else{
-                    inputs.setDestionationIndex((inputs.getDestinationIndex() - 1) % inputs.getPossibleDestinationsNumber());
+                    inputs.setDestinationIndex((inputs.getDestinationIndex() - 1) % inputs.getPossibleDestinationsNumber());
                 }
                 break;
 
@@ -100,7 +99,7 @@ public:
                 break;
             case 2:
                 if (!inputs.isPossibleDestinationsEmpty()){
-                    inputs.setDestionationIndex(random.getRandomInt(0,int (inputs.getPossibleDestinationsNumber())));
+                    inputs.setDestinationIndex(random.getRandomInt(0,int (inputs.getPossibleDestinationsNumber())));
                 }
                 else{
                     //lancer exception
@@ -157,13 +156,29 @@ public:
         }
     }
 
-    void updatePlayerInputsQt(Player & player_, vec2i clickedPos, bool input) {
-        Inputs & inputs = player_.inputs;
-        if (input) {//Si c'est la première sélection
-            inputs.setStart(clickedPos);
+    void updatePlayerInputsQt(Player * player_, vec2i clickedPos, bool inputT) {
+        Inputs & inputs = player_->inputs;
+        const vec2i deck(-1,-1);
+        if (inputT) {//Si c'est la première sélection
+            if (clickedPos!=deck) {//Si la position n'est pas dans le deck
+                inputs.setStart(clickedPos);
+                inputs.setPossibleDestinations(map.getInsectAt(clickedPos)->getPossibleMovements(map));
+            } else {
+                inputs.setStart(deck);
+            }
+        } else {//Si c'est la deuxième sélection
+            auto it = std::find(inputs.getPossibleDestinations().begin(), inputs.getPossibleDestinations().end(), clickedPos);
+            if (it != inputs.getPossibleDestinations().end()) {//On trouvera toujours l'index, la vérification de l'existence est faite avant l'appel de fonction
+                inputs.setDestinationIndex(std::distance(inputs.getPossibleDestinations().begin(), it));
+            }
         }
-
     }
+
+    void resetPlayerInputs(Player* player_) {
+        player_->inputs.resetQt();
+    }
+
+
 };
 
 

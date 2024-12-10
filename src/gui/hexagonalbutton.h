@@ -17,6 +17,7 @@ public:
     void paintEvent(QPaintEvent *event) override;
     QPolygon getHexagon(){return hexagon;}
     void updateState(int event);
+    int getState(){return currentEvent;}
     vec2i getCoordinates(){return coordinates;}
     void setCoordinates(vec2i coordinates) {
         this->coordinates = coordinates;

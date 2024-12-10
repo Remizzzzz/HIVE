@@ -61,7 +61,7 @@ public:
         start = start_;
     }
 
-    void setDestionationIndex(int destinationIndex_){
+    void setDestinationIndex(int destinationIndex_){
         destinationIndex = destinationIndex_;
     }
 
@@ -113,6 +113,13 @@ public:
         startSelected = false;
         destinationSelected = false;
         needPossibleDestinations = false;
+    }
+    void resetQt() {
+        vec2i reset(-1,-1);
+        start=reset;
+        while (!possibleDestinations.empty()) {
+            possibleDestinations.clear();
+        }
     }
 
 };
