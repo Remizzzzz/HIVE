@@ -155,7 +155,7 @@ void Hive::changeSettings() {
             case 2: {
                 int newRewindNb;
                 do {
-                    std::cout << "Entrez le nombre de rewinds autorisés (0 à 10) : ";
+                    std::cout << "Actuellement il y a "<< rewindNb<<"rewinds ,Entrez le nombre de rewinds autorisés (0 à 10) : ";
                     std::cin >> newRewindNb;
 
                     if (newRewindNb < 0 || newRewindNb > 10) {
@@ -204,11 +204,11 @@ void Hive::saveGame(const std::string& filename) const {
         }
 
         // Sauvegarder les informations de base (exemple : mode, version)
-        file << "Mode: " << static_cast<int>(mode) << std::endl;
-        file << "Version: " << static_cast<int>(version) << std::endl;
-        file << "isInit: " << static_cast<bool>(isInit) << std::endl;
-        file << "trueMapSideSize: " << trueMapSideSize << std::endl;
-        file << "renderedMapSideSize: " << renderedMapSideSize << std::endl;
+        file << "Mode:"<< std::endl << static_cast<int>(mode) << std::endl;
+        file << "isInit:" << std::endl<< static_cast<bool>(isInit) << std::endl;
+        file << "trueMapSideSize:"<< std::endl << trueMapSideSize << std::endl;
+        file << "renderedMapSideSize:"<< std::endl << renderedMapSideSize << std::endl;
+        file << "RewindNb:"<< std::endl << rewindNb << std::endl;
 
         // Sauvegarder l'état de la carte (Map)
         file << "Map:" << std::endl;
@@ -217,9 +217,9 @@ void Hive::saveGame(const std::string& filename) const {
                 movement.getTo().getI() << "," <<movement.getTo().getJ() << std::endl;
         }
         file << map.getRelativePos().getI() << "," <<map.getRelativePos().getJ() << std::endl;
-        file << "sideSize "<< map.getSideSize() << std::endl;
-        file << "rewind "<< map.getRewind() << std::endl;
-        file << "Fin_Map: " << std::endl;
+        file << "sideSize"<< std::endl<< map.getSideSize() << std::endl;
+        file << "rewind"<< std::endl<< map.getRewind() << std::endl;
+        file << "Fin_Map:"<< std::endl << std::endl;
 
         // Sauvegarder insects
         file << "Insects_Hive:" << std::endl;
@@ -227,8 +227,8 @@ void Hive::saveGame(const std::string& filename) const {
             file << insect->getID() << " " << insect->getIT() << " " << insect->getCoordinates().getI()
             << ","<< insect->getCoordinates().getJ()<< " "<< insect->getColor()<< std::endl;
         }
-        file << "counter:"<< Insect::get_counter() << std::endl;
-        file << "Fin_Insects_Hive:" << std::endl;
+        file << "counter:"<< std::endl<< Insect::get_counter() << std::endl;
+        file << "Fin_Insects_Hive:"<< std::endl;
         file << "Extensions:" << std::endl;
         for (const auto& extension : extensions) {
             file << extension << std::endl;
@@ -239,73 +239,76 @@ void Hive::saveGame(const std::string& filename) const {
 
         file << "Joueur1:" << std::endl;
         // Sauvegarder les joueurs
-        file << "ID: " << player1.getId() << std::endl;
-        file << "isHuman: " << player1.isHuman << std::endl;
-        file << "Player Name: " << player1.getName() << std::endl;
+        file << "ID:"<< std::endl << player1.getId() << std::endl;
+        file << "isHuman:" << std::endl<< player1.isHuman << std::endl;
+        file << "Player Name:"<< std::endl << player1.getName() << std::endl;
 
         // Sauvegarder les éléments du Deck du Player
-        file << "Deck Size: " << player1.getDeck().getInsects()->size() << std::endl;
+        file << "Deck Size:"<< std::endl << player1.getDeck().getInsects()->size() << std::endl;
 
         // Sauvegarder les id des Insects actifs du Player
-        file << "Active Insects Count: " << player1.getActiveInsects().size() << std::endl;
+        file << "Active Insects Count:"<< std::endl << player1.getActiveInsects().size() << std::endl;
         for (Insect* insect : player1.getActiveInsects()) {
-            file << "Insect ID: " << insect->getID() << std::endl;
+            file << "Insect ID:"<< std::endl<< insect->getID() << std::endl;
         }
-        file << "Fin_Active_Insect: " << std::endl;
+        file << "Fin_Active_Insect:" << std::endl;
 
         // Sauvegarder de Input
         const Inputs input = player1.getInputs();
-        file << "Start Position: " << input.getStart().getI() << ", " << input.getStart().getJ()<< std::endl;
+        file << "Start Position:"<< std::endl << input.getStart().getI() << ", " << input.getStart().getJ()<< std::endl;
         for (const auto& dest : input.getPossibleDestinations()) {
             file  << dest.getI() << "," << dest.getJ() << std::endl;
         }
-        file << "startSelected: " << input.getStartSelected() << std::endl;
-        file << "destinationSelected: " << input.getDestinationSelected() << std::endl;
-        file << "destinationIndex: " << input.getDestinationIndex() << std::endl;
-        file << "needPossibleDestinations: " << input.getNeedPossibleDestinations() << std::endl;
-        file << "message: " << input.getMessage() << std::endl;
-        file << "Fin_Joueur1: " << std::endl;
+        file << "startSelected:" << std::endl<< input.getStartSelected() << std::endl;
+        file << "destinationSelected:"<< std::endl << input.getDestinationSelected() << std::endl;
+        file << "destinationIndex:"<< std::endl << input.getDestinationIndex() << std::endl;
+        file << "needPossibleDestinations:"<< std::endl << input.getNeedPossibleDestinations() << std::endl;
+        file << "message:" << std::endl<< input.getMessage() << std::endl;
+        file << "Fin_Joueur1:"<< std::endl << std::endl;
 
 
         file << "Joueur2:" << std::endl;
         // Sauvegarder les joueurs
-        file << "ID: " << player2.getId() << std::endl;
-        file << "isHuman: " << player2.isHuman << std::endl;
-        file << "Player Name: " << player2.getName() << std::endl;
+        file << "ID:" << std::endl << player2.getId() << std::endl;
+        file << "isHuman:" << std::endl << player2.isHuman << std::endl;
+        file << "Player Name:" << std::endl << player2.getName() << std::endl;
 
         // Sauvegarder les éléments du Deck du Player
-        file << "Deck Size: " << player2.getDeck().getInsects()->size() << std::endl;
+        file << "Deck Size:" << std::endl << player2.getDeck().getInsects()->size() << std::endl;
 
         // Sauvegarder les id des Insects actifs du Player
-        file << "Active Insects Count: " << player2.getActiveInsects().size() << std::endl;
+        file << "Active Insects Count:" << std::endl << player2.getActiveInsects().size() << std::endl;
         for (Insect* insect : player2.getActiveInsects()) {
-            file << "Insect ID: " << insect->getID() << std::endl;
+            file << "Insect ID:" << std::endl << insect->getID() << std::endl;
         }
-        file << "Fin_Active_Insect: " << std::endl;
-
+        file << "Fin_Active_Insect:" << std::endl;
 
         // Sauvegarder de Input
         const Inputs input2 = player2.getInputs();
-        file << "Start Position: " << input2.getStart().getI() << ", " << input2.getStart().getJ() << std::endl;
+        file << "Start Position:" << std::endl << input2.getStart().getI() << ", " << input2.getStart().getJ() << std::endl;
         for (const auto& dest : input2.getPossibleDestinations()) {
             file << dest.getI() << "," << dest.getJ() << std::endl;
         }
-        file << "startSelected: " << input2.getStartSelected() << std::endl;
-        file << "destinationSelected: " << input2.getDestinationSelected() << std::endl;
-        file << "destinationIndex: " << input2.getDestinationIndex() << std::endl;
-        file << "needPossibleDestinations: " << input2.getNeedPossibleDestinations() << std::endl;
-        file << "message: " << input2.getMessage() << std::endl;
-        file << "Fin_Joueur2: " << std::endl;
-        file << "Current_Player: " << std::endl;
-        file << "ID: " << player2.getId() << std::endl;
-        file << "Fin_Current_Player: " << std::endl;
-        file << "InputManager: " << std::endl;
-        file << "InputManager_Fin: " << std::endl;
+        file << "startSelected:" << std::endl << input2.getStartSelected() << std::endl;
+        file << "destinationSelected:" << std::endl << input2.getDestinationSelected() << std::endl;
+        file << "destinationIndex:" << std::endl << input2.getDestinationIndex() << std::endl;
+        file << "needPossibleDestinations:" << std::endl << input2.getNeedPossibleDestinations() << std::endl;
+        file << "message:" << std::endl << input2.getMessage() << std::endl;
+        file << "Fin_Joueur2:" << std::endl << std::endl;
+
+        file << "Current_Player:"<< std::endl << std::endl;
+        file << "ID:"<< std::endl << player2.getId() << std::endl;
+        file << "Fin_Current_Player:"<< std::endl << std::endl;
+        file << "InputManager:"<< std::endl << std::endl;
+        file << "InputManager_Fin:"<< std::endl << std::endl;
 
         file.close();
         std::cout << "Partie sauvegardée avec succès dans " << filename << std::endl;
     }
 //void Hive::loadGame(const std::string& filename) {}
+
+
+
 
 void Hive::loadGame(const std::string& filename) {
         std::ifstream file(filename);
@@ -322,10 +325,10 @@ void Hive::loadGame(const std::string& filename) {
                 file >> modeValue;
                 mode = static_cast<Mode>(modeValue);
             }
-            else if (line.find("Version:") != std::string::npos) {
-                int versionValue;
-                file >> versionValue;
-                version = static_cast<Version>(versionValue);
+
+            if (line.find("RewindNb:") == 0) {  // Vérifie si la ligne commence par "RewindNb:"
+                file >> rewindNb;  // Lire la valeur entière dans rewindNb
+                std::cout << "Voila le nb de rewind après chargement: " << rewindNb << std::endl;
             }
             else if (line.find("isInit:") != std::string::npos) {
                 bool isInitValue;
@@ -416,7 +419,7 @@ void Hive::loadGame(const std::string& filename) {
                         deck = Deck();
                     }
                     else if(line.find("Active Insects Count: ") != std::string::npos) {
-                        while (std::getline(file, line) && line != "Fin_Active_Insect: ") {
+                        while (std::getline(file, line) && line != "Fin_Active_Insect:") {
                             for (const auto& insect : insects) {
                                 if(insect->getID() == id) {
                                     activeInsects.push_back(insect);
@@ -452,7 +455,7 @@ void Hive::loadGame(const std::string& filename) {
                         deck = Deck();
                     }
                     else if(line.find("Active Insects Count: ") != std::string::npos){
-                        while (std::getline(file, line) && line != "Fin_Active_Insect: ") {
+                        while (std::getline(file, line) && line != "Fin_Active_Insect:") {
                             for (const auto& insect : insects) {
                                 if(insect->getID() == id) {
                                     activeInsects.push_back(insect);
