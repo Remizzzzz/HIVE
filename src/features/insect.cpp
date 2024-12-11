@@ -349,38 +349,49 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const {
 // Méthodes de spider
 std::vector<vec2i> Spider::getPossibleMovements(Map &m) const {
     try{
-    std::vector<vec2i> possibleMovements;
-    // Vérifie que l'insecte puisse bouger
-    if (!this->isLinkingHive(m)) {
-        // 1er niveau de voisins
-        std::list<vec2i> firstLevel = m.getNeighbours(getCoordinates());
+        std::vector<vec2i> possibleMovements;
 
-        for (const auto &level1 : firstLevel) {
-            // Si le slot est libre ET qu'il y a exactement un ancien voisin parmi les nouveaux
-            if (m.isSlotFree(level1) == 1 && getFormerNeighbour(getCoordinates(),level1, m) == 1) {
-                // 2e niveau de voisins
-                std::list<vec2i> secondLevel = m.getNeighbours(level1);
+        // Vérifie que l'insecte puisse bouger
+        if (!this->isLinkingHive(m)) {
+            // 1er niveau de voisins
+            std::list<vec2i> firstLevel = m.getNeighbours(getCoordinates());
 
-                for (const auto &level2 : secondLevel) {
-                    // Idem level1 + vérification que le voisin2 ne soit pas la position de départ
-                    if (m.isSlotFree(level2) && level2 != getCoordinates() && getFormerNeighbour(level1, level2, m) == 1) {
-                        // 3e niveau de voisins
-                        std::list<vec2i> thirdLevel = m.getNeighbours(level2);
+            for (const auto &level1 : firstLevel) {
+                // Si le slot est libre ET qu'il y a exactement un ancien voisin parmi les nouveaux
+                if (m.isSlotFree(level1) == 1 && getFormerNeighbour(getCoordinates(),level1, m) == 1) {
+                    // 2e niveau de voisins
+                    std::list<vec2i> secondLevel = m.getNeighbours(level1);
 
-                        for (const auto &level3 : thirdLevel) {
-                            // Idem level1 + vérification que le voisin3 ne soit pas la position level1
-                            if (m.isSlotFree(level3) && level3 != level1 && getFormerNeighbour(level2,level3, m) == 1) {
-                                // Ajouter le mouvement valide
-                                possibleMovements.push_back(level3);
+                    for (const auto &level2 : secondLevel) {
+                        // Idem level1 + vérification que le voisin2 ne soit pas la position de départ
+                        if (m.isSlotFree(level2) && level2 != getCoordinates() && getFormerNeighbour(level1, level2, m) == 1) {
+                            // 3e niveau de voisins
+                            std::list<vec2i> thirdLevel = m.getNeighbours(level2);
+
+                            for (const auto &level3 : thirdLevel) {
+                                // Idem level1 + vérification que le voisin3 ne soit pas la position level1
+                                if (m.isSlotFree(level3) && level3 != level1 && getFormerNeighbour(level2,level3, m) == 1) {
+                                    // Test qu'il n'y ait pas la position de départ dans la liste des voisins de la position d'arrivée
+                                    std::list<vec2i> fourthLevel = m.getNeighbours(level3);
+                                    bool test = true;
+                                    for (const auto &level4 : fourthLevel) {
+                                        if (level4 == getCoordinates()) {
+                                            test = false;
+                                        }
+                                    }
+                                    // Si le test est vérifié, ajout de la position
+                                    if (test == true) {
+                                        possibleMovements.push_back(level3);
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
 
-    return possibleMovements;
+        return possibleMovements;
     } catch (const std::string& e) {
         throw HiveException("Spider::getPossibleMovements", e);
     }catch (...) {
