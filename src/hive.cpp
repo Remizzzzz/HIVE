@@ -216,10 +216,11 @@ void Hive::saveGame(const std::string& filename) const {
             file << movement.getFrom().getI() << "," <<movement.getFrom().getJ() << " "  <<
                 movement.getTo().getI() << "," <<movement.getTo().getJ() << std::endl;
         }
-        file << map.getRelativePos().getI() << "," <<map.getRelativePos().getJ() << std::endl;
-        file << "sideSize"<< std::endl<< map.getSideSize() << std::endl;
-        file << "rewind"<< std::endl<< map.getRewind() << std::endl;
-        file << "Fin_Map:"<< std::endl << std::endl;
+        file << "Fin_Historic:" << std::endl;
+        file << map.getRelativePos().getI() << std::endl <<map.getRelativePos().getJ() << std::endl;
+        file << map.getSideSize() << std::endl;
+        file << map.getRewind() << std::endl;
+        file << "Fin_Map:"<< std::endl;
 
         // Sauvegarder insects
         file << "Insects_Hive:" << std::endl;
@@ -227,8 +228,9 @@ void Hive::saveGame(const std::string& filename) const {
             file << insect->getID() << " " << insect->getIT() << " " << insect->getCoordinates().getI()
             << ","<< insect->getCoordinates().getJ()<< " "<< insect->getColor()<< std::endl;
         }
-        file << "counter:"<< std::endl<< Insect::get_counter() << std::endl;
         file << "Fin_Insects_Hive:"<< std::endl;
+        file << "counter:"<< std::endl<< Insect::get_counter() << std::endl;
+
         file << "Extensions:" << std::endl;
         for (const auto& extension : extensions) {
             file << extension << std::endl;
@@ -302,6 +304,7 @@ void Hive::saveGame(const std::string& filename) const {
         file << "InputManager:"<< std::endl << std::endl;
         file << "InputManager_Fin:"<< std::endl << std::endl;
 
+        file << "Fin" << std::endl;
         file.close();
         std::cout << "Partie sauvegardée avec succès dans " << filename << std::endl;
     }
@@ -312,44 +315,86 @@ void Hive::saveGame(const std::string& filename) const {
 
 void Hive::loadGame(const std::string& filename) {
         std::ifstream file(filename);
+        int counter = 0;
 
         if (!file.is_open()) {
             throw HiveException("loadGame", "Impossible d'ouvrir le fichier de sauvegarde.");
         }
-
+        bool mode_done = false;
+        bool rewind_done = false;
+        bool isInit_done = false;
+        bool trueMapSideSize_done = false;
+        bool renderedMapSideSize_done = false;
+        bool map_done = false;
+        bool insects_done = false;
+        bool extensions_done = false;
+        bool joueur1_done = false;
+        bool joueur2_done = false;
+        int count = 0;
         std::string line;
         // Charger les informations de base
-        while (std::getline(file, line)) {
-            if (line.find("Mode:") != std::string::npos) {
+        while (counter < 10) {
+            if(line.find("Fin") != std::string::npos) {
+                file.clear();  // Réinitialise les indicateurs (EOF)
+                file.seekg(0, std::ios::beg);
+            }  // Repositionne le curseur au début
+
+            if(count++ > 50)break;
+            std::getline(file, line);
+            std::cout << "Compteur"<< counter ;
+
+            std::cout << "ligne" << counter<< " : "<< line << std::endl;
+            if (line.find("Mode:") != std::string::npos && !mode_done) {
+                counter++;mode_done = true;
                 int modeValue;
                 file >> modeValue;
+                std::cout << "Mode:" ;
                 mode = static_cast<Mode>(modeValue);
             }
 
-            if (line.find("RewindNb:") == 0) {  // Vérifie si la ligne commence par "RewindNb:"
+            if (line.find("RewindNb:") == 0  && !rewind_done )  {  // Vérifie si la ligne commence par "RewindNb:"
+                counter++;rewind_done= true;
+                std::cout << "Rewind:" ;
                 file >> rewindNb;  // Lire la valeur entière dans rewindNb
                 std::cout << "Voila le nb de rewind après chargement: " << rewindNb << std::endl;
             }
-            else if (line.find("isInit:") != std::string::npos) {
+            else if (line.find("isInit:") != std::string::npos && !isInit_done) {
+                counter++;isInit_done= true;
+                std::cout << "isInit:\n" ;
                 bool isInitValue;
                 file >> isInitValue;
                 isInit = isInitValue;
             }
-            else if (line.find("trueMapSideSize:") != std::string::npos) {
+            else if (line.find("trueMapSideSize:") != std::string::npos  && !trueMapSideSize_done) {
+                counter++;trueMapSideSize_done= true;
+                std::cout << "lalalalatrulap\n";
                 file >> trueMapSideSize;
+
             }
-            else if (line.find("renderedMapSideSize:") != std::string::npos) {
+            else if (line.find("renderedMapSideSize:") != std::string::npos && !renderedMapSideSize_done) {
+                counter++;renderedMapSideSize_done= true;
+                std::cout << "lalalalarenderermap\n";
                 file >> renderedMapSideSize;
+
+
             }
 
             // Charger l'état de la carte (Map)
-            else if (line == "Map:") {
+            else if (line == "Map:" &&  !map_done) {
+                std::cout << "mapdone:"<<map_done << std::endl;
+                counter++;map_done= true;
+                std::cout << "Map:\n" ;
                 // Variables nécessaires pour créer la nouvelle carte
                 int relativePosI, relativePosJ, sideSize, rewind;
                 std::list<Map::movement> historic;
 
                 // Charger les mouvements historiques
-                while (std::getline(file, line) && line != "Fin_Map:") {
+                std::cout<< "va rentrer dans le while de la mort";
+
+                while ( line != "Fin_Historic:") {
+
+                    std::cout << "Ligne lue : " << line << std::endl;
+                    std::getline(file, line);
                     int fromI, fromJ, toI, toJ;
                     std::istringstream stream(line);
                     stream >> fromI >> fromJ >> toI >> toJ;
@@ -357,18 +402,29 @@ void Hive::loadGame(const std::string& filename) {
                     // Créer un mouvement avec les coordonnées de départ et d'arrivée
                     Map::movement m(vec2i(fromI, fromJ), vec2i(toI, toJ));
                     historic.push_back(m);  // Ajouter le mouvement à la liste historique
+
                 }
 
+
+                // Consommer la ligne vide qui reste après le dernier appel de getline
+                file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                file >> relativePosI;
+                file >> relativePosJ;
+                //Charger relativepos
                 // Charger les autres informations de la carte
-                file >> relativePosI >> relativePosJ >> sideSize >> rewind;
+                file >> sideSize;
+                file  >> rewind;
 
                 // Créer une nouvelle instance de la carte avec les valeurs chargées
                 vec2i relativePos(relativePosI, relativePosJ);
                 Map newMap(sideSize, rewind, relativePos, historic);  // Créer la nouvelle carte
                 map = newMap;  // Assigner la nouvelle carte à l'objet actuel
+                std::cout << "finmap";
             }
             // Charger les Insects
-            else if (line == "Insects_Hive:") {
+            else if (line == "Insects_Hive:"&& !insects_done) {// probleme rentre pas ici
+                counter++;insects_done= true;
+                std::cout << "Insect_de hive:\n" ;
                 while (std::getline(file, line) && line != "Fin_Insects_Hive:") {
 
                     int id, it, i, j;
@@ -385,9 +441,12 @@ void Hive::loadGame(const std::string& filename) {
                         map.moveInsect(coor, vec2i(i, j));
                     }
                 }
+
             }
             // Charger les Extensions
-            else if (line == "Extensions:") {
+            else if (line == "Extensions:" && !extensions_done ) {
+                counter++;extensions_done= true; //Extension probleme
+                std::cout << "extensions:\n" ;
                 while (std::getline(file, line) && line != "Fin_Extensions:") {
                     std::istringstream stream(line);
                     insectType extension;
@@ -396,7 +455,9 @@ void Hive::loadGame(const std::string& filename) {
             }
 
             // Charger les informations des joueurs
-            else if (line == "Joueur1:") {
+            else if (line == "Joueur1:" && !joueur1_done ) {
+                counter++;joueur1_done= true;
+                std::cout << "Joueur1:\n" ;
                 int id = 0;
                 bool isHuman = false;
                 std::string name;
@@ -432,7 +493,9 @@ void Hive::loadGame(const std::string& filename) {
             }
             // Charger les informations de Joueur2 de manière similaire à Joueur1
             // Charger les informations des joueurs
-            else if (line == "Joueur2:") {
+            else if (line == "Joueur2:"  && !joueur2_done) {
+                counter++;joueur2_done= true;
+                std::cout << "Joueur2:\n" ;
                 int id = 0;
                 bool isHuman = false;
                 std::string name;
@@ -467,9 +530,14 @@ void Hive::loadGame(const std::string& filename) {
                 Player joueur2 = Player(id, isHuman, name, deck, activeInsects);
             }
 
-            file.close();
-            std::cout << "Partie chargée avec succès depuis " << filename << std::endl;
+
+            if(counter == 6) {
+                std::cout<< "compteur avant break "<<count;
+
+            }
         }
+        file.close();
+        std::cout << "Partie chargée avec succès depuis " << filename << std::endl;
     }
 
 
