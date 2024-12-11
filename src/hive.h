@@ -159,6 +159,9 @@ private:
         player_.inputs.reset();
     }
 
+
+
+
     int displayMenu();
 
 public:
@@ -185,6 +188,7 @@ public:
             delete insect;
         }
     }
+    int launchGame();
     void static displayRules() ;
     void changeSettings();
     void saveGame(const std::string& filename)const;
@@ -210,9 +214,7 @@ public:
     }
 
     int run(){
-        if (initIfNeeded() == 0){
-            return 0;
-        }
+
 
         if (currentPlayer->isHuman){
             inputsManager.updatePlayerInputs(*currentPlayer);
