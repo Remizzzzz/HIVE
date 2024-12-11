@@ -165,7 +165,7 @@ public:
     Hive() : mode(PvP), version(console),
                 insects(),
                 rewindNb(1), map(trueMapSideSize,rewindNb),
-                player1(1), player2(2), currentPlayer(&player1),
+                player1(1, "Joueur1"), player2(2, "Joueur2"), currentPlayer(&player1),
                 inputsManager(mode, renderedMapSideSize, map),
                 solver(map, trueMapSideSize),renderer( nullptr){}
 

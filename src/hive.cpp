@@ -123,6 +123,7 @@ void Hive::changeSettings() {
         std::cout << "2. Modifier le nombre de rewinds\n";
         std::cout << "3. Choisir le mode de jeu (IA vs Humain ou Humain vs Humain)\n";
         std::cout << "4. Quitter le menu des paramètres\n";
+        std::cout << "5. Modifier le nom des joueurs\n";
         std::cout << "Choisissez une option : ";
         std::cin >> choice;
 
@@ -188,6 +189,20 @@ void Hive::changeSettings() {
             case 4:
                 std::cout << "Sortie du menu des paramètres.\n";
                 break;
+            case 5: {
+                int playerchoice = 0;
+                std::string newname;
+                while(playerchoice != 1 && playerchoice != 2) {
+                    std::cout << "De quel joueur voulez vous changer le nom? : 1 ("<< player1.getName()<<") ou 2("<<player2.getName() <<")\n ";
+                    std::cin >> playerchoice;
+                }
+                std::cout << "Quel est le nouveau nom?.\n";
+                std::cin >> newname;
+                if (playerchoice == 1) {player1.name = newname;}
+                else{player2.name = newname;}
+                std::cout << "Le .\n";
+                break;
+            }
             default:
                 std::cout << "Option invalide, veuillez réessayer.\n";
                 break;

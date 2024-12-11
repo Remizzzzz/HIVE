@@ -32,6 +32,10 @@ public:
     {
 
     };
+    explicit Player(const int & id_, const std::string &newname) : id(id_), isHuman(true), deck(), activeInsects(), inputs(), name(newname)
+    {
+
+    };
     Player(int id, bool isHuman, const std::string& name, const Deck& deck, const std::vector<Insect*>& activeInsects)
         : id(id), isHuman(isHuman), name(name), deck(deck), activeInsects(activeInsects) {}
 
