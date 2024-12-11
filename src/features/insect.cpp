@@ -1,6 +1,7 @@
 //
 // Created by Thiba on 29/10/2024.
 //
+#include <map>
 #include <set>
 #ifndef HIVE_INSECT_CPP
 #define HIVE_INSECT_CPP
@@ -100,8 +101,8 @@ bool Insect:: isLinkingHive(Map &m) const {
     try{
     // On parcourt toute la map pour compter son nombre d'insecte et garder une valeur d'insect
     int found_i = -1, found_j, nbInsect = 0;
-    for(int i = 0; i < MAP_SIZE; i++) {
-        for(int j = 0; j < MAP_SIZE; j++) {
+    for(int i = 0; i < MAP_SIZE-3; i++) {
+        for(int j = 0; j < MAP_SIZE-3; j++) {
             if(m.isSlotFree(vec2i{i,j}) == 0 && getCoordinates() != vec2i{i,j}) {
                 found_i = i;
                 found_j = j;
@@ -118,16 +119,17 @@ bool Insect:: isLinkingHive(Map &m) const {
     while (insectSet.size() > i_insect) // On itère dans insectSet tant qu'il y a des elements ;
     {
         neighbors = m.getNeighbours(insectSet[i_insect]);
-        for (auto it = neighbors.begin(); it != neighbors.end(); ++it) {// On itère dans les voisins
-            if(m.isSlotFree(*it) == 0) // Quand on trouve un voisin insect de l'elem on l'ajoute dans la liste insectset si pas encore dedans sauf si c'est l'insect sur lequel on a appelé la fonction
+        for (auto it : neighbors) {// On itère dans les voisins
+            if(m.isSlotFree(it) == 0) // Quand on trouve un voisin insect de l'elem on l'ajoute dans la liste insectset si pas encore dedans sauf si c'est l'insect sur lequel on a appelé la fonction
             {
-                if (std::find(insectSet.begin(), insectSet.end(), *it)[0] != *it && *it != getCoordinates()) {
+                auto search=std::find(insectSet.begin(), insectSet.end(), it);
+                if (search==insectSet.end() && it != getCoordinates()) {
                     // L'élément n'est pas trouvé, donc on l'ajoute
-                    insectSet.push_back(*it);
-                    i_insect++;
+                    insectSet.push_back(it);
                 }
             }
         }
+        i_insect++;
     }
     return i_insect != nbInsect;
     } catch (const std::string& e) {
@@ -284,50 +286,51 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const {
     std::vector<vec2i> possibleMovements;
     std::vector<vec2i> potentialMovements;
     std::vector<vec2i> impossibleMovements;
-
-    // Initialiser les voisins vides immédiats comme mouvements potentiels
-    std::list<vec2i> neighbors = m.getNeighbours(getCoordinates());
-    for (const auto &neighbor : neighbors) {
-        if (m.isSlotFree(neighbor)) {
-            potentialMovements.push_back(neighbor);
+    if (!this->isLinkingHive(m)) {
+        // Initialiser les voisins vides immédiats comme mouvements potentiels
+        std::list<vec2i> neighbors = m.getNeighbours(getCoordinates());
+        for (const auto &neighbor : neighbors) {
+            if (m.isSlotFree(neighbor)) {
+                potentialMovements.push_back(neighbor);
+            }
         }
-    }
-    bool valid = false; // Indique si le mouvement est valide
-    // Parcourir les mouvements potentiels
-    auto it = potentialMovements.begin();// Je fais comme ça parce que chatGPT m'a dit que ct pas bien de faire while (!potentialMovements.empty())
-    while (it != potentialMovements.end()) {
-        std::list<vec2i> newNeighbours = m.getNeighbours(*it); //On récupère les voisins de la case vide
-        for (auto &neighbour : newNeighbours) {
-            if (!m.isSlotFree(neighbour) && neighbour != getCoordinates()) {
-                // Si la case a un voisin non vide et ce voisin n'est pas Ant
-                valid = true;
-                // Ajouter les voisins vides de la case non encore traités à potentialMovements
-                for (auto &newNeighbour : newNeighbours) {
-                    if (m.isSlotFree(newNeighbour)) {
-                        if (std::find(potentialMovements.begin(), potentialMovements.end(), newNeighbour) == potentialMovements.end() &&
-                            std::find(possibleMovements.begin(), possibleMovements.end(), newNeighbour) == possibleMovements.end() &&
-                            std::find(impossibleMovements.begin(), impossibleMovements.end(), newNeighbour) == impossibleMovements.end()) {
-                            potentialMovements.push_back(newNeighbour);
+        bool valid = false; // Indique si le mouvement est valide
+        // Parcourir les mouvements potentiels
+        auto it = potentialMovements.begin();// Je fais comme ça parce que chatGPT m'a dit que ct pas bien de faire while (!potentialMovements.empty())
+        while (it != potentialMovements.end()) {
+            std::list<vec2i> newNeighbours = m.getNeighbours(*it); //On récupère les voisins de la case vide
+            for (auto &neighbour : newNeighbours) {
+                if (!m.isSlotFree(neighbour) && neighbour != getCoordinates()) {
+                    // Si la case a un voisin non vide et ce voisin n'est pas Ant
+                    valid = true;
+                    // Ajouter les voisins vides de la case non encore traités à potentialMovements
+                    for (auto &newNeighbour : newNeighbours) {
+                        if (m.isSlotFree(newNeighbour)) {
+                            if (std::find(potentialMovements.begin(), potentialMovements.end(), newNeighbour) == potentialMovements.end() &&
+                                std::find(possibleMovements.begin(), possibleMovements.end(), newNeighbour) == possibleMovements.end() &&
+                                std::find(impossibleMovements.begin(), impossibleMovements.end(), newNeighbour) == impossibleMovements.end()) {
+                                potentialMovements.push_back(newNeighbour);
+                                }
                         }
                     }
+                    break; // Arrêter la vérification dès qu'un voisin valide est trouvé
                 }
-                break; // Arrêter la vérification dès qu'un voisin valide est trouvé
+            }
+
+            if (valid) {//Probleme valid always false ? vérifier getNeighbour et getCoordinate
+                // Mouvement validé, le supprimer de potentialMovements
+                possibleMovements.push_back(*it); // Ajouter à possibleMovements
+                it = potentialMovements.erase(it);
+                valid=false;
+            } else {
+                // Mouvement invalide, l'ajouter à impossibleMovements
+                impossibleMovements.push_back(*it);
+                it = potentialMovements.erase(it);
             }
         }
 
-        if (valid) {//Probleme valid always false ? vérifier getNeighbour et getCoordinate
-            // Mouvement validé, le supprimer de potentialMovements
-            possibleMovements.push_back(*it); // Ajouter à possibleMovements
-            it = potentialMovements.erase(it);
-            valid=false;
-        } else {
-            // Mouvement invalide, l'ajouter à impossibleMovements
-            impossibleMovements.push_back(*it);
-            it = potentialMovements.erase(it);
-        }
+        return possibleMovements;
     }
-
-    return possibleMovements;
     } catch (const std::string& e) {
         throw HiveException("Ant::getPossibleMovements", e);
     }
