@@ -153,7 +153,7 @@ void hiveRenderer::handleButtonClick() {
                         button->updateState(0);
                     }
                 }
-                lastClicked->updateState(0);
+                lastClicked->updateState(2);
                 for (auto b : actualP->getInputs().getPossibleDestinations()) {
                     HexagonalButton * selec=buttons[b.getI()][b.getJ()];
                     if (selec->getInsectType()!=none) {

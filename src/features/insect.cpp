@@ -284,14 +284,14 @@ std::vector<vec2i> Grasshopper:: getPossibleMovements(Map &m) const {
 // On parcourt cette liste, si le potential movement est un possible movement, on ajoute ses cases vides adjacentes à potential movement,
 // puis on l'enlève de potential movement et on l'ajoute à possible movement. Une fois qu'on ne peut plus ajouter, c'est fini !
 std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const {
-    try{
     std::vector<vec2i> possibleMovements;
     std::vector<vec2i> potentialMovements;
     std::vector<vec2i> impossibleMovements;
+    try{
     if (!this->isLinkingHive(m)) {
         // Initialiser les voisins vides immédiats comme mouvements potentiels
         std::list<vec2i> neighbors = m.getNeighbours(getCoordinates());
-        for (const auto &neighbor : neighbors) {
+        for (auto &neighbor : neighbors) {
             if (m.isSlotFree(neighbor)) {
                 potentialMovements.push_back(neighbor);
             }
@@ -308,18 +308,18 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const {
                     // Ajouter les voisins vides de la case non encore traités à potentialMovements
                     for (auto &newNeighbour : newNeighbours) {
                         if (m.isSlotFree(newNeighbour)) {
-                            if (std::find(potentialMovements.begin(), potentialMovements.end(), newNeighbour) == potentialMovements.end() &&
-                                std::find(possibleMovements.begin(), possibleMovements.end(), newNeighbour) == possibleMovements.end() &&
-                                std::find(impossibleMovements.begin(), impossibleMovements.end(), newNeighbour) == impossibleMovements.end()) {
+                            if (std::find(potentialMovements.begin(), potentialMovements.end(), newNeighbour) == potentialMovements.end() && //Si la case n'est pas dans les mouvements potentiels
+                                std::find(possibleMovements.begin(), possibleMovements.end(), newNeighbour) == possibleMovements.end() && //Et qu'elle n'est pas dans les mouvements possibles
+                                std::find(impossibleMovements.begin(), impossibleMovements.end(), newNeighbour) == impossibleMovements.end()) { //Ni dans les mouvements impossibles
                                 potentialMovements.push_back(newNeighbour);
-                                }
+                            }
                         }
                     }
                     break; // Arrêter la vérification dès qu'un voisin valide est trouvé
                 }
             }
 
-            if (valid) {//Probleme valid always false ? vérifier getNeighbour et getCoordinate
+            if (valid) {
                 // Mouvement validé, le supprimer de potentialMovements
                 possibleMovements.push_back(*it); // Ajouter à possibleMovements
                 it = potentialMovements.erase(it);
@@ -339,8 +339,10 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const {
     catch (...) {
         throw HiveException("Ant::getPossibleMovements", "Erreur dans lafonction pour récupérer les mouvements de Ant");
     }
+    vec2i erreur(3,3);
+    possibleMovements.push_back(erreur);
+    return possibleMovements;
 }
-
 
 
 // Méthodes de spider

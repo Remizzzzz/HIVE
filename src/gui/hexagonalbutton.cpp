@@ -44,8 +44,10 @@ void HexagonalButton::paintEvent(QPaintEvent *event) {
         break;
         case 3: // La case est une destination possible
             painter.setBrush(QBrush(Qt::green));
+            break;
         case 4: //Debug
             painter.setBrush(QBrush(Qt::darkRed));
+            break;
         default:
             break;
     }
