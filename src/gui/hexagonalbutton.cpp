@@ -34,7 +34,11 @@ void HexagonalButton::paintEvent(QPaintEvent *event) {
     // Définir la couleur en fonction de l'état
     switch (currentEvent) {
         case 0: // La case est un insecte
-            painter.setBrush(QBrush(Qt::red));
+            if (player) {//Si c'est au joueur 1
+                painter.setBrush(QBrush(Qt::red));
+            } else {//Si c'est au joueur 2
+                painter.setBrush(QBrush(Qt::white));
+            }
         break;
         case 1: // Un insecte a été sélectionné
             painter.setBrush(QBrush(Qt::blue));
@@ -48,6 +52,8 @@ void HexagonalButton::paintEvent(QPaintEvent *event) {
         case 4: //Debug
             painter.setBrush(QBrush(Qt::darkRed));
             break;
+        case 5://La case est un insecte
+            painter.setBrush(QBrush(Qt::white));
         default:
             break;
     }

@@ -97,6 +97,7 @@ void hiveRenderer::setupDeck(int buttonSize){
             button->setIconSize(pixmap.size());
             button->setParent(centralWidget);
             button->move(x,y);
+            button->setPlayer(num);
             button->updateState(0);//Le bouton est un insecte
             connect(button,&QPushButton::clicked, this, &hiveRenderer::handleButtonClick);
             buttons[30][i+num*sizeDeck]=button;
@@ -131,7 +132,7 @@ void hiveRenderer::handleButtonClick() {
     HexagonalButton *button = qobject_cast<HexagonalButton *>(sender());
     Player * actualP=hive.getPlayer1();
     vec2i deck(-1,-1);
-    if (turn%2!=0) actualP=hive.getPlayer2();//Si c'est au tour du joueur 2, on change le joueur actuel
+    if (turn%2!=0)actualP=hive.getPlayer2();//Si c'est au tour du joueur 2, on change le joueur actuel
     if (button) {
         //Affichez le texte du bouton dans le label
         infoLabel->setText(QString("Bouton cliqué : %1 selection : %2").arg(button->text(),inputT));
@@ -152,6 +153,7 @@ void hiveRenderer::handleButtonClick() {
                         lastClicked->updateState(2);//La case devient vide
                         button->updateState(0);
                     }
+                    turn++;
                 }
                 lastClicked->updateState(2);
                 for (auto b : actualP->getInputs().getPossibleDestinations()) {
@@ -166,10 +168,9 @@ void hiveRenderer::handleButtonClick() {
                 lastClicked=nullptr;
             }
             updateInputT();
+
         } else {//Si c'est la première sélection
-            if (button->getInsectType()!=none){
-                //DEBUG
-                buttons[30][30]->updateState(4);
+            if (button->getInsectType()!=none && button->getPlayer()==turn%2) {
 
                 button->updateState(1); //Insect a été sélectionné
                 lastClicked=button;
@@ -184,11 +185,10 @@ void hiveRenderer::handleButtonClick() {
                 for (auto b : actualP->getInputs().getPossibleDestinations()) {//On itère dans la liste des destionations possibles
                     buttons[b.getI()][b.getJ()]->updateState(3);
                 }
-
+                updateInputT();
             } else if (button->getInsectType()==none){
                 lastClicked=nullptr;
             }
-            updateInputT();
         }
     }
 }

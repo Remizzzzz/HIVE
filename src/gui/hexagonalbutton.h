@@ -22,7 +22,10 @@ public:
     void setCoordinates(vec2i coordinates) {
         this->coordinates = coordinates;
     }
+    void setPlayer(int player_) {if (player_)player=true; else player=false;}
+    bool getPlayer(){return player;}
 private:
+    bool player;
     int currentEvent=2; //Case vide
     QPolygon hexagon; // Polygone représentant la forme hexagonale
     void createHexagon(int size); // Méthode pour définir la forme
