@@ -190,17 +190,32 @@ void Hive::changeSettings() {
                 std::cout << "Sortie du menu des paramètres.\n";
                 break;
             case 5: {
-                int playerchoice = 0;
-                std::string newname;
-                while(playerchoice != 1 && playerchoice != 2) {
-                    std::cout << "De quel joueur voulez vous changer le nom? : 1 ("<< player1.getName()<<") ou 2("<<player2.getName() <<")\n ";
-                    std::cin >> playerchoice;
+                int selectedPlayer = 0;
+                std::string newName;
+
+                // Boucle pour s'assurer que le joueur choisi est valide
+                while (selectedPlayer != 1 && selectedPlayer != 2) {
+                    std::cout << "De quel joueur voulez-vous changer le nom ? : 1 ("
+                              << player1.getName() << ") ou 2 (" << player2.getName() << ")\n";
+                    std::cin >> selectedPlayer;
+
+                    if (selectedPlayer != 1 && selectedPlayer != 2) {
+                        std::cout << "Option invalide. Veuillez entrer 1 ou 2.\n";
+                    }
                 }
-                std::cout << "Quel est le nouveau nom?.\n";
-                std::cin >> newname;
-                if (playerchoice == 1) {player1.name = newname;}
-                else{player2.name = newname;}
-                std::cout << "Le .\n";
+
+                std::cout << "Quel est le nouveau nom ?\n";
+                std::cin >> newName;
+
+                // Mise à jour du nom du joueur
+                if (selectedPlayer == 1) {
+                    player1.setName(newName);
+                    std::cout << "Le nom du joueur 1 a été mis à jour à : " << player1.getName() << "\n";
+                } else {
+                    player2.setName(newName);
+                    std::cout << "Le nom du joueur 2 a été mis à jour à : " << player2.getName() << "\n";
+                }
+
                 break;
             }
             default:
