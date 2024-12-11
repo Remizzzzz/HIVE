@@ -152,6 +152,7 @@ void hiveRenderer::handleButtonClick() {
                         lastClicked->setInsectType(none);
                         lastClicked->updateState(2);//La case devient vide
                         button->updateState(0);
+                        button->setPlayer(turn%2);
                     }
                     turn++;
                 }
