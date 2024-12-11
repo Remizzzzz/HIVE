@@ -145,10 +145,12 @@ int Insect::getFormerNeighbour(vec2i newPosition, Map &m) const{
     int count=0;
     std::list<vec2i> formerNeighbour=m.getNeighbours(getCoordinates());
     std::list<vec2i> newNeighbours=m.getNeighbours(newPosition);
-    for (auto it=formerNeighbour.begin();it!=formerNeighbour.end();++it) {
-        for (auto itn=newNeighbours.begin();itn!=newNeighbours.end();++itn) {
-            if (*it == *itn) {
-                count++;
+    for (auto it : formerNeighbour) {
+        for (auto itn :newNeighbours) {
+            if(!m.isSlotFree(it) && !m.isSlotFree(itn)) {
+                if (it == itn) {
+                    count++;
+                }
             }
         }
     }
@@ -192,7 +194,7 @@ std::vector<vec2i> Bee::getPossibleMovements(Map &m) const {
         // Parcourt chaque voisin
         for (auto neighbor : neighbors) {
             // Si le slot est libre ET qu'il y a exactement un ancien voisin parmi les nouveaux
-            if(m.isSlotFree(neighbor) == 1  && getFormerNeighbour(neighbor, m) == 1) {
+            if(m.isSlotFree(neighbor) == true  && getFormerNeighbour(neighbor, m) == 1) {
                 possibleMovements.push_back(neighbor); // Ajoute la case valide
             }
         }
