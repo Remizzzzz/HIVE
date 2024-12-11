@@ -81,7 +81,7 @@ public:
         insectNb++;
     }
 
-    const Insect * getInsectAt(const int & index_) const{
+    Insect * getInsectAt(const int & index_) const{
         return insects.at(index_);
     }
 

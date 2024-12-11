@@ -187,9 +187,8 @@ std::vector<vec2i> Bee::getPossibleMovements(Map &m) const {
     // Vérifie que l'abeille puisse bouger sans casser la ruche en deux
     if(!this->isLinkingHive(m)) {
         std::list<vec2i> neighbors = m.getNeighbours(getCoordinates()); // Récupère les voisins de la case
-
         // Parcourt chaque voisin
-        for (const auto &neighbor : neighbors) {
+        for (auto neighbor : neighbors) {
             // Si le slot est libre ET qu'il y a exactement un ancien voisin parmi les nouveaux
             if(m.isSlotFree(neighbor) == 1  && getFormerNeighbour(neighbor, m) == 1) {
                 possibleMovements.push_back(neighbor); // Ajoute la case valide

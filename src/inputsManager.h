@@ -162,6 +162,14 @@ public:
         if (inputT) {//Si c'est la première sélection
             inputs.setStart(clickedPos);
             if (clickedPos.getI()!=deck) {//Si la position n'est pas dans le deck
+                std::vector<vec2i> possibleMovements = map.getInsectAt(clickedPos)->getPossibleMovements(map);
+                if (possibleMovements.empty()) {
+                    vec2i test1(10,15);
+                    vec2i test2(10,16);
+                    vec2i test3(10,17);
+                    std::vector<vec2i> test={test1,test2,test3};
+                    inputs.setPossibleDestinations(test);
+                }
                 inputs.setPossibleDestinations(map.getInsectAt(clickedPos)->getPossibleMovements(map));
             } else { //Ne marche pas, test à la place
                 vec2i test1(15,15);

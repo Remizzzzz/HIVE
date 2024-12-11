@@ -50,6 +50,7 @@ public:
         if (player_.getDeck().isIndexValid(start.getJ())){
             if (map.isSlotFree(destination)) {
                 map.putInsectTo(player_.getDeck().getInsectAt(start.getJ()), destination);
+                map.getInsectAt(destination)->setCoordinates(destination);
                 player_.addActiveInsectsFromDeck(start.getJ());
                 player_.deck.removeAt(start.getJ());
             } else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {//Ca sert a quoi ça ?
@@ -72,6 +73,7 @@ public:
         if (!map.isSlotFree(start)){
             if (map.isSlotFree(destination)){
                 map.moveInsect(start,destination);
+                map.getInsectAt(destination)->setCoordinates(destination);
             }
             else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {//???
                 //---------------A FAIRE--------------------

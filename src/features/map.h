@@ -25,7 +25,7 @@ private:
 
     //friend class renderer;
 
-    std::vector<const Insect *> slot{};
+    std::vector<Insect *> slot{};
     std::list<movement> historic{};
     vec2i relativePos{};
     const int sideSize;
@@ -57,10 +57,10 @@ public:
      * @param insect_ : insect to put
      * @param pos_ : position of the slot in which the insect will be put
      */
-    void putInsectTo(const Insect * insect_, const vec2i & pos_){
+    void putInsectTo(Insect * insect_, const vec2i & pos_){
         slot[posToIndex(pos_)] = insect_;
     }
-    const Insect * getInsectAt(const vec2i & pos_) const{
+    Insect * getInsectAt(const vec2i & pos_) const{
         return slot[posToIndex(pos_)];
     }
 
@@ -71,7 +71,7 @@ public:
         return relativePos;
     }
 
-    std::vector<const Insect *> getSlots() const{
+    std::vector<Insect *> getSlots() const{
         return slot;
     }
 
@@ -105,20 +105,20 @@ public:
         std::list<vec2i> neighbours{};
 
         if(pos_.getI() % 2 == 0) {
-           neighbours.push_back(pos_ - vec2i(-sideSize,0));
-           neighbours.push_back( pos_ - vec2i(-sideSize + 1,0));
-           neighbours.push_back( pos_ - vec2i(-1,0));
+           neighbours.push_back(pos_ - vec2i(1,1));
            neighbours.push_back( pos_ - vec2i(1,0));
-           neighbours.push_back( pos_ - vec2i(sideSize,0));
-           neighbours.push_back( pos_ - vec2i(sideSize + 1,0));
+           neighbours.push_back( pos_ - vec2i(0,1));
+           neighbours.push_back( pos_ - vec2i(0,-1));
+           neighbours.push_back( pos_ - vec2i(-1,1));
+           neighbours.push_back( pos_ - vec2i(-1,0));
         }
         else{
-           neighbours.push_back( pos_ - vec2i(-sideSize - 1,0));
-           neighbours.push_back( pos_ - vec2i(-sideSize,0));
-           neighbours.push_back( pos_ - vec2i(-1,0));
            neighbours.push_back( pos_ - vec2i(1,0));
-           neighbours.push_back( pos_ - vec2i(sideSize - 1,0));
-           neighbours.push_back( pos_ - vec2i(sideSize,0));
+           neighbours.push_back( pos_ - vec2i(1,-1));
+           neighbours.push_back( pos_ - vec2i(0,1));
+           neighbours.push_back( pos_ - vec2i(0,-1));
+           neighbours.push_back( pos_ - vec2i(-1,0));
+           neighbours.push_back( pos_ - vec2i(-1,-1));
         }
 
         return neighbours;
