@@ -2,6 +2,7 @@
 // Created by Thiba on 29/10/2024.
 //
 #include <map>
+#include <map>
 #include <set>
 #ifndef HIVE_INSECT_CPP
 #define HIVE_INSECT_CPP
@@ -86,15 +87,15 @@ std::vector<vec2i> Insect::setRule(Map &m) const {
         // Itérer sur tous les insectes dans l'ensemble
         for (const auto& insect : insectSet) {
             for (const auto& neighbor : m.getNeighbours(insect)) {
-                if (!m.isSlotFree(neighbor)) {
-                    std::cout << neighbor.getI() << " "<< neighbor.getJ()   ;
-                    // Vérifier la couleur de l'insecte à ce voisin
 
-                        if (m.getInsectAt(neighbor)->getColor() == this->getColor()) {
+                if (!m.isSlotFree(neighbor)) {
+
+                    // Vérifier la couleur de l'insecte à ce voisin
+                        /*if (m.getInsectAt(neighbor)->getColor() == getColor()) {
                             sameColorSet.insert(neighbor);
                         } else {
                             differentColorSet.insert(neighbor);
-                        }
+                        }*/
                     } else {
                         // Ajouter les cases vides à `toCheck`
                         toCheck.insert(neighbor);
