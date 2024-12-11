@@ -140,10 +140,10 @@ bool Insect:: isLinkingHive(Map &m) const {
     }
 }
 //Fonction former Neighbour pour détecter les anciens voisin à la nouvelle position : POUR BOUGER, IL FAUT STRICTEMENT 1 ANCIEN VOISIN!!
-int Insect::getFormerNeighbour(vec2i newPosition, Map &m) const{
+int Insect::getFormerNeighbour(vec2i oldPosition, vec2i newPosition, Map &m) const{
     try{
     int count=0;
-    std::list<vec2i> formerNeighbour=m.getNeighbours(getCoordinates());
+    std::list<vec2i> formerNeighbour=m.getNeighbours(oldPosition);
     std::list<vec2i> newNeighbours=m.getNeighbours(newPosition);
     for (auto it : formerNeighbour) {
         for (auto itn :newNeighbours) {
@@ -194,7 +194,7 @@ std::vector<vec2i> Bee::getPossibleMovements(Map &m) const {
         // Parcourt chaque voisin
         for (auto neighbor : neighbors) {
             // Si le slot est libre ET qu'il y a exactement un ancien voisin parmi les nouveaux
-            if(m.isSlotFree(neighbor) == true  && getFormerNeighbour(neighbor, m) == 1) {
+            if(m.isSlotFree(neighbor) == true  && getFormerNeighbour(getCoordinates(),neighbor, m) == 1) {
                 possibleMovements.push_back(neighbor); // Ajoute la case valide
             }
         }
@@ -224,7 +224,7 @@ std::vector<vec2i> Beetle:: getPossibleMovements(Map &m) const{
         // Alors, on boucle sur tous les voisins
         for (const auto &neighbor : neighbors) {
             // Et si le scarabée est au-dessus d'une pièce ou s'il y a exactement un ancien voisin parmi les nouveaux
-            if (!m.isSlotFree(neighbor) == 1  || getFormerNeighbour(neighbor, m) == 1) {
+            if (!m.isSlotFree(neighbor) == 1  || getFormerNeighbour(getCoordinates(), neighbor, m) == 1) {
                 // Alors, on ajoute le voisin en question
                 possibleMovements.push_back(neighbor);
             }
@@ -306,14 +306,15 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const {
                     // Si la case a un voisin non vide et ce voisin n'est pas Ant
                     valid = true;
                     // Ajouter les voisins vides de la case non encore traités à potentialMovements
+
                     for (auto &newNeighbour : newNeighbours) {
-                        if (m.isSlotFree(newNeighbour)) {
-                            if (std::find(potentialMovements.begin(), potentialMovements.end(), newNeighbour) == potentialMovements.end() && //Si la case n'est pas dans les mouvements potentiels
-                                std::find(possibleMovements.begin(), possibleMovements.end(), newNeighbour) == possibleMovements.end() && //Et qu'elle n'est pas dans les mouvements possibles
-                                std::find(impossibleMovements.begin(), impossibleMovements.end(), newNeighbour) == impossibleMovements.end()) { //Ni dans les mouvements impossibles
-                                potentialMovements.push_back(newNeighbour);
+                            if (m.isSlotFree(newNeighbour)) {
+                                if (std::find(potentialMovements.begin(), potentialMovements.end(), newNeighbour) == potentialMovements.end() && //Si la case n'est pas dans les mouvements potentiels
+                                    std::find(possibleMovements.begin(), possibleMovements.end(), newNeighbour) == possibleMovements.end() && //Et qu'elle n'est pas dans les mouvements possibles
+                                    std::find(impossibleMovements.begin(), impossibleMovements.end(), newNeighbour) == impossibleMovements.end()) { //Ni dans les mouvements impossibles
+                                    potentialMovements.push_back(newNeighbour);
+                                    }
                             }
-                        }
                     }
                     break; // Arrêter la vérification dès qu'un voisin valide est trouvé
                 }
@@ -356,19 +357,19 @@ std::vector<vec2i> Spider::getPossibleMovements(Map &m) const {
 
         for (const auto &level1 : firstLevel) {
             // Si le slot est libre ET qu'il y a exactement un ancien voisin parmi les nouveaux
-            if (m.isSlotFree(level1) == 1 && getFormerNeighbour(level1, m) == 1) {
+            if (m.isSlotFree(level1) == 1 && getFormerNeighbour(getCoordinates(),level1, m) == 1) {
                 // 2e niveau de voisins
                 std::list<vec2i> secondLevel = m.getNeighbours(level1);
 
                 for (const auto &level2 : secondLevel) {
                     // Idem level1 + vérification que le voisin2 ne soit pas la position de départ
-                    if (m.isSlotFree(level2) && level2 != getCoordinates() && getFormerNeighbour(level2, m) == 1) {
+                    if (m.isSlotFree(level2) && level2 != getCoordinates() && getFormerNeighbour(level1, level2, m) == 1) {
                         // 3e niveau de voisins
                         std::list<vec2i> thirdLevel = m.getNeighbours(level2);
 
                         for (const auto &level3 : thirdLevel) {
                             // Idem level1 + vérification que le voisin3 ne soit pas la position level1
-                            if (m.isSlotFree(level3) && level3 != level1 && getFormerNeighbour(level3, m) == 1) {
+                            if (m.isSlotFree(level3) && level3 != level1 && getFormerNeighbour(level2,level3, m) == 1) {
                                 // Ajouter le mouvement valide
                                 possibleMovements.push_back(level3);
                             }
@@ -456,13 +457,13 @@ std::vector<vec2i> Ladybug::getPossibleMovements(Map &m) const {
 
                     for (const auto &level2 : secondLevel) {
                         //on verifie quye les cases du niveau 2 contiennent un pion et q'on ne retourne pas à la case d'origine
-                        if (!m.isSlotFree(level2) && level2 != getCoordinates() && getFormerNeighbour(level2, m) == 1) {
+                        if (!m.isSlotFree(level2) && level2 != getCoordinates() && getFormerNeighbour(level1, level2, m) == 1) {
                             // 3e niveau de voisins
                             std::list<vec2i> thirdLevel = m.getNeighbours(level2);
 
                             for (const auto &level3 : thirdLevel) {
                                 // on redescend de la ruche en dernier mouvement, dans une case vide
-                                if (m.isSlotFree(level3) && level3 != level1 && getFormerNeighbour(level3, m) == 1) {
+                                if (m.isSlotFree(level3) && level3 != level1 && getFormerNeighbour(level2, level3, m) == 1) {
                                     possibleMovements.push_back(level3);
                                 }
                             }
