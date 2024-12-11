@@ -20,81 +20,113 @@ int Insect::counter = 0;
 
 // Méthodes de Insect
 // Renvoie tous les slots dispos sur la map pour poser une pièce
-std::vector<vec2i> Insect::setRule( Map &m) const {
-    try{
-    std::vector<vec2i> possiblePlace;
-     // On cherche les endroits possibles
-        // Trouver un insecte sur la map en iterant dessus en sortant de la boucle des qu'il est trouvé
-        int found_i = -1, found_j;
-        for(int i = 0; i < MAP_SIZE; i++) {
-            for(int j = 0; j < MAP_SIZE; j++) {
-                if(m.isSlotFree(vec2i{i,j}) == 0) {
-                    found_i = i;
-                    found_j = j;
+std::vector<vec2i> Insect::setRule(Map &m) const {
+    try {
+        std::vector<vec2i> possiblePlace;
+
+        // Trouver un insecte sur la carte
+        vec2i foundInsect(-1, -1);
+        for (int i = 0; i < MAP_SIZE && foundInsect.getI() == -1; ++i) {
+            for (int j = 0; j < MAP_SIZE; ++j) {
+                if (!m.isSlotFree(vec2i{i, j})) {
+                    foundInsect = vec2i{i, j};
                     break;
                 }
             }
-            if(found_i != -1) {
-                break;
-            }
         }
-        if(found_i == -1) {
-            possiblePlace.push_back({MAP_SIZE/2,MAP_SIZE/2});
-        }
-        std::vector<vec2i> insectSet = {vec2i(found_i,found_j)} , toCheck;
-        std::list<vec2i> neighbors;
-        int i_insect = 0;
-        while (insectSet.size() < i_insect) // On itère dans insectSet tant qu'il y a des elements ;
-        {
-            neighbors = m.getNeighbours(insectSet[i_insect]);
-            for (auto it = neighbors.begin(); it != neighbors.end(); ++it) {// On itère dans les voisins
-                if(m.isSlotFree(*it) == 0)//Quand on trouve un voisin de l'elem on l'ajoute dans la liste insectset si pas encore dedans
-                    {
-                    if (std::find(insectSet.begin(), insectSet.end(), *it)[0] != *it) {
-                        // L'élément n'est pas trouvé, donc on l'ajoute
-                        insectSet.push_back(*it);
-                        i_insect++;
-                    }
-                }else//Quand on trouve une case vide, on l'ajoute dans la liste toCheck si pas encore dedans
-                {
-                    if (std::find(toCheck.begin(), toCheck.end(), (*it))[0] != *it) {
-                        // L'élément n'est pas trouvé, donc on l'ajoute
-                        toCheck.push_back(*it);
-                    }
-                }
-            }
-        }
-        if(insectSet.size() == 1) {// Si un seul insect on propose les six voisins de l'unique element
-            neighbors = m.getNeighbours(insectSet[0]);
-            std::vector<vec2i> neighborsVector(neighbors.begin(), neighbors.end()); //Conversion en vector
-            return neighborsVector;
-        }else {
-            bool isOk;
-            for (auto it = toCheck.begin(); it != toCheck.end(); ++it) {
-                neighbors = m.getNeighbours(*it);
-                isOk = true;
-                for (auto voisin = neighbors.begin(); voisin != neighbors.end(); ++voisin) {
-                    if( m.getInsectAt(*voisin) != nullptr && m.getInsectAt(*voisin)->getColor() != this->getColor()) {
-                        isOk = false; // Indique qu'on ne veut pas l'ajouter dans possible place
-                        break; // Pas besoin de checker les autres voisins
-                    }
-                }
-                if (isOk) {// Si pas de voisin de la couleur inverse et pas déjà dans possiblePlace on l'ajoute
-                    if (std::find(possiblePlace.begin(), possiblePlace.end(), (*it))[0] != *it) {
-                        possiblePlace.push_back(*it);
-                    }
 
+        // Si aucun insecte n'est trouvé, proposer le centre de la carte
+        if (foundInsect.getI() == -1) {
+            possiblePlace.push_back(vec2i{MAP_SIZE / 2, MAP_SIZE / 2});
+            return possiblePlace;
+        }
+
+        // Découvrir tous les insectes connectés
+        std::vector<vec2i> insectSet = {foundInsect}; // Liste des insectes connectés
+        std::set<vec2i> visited;                      // Ensemble pour éviter les doublons
+        std::set<vec2i> toCheck;                      // Cases vides adjacentes à vérifier
+
+        // Parcours dynamique avec `while`
+        size_t index = 0; // Indice pour parcourir `insectSet`
+        while (index < insectSet.size()) {
+            vec2i current = insectSet[index];
+            visited.insert(current);
+
+            // Récupérer les voisins de l'insecte courant
+            for (const auto& neighbor : m.getNeighbours(current)) {
+                if (!m.isSlotFree(neighbor)) {
+                    // Si un insecte voisin est trouvé, l'ajouter à `insectSet` s'il n'a pas encore été visité
+                    if (visited.find(neighbor) == visited.end() &&
+                        std::find(insectSet.begin(), insectSet.end(), neighbor) == insectSet.end()) {
+                        insectSet.push_back(neighbor);
+                    }
+                } else {
+                    // Ajouter les cases vides à `toCheck`
+                    toCheck.insert(neighbor);
                 }
             }
+
+            ++index; // Avancer l'indice pour explorer le prochain insecte
         }
-    return possiblePlace;
+
+        // Si un seul insecte est présent, proposer ses six voisins
+        if (insectSet.size() == 1) {
+            for (const auto& neighbor : m.getNeighbours(insectSet[0])) {
+                if (m.isSlotFree(neighbor)) {
+                    possiblePlace.push_back(neighbor);
+                }
+            }
+            return possiblePlace;
+        }
+
+        // Cas avec 2 insectes ou plus
+        std::set<vec2i> sameColorSet;  // Insectes de la même couleur
+        std::set<vec2i> differentColorSet;  // Insectes de couleur différente
+
+        // Itérer sur tous les insectes dans l'ensemble
+        for (const auto& insect : insectSet) {
+            for (const auto& neighbor : m.getNeighbours(insect)) {
+                if (!m.isSlotFree(neighbor)) {
+                    std::cout << neighbor.getI() << " "<< neighbor.getJ()   ;
+                    // Vérifier la couleur de l'insecte à ce voisin
+
+                        if (m.getInsectAt(neighbor)->getColor() == this->getColor()) {
+                            sameColorSet.insert(neighbor);
+                        } else {
+                            differentColorSet.insert(neighbor);
+                        }
+                    } else {
+                        // Ajouter les cases vides à `toCheck`
+                        toCheck.insert(neighbor);
+                    }
+                }
+            }
+        // Convertir l'ensemble des positions valides en vecteur
+        possiblePlace.assign(toCheck.begin(), toCheck.end());
+        return possiblePlace;
+        // Faire la différence entre les ensembles
+        std::set<vec2i> validPositions = sameColorSet;
+        for (const auto& slot : differentColorSet) {
+            validPositions.erase(slot);
+        }
+
+        // Convertir l'ensemble des positions valides en vecteur
+        possiblePlace.assign(validPositions.begin(), validPositions.end());
+
+        return possiblePlace;
+
     } catch (const std::string& e) {
         throw HiveException("Insect::setRule", e);
-    }
-    catch (...) {
-        throw HiveException("Insect::setRule", "Erreur dans la fonction pour récupérer les mouvement d'un insecte dans un deck");
+    } catch (const std::exception& e) {
+        throw HiveException("Insect::setRule", e.what());
+    } catch (...) {
+        throw HiveException("Insect::setRule", "Erreur inattendue lors du calcul des emplacements possibles.");
     }
 }
+
+
+
+
 
 //Fonction qui détermine si en enlevant un insecte la ruche est toujours lié (si l'insecte à le droit de bouger)
 bool Insect:: isLinkingHive(Map &m) const {

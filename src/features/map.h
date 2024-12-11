@@ -75,6 +75,8 @@ public:
         return slot;
     }
 
+    std::vector<vec2i> setRule( bool color) const;
+
     /**
      * @brief \n set the slot on position pos_ to nullptr
      * @param pos_ : position of the slot to remove
@@ -87,7 +89,7 @@ public:
      * @brief \n check if the slop in position pos_ is free
      * @param pos_ : position of the slot to check
      */
-    bool isSlotFree(const vec2i & pos_){
+    bool isSlotFree( const vec2i & pos_) const{
         return slot[posToIndex(pos_)] == nullptr;
     }
 
