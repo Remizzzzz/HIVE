@@ -165,7 +165,7 @@ public:
                 std::vector<vec2i> possibleMovements = map.getInsectAt(clickedPos)->getPossibleMovements(map);
                 inputs.setPossibleDestinations(map.getInsectAt(clickedPos)->getPossibleMovements(map));
             } else {
-                //Ne marche pas, test à la place
+                //Si la position est dans le deck
                 vec2i test1(10,15);
                 vec2i test2(10,16);
                 vec2i test3(10,17);
