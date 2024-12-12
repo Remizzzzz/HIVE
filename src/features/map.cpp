@@ -36,7 +36,7 @@ std::vector<vec2i> Map::setRule(bool color) const {
 
         // Si aucun insecte n'est trouvé, proposer le centre de la carte
         if (foundInsect.getI() == -1) {
-            possiblePlace.push_back(vec2i{sideSize / 2, sideSize / 2});
+            possiblePlace.push_back(vec2i{(sideSize-2) / 2, (sideSize-2) / 2});
             return possiblePlace;
         }
 

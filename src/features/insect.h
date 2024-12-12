@@ -58,6 +58,9 @@ public:
     std::vector<vec2i> setRule(Map &m) const;
     bool isLinkingHive(Map &m) const;
     void setAboveOf(Insect * insect){};
+    Insect* getInsectUnder() const {
+        return nullptr;
+    }
 };
 
 
