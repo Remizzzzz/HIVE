@@ -159,6 +159,9 @@ void hiveRenderer::handleButtonClick() {
                                 lastClicked->setInsectType(beetleInsectType);
                                 lastClicked->setPlayer(beetleInsectPlayer);
                                 lastClicked->updateState(0);
+                            } else {
+                                lastClicked->setInsectType(none);
+                                lastClicked->updateState(2);//La case devient vide
                             }
                         }else {
                             lastClicked->setInsectType(none);
