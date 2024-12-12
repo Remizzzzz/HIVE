@@ -182,7 +182,7 @@ public:
                 //inputs.setPossibleDestinations(test);inputs.getStart()
                 //inputs.setPossibleDestinations(map.setRule(map.getInsectAt(inputs.getStart())->getColor()));
 
-                inputs.setPossibleDestinations(map.getInsectAt(inputs.getStart())->setRule(map,inputT));
+                inputs.setPossibleDestinations(map.setRule(inputT));
             }
         } else {//Si c'est la deuxième sélection
             auto it = std::find(inputs.getPossibleDestinations().begin(), inputs.getPossibleDestinations().end(), clickedPos);

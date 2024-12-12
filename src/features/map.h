@@ -75,7 +75,7 @@ public:
         return slot;
     }
 
-    std::vector<vec2i> setRule( bool color) const;
+    std::vector<vec2i> setRule( bool color_insect);
 
     /**
      * @brief \n set the slot on position pos_ to nullptr
