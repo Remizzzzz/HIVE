@@ -22,6 +22,7 @@ int Insect::counter = 0;
 // Méthodes de Insect
 // Renvoie tous les slots dispos sur la map pour poser une pièce
 std::vector<vec2i> Insect::setRule(Map &m) const {
+    //bool found = color;
     try {
         std::vector<vec2i> possiblePlace;
 
@@ -89,7 +90,7 @@ std::vector<vec2i> Insect::setRule(Map &m) const {
             for (const auto& neighbor : m.getNeighbours(insect)) {
 
                 if (!m.isSlotFree(neighbor)) {
-
+                    //bool found = color; //avec cette ligne ça fait crasher
                     // Vérifier la couleur de l'insecte à ce voisin
                         /*if (m.getInsectAt(neighbor)->getColor() == getColor()) {
                             sameColorSet.insert(neighbor);
@@ -324,6 +325,7 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const {
     if (!this->isLinkingHive(m)) {
         // Initialiser les voisins vides immédiats comme mouvements potentiels
         std::list<vec2i> neighbors = m.getNeighbours(getCoordinates());
+
         for (auto &neighbor : neighbors) {
             if (m.isSlotFree(neighbor)) {
                 potentialMovements.push_back(neighbor);

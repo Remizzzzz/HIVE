@@ -14,6 +14,7 @@
 class Map;
 enum insectType{ant,beetle, grasshopper,bee,spider, mosquitoe, ladybug,none};
 class Insect{
+protected:
     int id;
     insectType iT;
     vec2i coordinates;
@@ -163,6 +164,7 @@ public:
 
 class Grasshopper : public virtual Insect {
 public:
+
     Grasshopper(bool col) : Insect(col, grasshopper) {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
     [[nodiscard]] std::string getPrintableValue(int idColor) const override
