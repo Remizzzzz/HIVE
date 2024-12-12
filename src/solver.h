@@ -71,21 +71,21 @@ public:
         const vec2i & destination = player_.inputs.getDestination();
 
         if (!map.isSlotFree(start)){
-            if (map.isSlotFree(destination)){
+            //if (map.isSlotFree(destination)){
                 map.moveInsect(start,destination);
                 map.getInsectAt(destination)->setCoordinates(destination);
-            }
+            /*}
             else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {//???
                 //---------------A FAIRE--------------------
                 /*
                  deck2.getInsectAt(cursor1.getJ())
                 map.putInsect(deck2.getInsectAt(cursor1.getJ()),destination);
                 deck2.deleteAt(cursor1.getJ());
-                 */
+                 *
             }
             else{
                 player_.inputs.setMessage("Can't put your insect here");
-            }
+            }*/
         }
     }
 

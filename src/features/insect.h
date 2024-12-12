@@ -57,6 +57,7 @@ public:
     virtual std::vector<vec2i> getPossibleMovements(Map &m) const = 0;
     std::vector<vec2i> setRule(Map &m) const;
     bool isLinkingHive(Map &m) const;
+    void setAboveOf(Insect * insect){};
 };
 
 
