@@ -102,7 +102,7 @@ public:
         Insect* insectEnd = getInsectAt(pos2_);
         if(insectStart!= nullptr && insectStart->getIT()== beetle ) {//Si l'insecte qui bouge est beetle
             Beetle* beetlePointer = dynamic_cast<Beetle*>(insectStart);
-
+            if (beetlePointer == nullptr){throw HiveException("Map::moveinsect","Erreur du dynamique cast");}
             if(beetlePointer->getInsectUnder() != nullptr) {//Si y a un insecte en dessous
 
                 putInsectTo(insectStart->getInsectUnder(),pos1_);
