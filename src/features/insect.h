@@ -56,7 +56,7 @@ public:
     }
     int getFormerNeighbour(vec2i oldPosition, vec2i newPosition, Map &m) const; //Fonctions pour detecter les anciens voisins à la nouvelle position
     virtual std::vector<vec2i> getPossibleMovements(Map &m) const = 0;
-    std::vector<vec2i> setRule(Map &m) const;
+    std::vector<vec2i> setRule(Map &m, bool color) const;
     bool isLinkingHive(Map &m) const;
     void setAboveOf(Insect * insect){};
     Insect* getInsectUnder() const {

@@ -21,7 +21,7 @@ int Insect::counter = 0;
 
 // Méthodes de Insect
 // Renvoie tous les slots dispos sur la map pour poser une pièce
-std::vector<vec2i> Insect::setRule(Map &m) const {
+std::vector<vec2i> Insect::setRule(Map &m, bool color) const {
     //bool found = color;
     try {
         std::vector<vec2i> possiblePlace;
@@ -90,13 +90,13 @@ std::vector<vec2i> Insect::setRule(Map &m) const {
             for (const auto& neighbor : m.getNeighbours(insect)) {
 
                 if (!m.isSlotFree(neighbor)) {
-                    //bool found = color; //avec cette ligne ça fait crasher
+                    //bool found = this->color; //avec cette ligne ça fait crasher
                     // Vérifier la couleur de l'insecte à ce voisin
-                        /*if (m.getInsectAt(neighbor)->getColor() == getColor()) {
+                        if (m.getInsectAt(neighbor)->getColor() == color) {
                             sameColorSet.insert(neighbor);
                         } else {
                             differentColorSet.insert(neighbor);
-                        }*/
+                        }
                     } else {
                         // Ajouter les cases vides à `toCheck`
                         toCheck.insert(neighbor);

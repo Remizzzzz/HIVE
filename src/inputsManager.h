@@ -181,7 +181,8 @@ public:
                 std::vector<vec2i> test={test1,test2,test3,test4,test5,test6,test7,test8,test9,test10,test11,test12};
                 //inputs.setPossibleDestinations(test);inputs.getStart()
                 //inputs.setPossibleDestinations(map.setRule(map.getInsectAt(inputs.getStart())->getColor()));
-                inputs.setPossibleDestinations(map.getInsectAt(inputs.getStart())->setRule(map));
+
+                inputs.setPossibleDestinations(map.getInsectAt(inputs.getStart())->setRule(map,inputT));
             }
         } else {//Si c'est la deuxième sélection
             auto it = std::find(inputs.getPossibleDestinations().begin(), inputs.getPossibleDestinations().end(), clickedPos);
