@@ -5,6 +5,8 @@
 #ifndef HIVE_MAP_H
 #define HIVE_MAP_H
 
+
+#include <qdebug.h>
 #include <iostream>
 #include <vector>
 #include <list>
@@ -95,18 +97,20 @@ public:
 
     /**@brief move the insect on pos1_ to the pos2_.*/
     void moveInsect(const vec2i & pos1_, const vec2i & pos2_){
-        /*
+
         Insect* insectStart = getInsectAt(pos1_);
         Insect* insectEnd = getInsectAt(pos2_);
-        if(insectStart!= nullptr && insectStart->getIT()== beetle ) {
-            if(insectStart->getInsectUnder() != nullptr) {
+        if(insectStart!= nullptr && insectStart->getIT()== beetle ) {//Si l'insecte qui bouge est beetle
+            if(insectStart->getInsectUnder() != nullptr) {//Si y a un insecte en dessous
+
                 putInsectTo(insectStart->getInsectUnder(),pos1_);
             }
-            if(insectEnd!= nullptr) {
+            if(insectEnd!= nullptr) {// Si il arrive sur un  insecte
                 Beetle* beetlePointer = dynamic_cast<Beetle*>(insectStart);
                 beetlePointer->setAboveOf(insectEnd);
+
             }
-        }*/
+        }
         if(!(isSlotFree(pos1_) || pos1_ == pos2_)){
             if(slot[posToIndex(pos1_)]->getIT()==beetle) {
                 /*
