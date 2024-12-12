@@ -271,41 +271,44 @@ std::vector<vec2i> Beetle:: getPossibleMovements(Map &m) const{
 
 
 
-// Méthodes de Grasshoper
-std::vector<vec2i> Grasshopper:: getPossibleMovements(Map &m) const {
-    try{
-        std::vector<vec2i> possibleMovements;
-        int breakCount = 0;
-        if(!this->isLinkingHive(m)) {
-            std::list<vec2i> neighboursList = m.getNeighbours(getCoordinates());
-            std::vector<vec2i> neighbors(neighboursList.begin(), neighboursList.end()); //Conversion en vector
-            int i = 0;
-            vec2i it2;
-            bool goOn = true;
-            for (auto it = neighbors.begin(); it != neighbors.end(); ++it) {
-                //On itère dans chaque voisin
-                if( !m.isSlotFree(*it)) {
-                    // S'il y a un voisin
-                    it2 = neighbors.at(i++);
-                    while(goOn) {
-                        // On itère dans le voisin de position x du voisin x du voisin x etc jusqu'à trouver une case vide
-                        it2 =  std::vector<vec2i>(m.getNeighbours(it2).begin(),m.getNeighbours(it2).end()).at(i);
-                        if(m.isSlotFree(*it)) {
-                            possibleMovements.push_back(it2); // On ajoute la position de la case vide dans possibleMovement
-                            goOn = false; // On arrête la boucle
-                        }
-                    }
+std::vector<vec2i> Grasshopper::getPossibleMovements(Map &m) const {
+    std::vector<vec2i> possibleMovements;
+
+    try {
+        // Si le déplacement casse la continuité de la ruche, aucun mouvement n'est possible
+        if (this->isLinkingHive(m)) {
+            return possibleMovements; // Retourne une liste vide
+        }
+
+        // Récupérer les voisins hexagonaux directs
+        std::list<vec2i> neighboursList = m.getNeighbours(getCoordinates());
+
+        for (const auto& neighbour : neighboursList) {
+            // Vérifie si le voisin contient une pièce
+            if (!m.isSlotFree(neighbour)) {
+                vec2i current = neighbour;
+                vec2i direction = current - getCoordinates(); // Calculer la direction du mouvement
+
+                // Avancer dans la direction jusqu'à trouver une case libre ou sortir des limites
+                while ( !m.isSlotFree(current)) {
+                    current = current + direction;
+                }
+
+                // Ajouter la case libre trouvée si elle est valide
+                if ( m.isSlotFree(current)) {
+                    possibleMovements.push_back(current);
                 }
             }
         }
-        return possibleMovements; // Retourne le vector des coups possibles
     } catch (const std::string& e) {
-        throw HiveException("Grasshoper::getPossibleMovements", e);
+        throw HiveException("Grasshopper::getPossibleMovements", e);
+    } catch (...) {
+        throw HiveException("Grasshopper::getPossibleMovements", "Erreur inattendue lors du calcul des mouvements possibles.");
     }
-    catch (...) {
-        throw HiveException("Grasshoper::getPossibleMovements", "Erreur dans lafonction pour récupérer les mouvements de Grasshoper");
-    }
+
+    return possibleMovements; // Retourner la liste finale
 }
+
 
 
 
