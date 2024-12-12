@@ -104,13 +104,13 @@ public:
             Beetle* beetlePointer = dynamic_cast<Beetle*>(insectStart);
 
             if(beetlePointer->getInsectUnder() != nullptr) {//Si y a un insecte en dessous
-                // Ca rentre pas dans cette boucle alors que ça devrait donc l'insecte n'est pas restorer
+
                 putInsectTo(insectStart->getInsectUnder(),pos1_);
             }
             if(insectEnd!= nullptr) {// Si il arrive sur un  insecte
-                //Beetle* beetlePointer = dynamic_cast<Beetle*>(insectStart);
-                beetlePointer->setAboveOf(insectEnd); // Ca ne rentre pas non plus dans setaboveof
-                //beetlePointer->setAboveOf(insectEnd);
+
+                beetlePointer->setAboveOf(insectEnd);
+
             }
         }
         if(!(isSlotFree(pos1_) || pos1_ == pos2_)){
