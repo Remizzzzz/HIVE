@@ -3,10 +3,10 @@
 //
 #include <set>
 #include "map.h"
-
+/*
 void Map::updateBeetlePosition(Beetle *beetle, const vec2i &newPos) {
     if (beetle == nullptr) return;
-    const Insect *insectBelow = getInsectAt(newPos);
+    Insect *insectBelow = getInsectAt(newPos);
 
     // Si un insecte est déjà présent à la position cible
     if (insectBelow != nullptr) {
@@ -17,7 +17,7 @@ void Map::updateBeetlePosition(Beetle *beetle, const vec2i &newPos) {
 
     // Met à jour la position dans la carte
     moveInsect(beetle->getCoordinates(), newPos); // Déplace l'insecte dans la carte
-}
+}*/
 
 std::vector<vec2i> Map::setRule(bool color) const {
     try {

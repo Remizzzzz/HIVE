@@ -96,8 +96,24 @@ public:
     /**@brief move the insect on pos1_ to the pos2_.*/
     void moveInsect(const vec2i & pos1_, const vec2i & pos2_){
         if(!(isSlotFree(pos1_) || pos1_ == pos2_)){
-            putInsectTo(slot[posToIndex(pos1_)], pos2_);
-            removeInsectAt(pos1_);
+            if(slot[posToIndex(pos1_)]->getIT()==beetle) {
+                /*
+                Beetle b=slot[posToIndex(pos1_)];
+                Insect* insectAbove=b.getInsectUnder();
+                b.setAboveOf(slot[posToIndex(pos2_)]);
+                putInsectTo(slot[posToIndex(pos1_)], pos2_);
+                if (insectAbove!=nullptr) {
+                    putInsectTo(insectAbove, pos1_);
+                } else {
+                    removeInsectAt(pos1_);
+                }*/
+                slot[posToIndex(pos1_)]->setAboveOf(slot[posToIndex(pos2_)]);
+                putInsectTo(slot[posToIndex(pos1_)], pos2_);
+                removeInsectAt(pos1_);
+            } else {
+                putInsectTo(slot[posToIndex(pos1_)], pos2_);
+                removeInsectAt(pos1_);
+            }
         }
         addToHistoric(pos1_,pos2_);//If the movement is a rewind, goBack will manage the historic
     }
@@ -142,7 +158,7 @@ public:
 
     // Il faut appeler updateBeetlePosition à la place de moveInsect SI la pièce est un scarabée.
     // updateBeetlePosition permet de gérer la mise à jour de l'attribut isAboveOf et de déplacer le scarabée.
-    void updateBeetlePosition(Beetle *beetle, const vec2i &newPos);
+    //void updateBeetlePosition(Beetle *beetle, const vec2i &newPos);
 
 //------- ANTI MAP EXIT -------
 private:

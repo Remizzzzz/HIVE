@@ -132,6 +132,8 @@ void hiveRenderer::handleButtonClick() {
     HexagonalButton *button = qobject_cast<HexagonalButton *>(sender());
     Player * actualP=hive.getPlayer1();
     vec2i deck(-1,-1);
+    insectType beetleInsectType=none;
+    bool beetleInsectPlayer=false;
     if (turn%2!=0)actualP=hive.getPlayer2();//Si c'est au tour du joueur 2, on change le joueur actuel
     if (button) {
         //Affichez le texte du bouton dans le label
@@ -141,16 +143,34 @@ void hiveRenderer::handleButtonClick() {
                 if (button->getState()==3) { //Si la case sélectionnée est bien dans les mouvements possibles
                     if (lastClicked->getInsectType()!=none){
                         hive.getInputsManager()->updatePlayerInputsQt(actualP,button->getCoordinates(),inputT);
+
+                        button->setInsectType(lastClicked->getInsectType());
+
+                        if (lastClicked->getInsectType()==beetle) {
+                            Insect *b=hive.getMap().getInsectAt(actualP->getInputs().getStart());
+                            if (b->getInsectUnder()!=nullptr) {
+                                /*
+                                beetleInsectType=b.getInsectUnder()->getIT();
+                                beetleInsectPlayer=b.getInsectUnder()->getColor();
+                                lastClicked->setInsectType(beetleInsectType);
+                                lastClicked->setPlayer(beetleInsectPlayer);
+                                lastClicked->updateState(0);*/
+                                lastClicked->setInsectType(bee);
+                                lastClicked->setPlayer(0);
+                                lastClicked->updateState(0);
+                            } else {
+                                lastClicked->setInsectType(none);
+                                lastClicked->updateState(2);//La case devient vide
+                            }
+                        }else {
+                            lastClicked->setInsectType(none);
+                            lastClicked->updateState(2);//La case devient vide
+                        }
                         if (actualP->getInputs().getStart().getI()==-1) {//Si c'est deckToMap movement
-                             hive.getSolver()->deckToMapMovement(*actualP);
+                            hive.getSolver()->deckToMapMovement(*actualP);
                         } else { //Si c'est mapToMapMovement
                             hive.getSolver()->mapToMapMovement(*actualP);
                         }
-
-                        button->setInsectType(lastClicked->getInsectType());
-                        //A modif pour le scarabée
-                        lastClicked->setInsectType(none);
-                        lastClicked->updateState(2);//La case devient vide
                         button->updateState(0);
                         button->setPlayer(turn%2);
                     }
