@@ -65,12 +65,9 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
     }
 
     // DEBUG BUTTON
-    HexagonalButton *button = new HexagonalButton(buttonSize, this);
+    auto *button = new QPushButton;
     button->setParent(centralWidget);
-    button->move(15, 33);
-    button->setInsectType(none);
-    button->updateState(2);
-    buttons[30][30]=button;
+    button->move(15, 50);
 }
 
 void hiveRenderer::setupDeck(int buttonSize){
@@ -132,9 +129,8 @@ void hiveRenderer::handleButtonClick() {
     HexagonalButton *button = qobject_cast<HexagonalButton *>(sender());
     Player * actualP=hive.getPlayer1();
     vec2i deck(-1,-1);
-    insectType beetleInsectType=none;
-    bool beetleInsectPlayer=false;
-    if (turn%2!=0)actualP=hive.getPlayer2();//Si c'est au tour du joueur 2, on change le joueur actuel
+    bool playerTurn=turn%2;
+    if (playerTurn)actualP=hive.getPlayer2();//Si c'est au tour du joueur 2, on change le joueur actuel
     if (button) {
         //Affichez le texte du bouton dans le label
         infoLabel->setText(QString("Bouton cliqué : %1 selection : %2").arg(button->text(),inputT));
@@ -142,7 +138,7 @@ void hiveRenderer::handleButtonClick() {
             if (lastClicked!=nullptr){
                 if (button->getState()==3) { //Si la case sélectionnée est bien dans les mouvements possibles
                     if (lastClicked->getInsectType()!=none){
-                        hive.getInputsManager()->updatePlayerInputsQt(actualP,button->getCoordinates(),inputT);
+                        hive.getInputsManager()->updatePlayerInputsQt(actualP,button->getCoordinates(),inputT, playerTurn);
 
                         button->setInsectType(lastClicked->getInsectType());
 
@@ -176,7 +172,11 @@ void hiveRenderer::handleButtonClick() {
                     }
                     turn++;
                 }
-                lastClicked->updateState(2);
+                if (lastClicked!=button) {
+                    lastClicked->updateState(2);
+                } else {
+                    button->updateState(0);
+                }
                 for (auto b : actualP->getInputs().getPossibleDestinations()) {
                     HexagonalButton * selec=buttons[b.getI()][b.getJ()];
                     if (selec->getInsectType()!=none) {
@@ -202,7 +202,7 @@ void hiveRenderer::handleButtonClick() {
                     button->setCoordinates(index);
                 }
 
-                hive.getInputsManager()->updatePlayerInputsQt(actualP,button->getCoordinates(),inputT);
+                hive.getInputsManager()->updatePlayerInputsQt(actualP,button->getCoordinates(),inputT,playerTurn);
                 for (auto b : actualP->getInputs().getPossibleDestinations()) {//On itère dans la liste des destionations possibles
                     buttons[b.getI()][b.getJ()]->updateState(3);
                 }
