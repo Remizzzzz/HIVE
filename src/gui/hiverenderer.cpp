@@ -132,6 +132,8 @@ void hiveRenderer::handleButtonClick() {
     HexagonalButton *button = qobject_cast<HexagonalButton *>(sender());
     Player * actualP=hive.getPlayer1();
     vec2i deck(-1,-1);
+    insectType beetleInsectType=none;
+    bool beetleInsectPlayer=false;
     if (turn%2!=0)actualP=hive.getPlayer2();//Si c'est au tour du joueur 2, on change le joueur actuel
     if (button) {
         //Affichez le texte du bouton dans le label
@@ -148,9 +150,20 @@ void hiveRenderer::handleButtonClick() {
                         }
 
                         button->setInsectType(lastClicked->getInsectType());
-                        //A modif pour le scarabée
-                        lastClicked->setInsectType(none);
-                        lastClicked->updateState(2);//La case devient vide
+
+                        if (lastClicked->getInsectType()==beetle) {
+                            Beetle b=hive.getMap().getInsectAt(actualP->getInputs().getStart());
+                            if (b.getInsectUnder()!=nullptr) {
+                                beetleInsectType=b.getInsectUnder()->getIT();
+                                beetleInsectPlayer=b.getInsectUnder()->getColor();
+                                lastClicked->setInsectType(beetleInsectType);
+                                lastClicked->setPlayer(beetleInsectPlayer);
+                                lastClicked->updateState(0);
+                            }
+                        }else {
+                            lastClicked->setInsectType(none);
+                            lastClicked->updateState(2);//La case devient vide
+                        }
                         button->updateState(0);
                         button->setPlayer(turn%2);
                     }

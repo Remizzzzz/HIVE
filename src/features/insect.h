@@ -27,7 +27,7 @@ public:
     Insect( bool col, insectType type) : id(counter++), iT(type), color(col),coordinates({-1,-1}) {};//Ici -1 c'est pour NULL, mais la valeur doit être int
 
     int  getID() const { return id; }
-    int getIT() const { return iT; }
+    insectType  getIT() const { return iT; }
     bool  getColor() const { return color; }
     vec2i getCoordinates() const { return coordinates; }
     void setCoordinates(const vec2i & coordinates_){coordinates = coordinates_;}
@@ -109,14 +109,14 @@ class Beetle : public virtual Insect {
 
     // Pointe vers l'insecte sur lequel le scarabée est placé
     // nullptr par défaut, car le scarabée ne peut pas être placé au-dessus d'une pièce
-    const Insect* isAboveOf = nullptr;
+    Insect* isAboveOf = nullptr;
 
 public:
     Beetle(const bool col) : Insect(col, beetle) {}
-    const Insect* getInsectUnder() const {
+    Insect* getInsectUnder() const {
         return isAboveOf;
     }
-    void setAboveOf(const Insect *insect) {
+    void setAboveOf(Insect *insect) {
         isAboveOf = insect;
     }
 

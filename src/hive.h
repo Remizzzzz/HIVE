@@ -249,7 +249,7 @@ public:
     Player* getPlayer2() {return &player2;}
     InputsManager* getInputsManager() {return &inputsManager;}
     Solver* getSolver() {return &solver;}
-
+    Map& getMap(){return map;}
 };
 
 

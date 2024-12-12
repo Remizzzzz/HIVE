@@ -6,7 +6,7 @@
 
 void Map::updateBeetlePosition(Beetle *beetle, const vec2i &newPos) {
     if (beetle == nullptr) return;
-    const Insect *insectBelow = getInsectAt(newPos);
+    Insect *insectBelow = getInsectAt(newPos);
 
     // Si un insecte est déjà présent à la position cible
     if (insectBelow != nullptr) {
