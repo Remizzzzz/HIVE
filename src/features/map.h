@@ -102,13 +102,13 @@ public:
         Insect* insectEnd = getInsectAt(pos2_);
         if(insectStart!= nullptr && insectStart->getIT()== beetle ) {//Si l'insecte qui bouge est beetle
             if(insectStart->getInsectUnder() != nullptr) {//Si y a un insecte en dessous
-
+                throw HiveException("sdsd","ff");// Ca rentre pas dans cette boucle alors que ça devrait donc l'insecte n'est pas restorer
                 putInsectTo(insectStart->getInsectUnder(),pos1_);
             }
-            if(insectEnd!= nullptr) {// Si il arrive sur un  insecte
-                Beetle* beetlePointer = dynamic_cast<Beetle*>(insectStart);
-                beetlePointer->setAboveOf(insectEnd);
-
+            if(insectEnd!= nullptr) {// Si il arrive sur un  insecte / Ca rentre bien dans cette boucle
+                //Beetle* beetlePointer = dynamic_cast<Beetle*>(insectStart);
+                insectStart->setAboveOf(insectEnd);
+                //beetlePointer->setAboveOf(insectEnd);
             }
         }
         if(!(isSlotFree(pos1_) || pos1_ == pos2_)){
