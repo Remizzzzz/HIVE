@@ -430,7 +430,7 @@ std::vector<vec2i> Spider::getPossibleMovements(Map &m) const {
     } catch (const std::string& e) {
         throw HiveException("Spider::getPossibleMovements", e);
     }catch (...) {
-        throw HiveException("Spider::getPossibleMovements", "Erreur dans lafonction pour récupérer les mouvements de Spider");
+        throw HiveException("Spider::getPossibleMovements", "Erreur dans la fonction pour récupérer les mouvements de Spider");
     }
 }
 
@@ -482,7 +482,7 @@ std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) const{
         throw HiveException("Mosquitoe::getPossibleMovements", e);
     }
     catch (...) {
-        throw HiveException("Mosquitoe::getPossibleMovements", "Erreur dans lafonction pour récupérer les mouvements de Mosquitoe");
+        throw HiveException("Mosquitoe::getPossibleMovements", "Erreur dans la fonction pour récupérer les mouvements de Mosquitoe");
     }
 }
 

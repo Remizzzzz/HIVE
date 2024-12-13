@@ -17,8 +17,10 @@ public:
     private slots:
         void openSecondaryWindow();   // Ouvre la fenêtre secondaire
     void launchConsoleApp();      // Lance l'application console
+    void showGameRules();  // Lance l'affichage des règles du jeu
 
 private:
+    QPushButton *rulesButton;
     QPushButton *secondaryWindowButton;
     QPushButton *consoleAppButton;
 };
