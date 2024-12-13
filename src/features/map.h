@@ -98,33 +98,61 @@ public:
     /**@brief move the insect on pos1_ to the pos2_.*/
     void moveInsect(const vec2i & pos1_, const vec2i & pos2_){
 
-        Insect* insectStart = getInsectAt(pos1_);
-        Insect* insectEnd = getInsectAt(pos2_);
-        if(insectStart!= nullptr && insectStart->getIT()== beetle ) {//Si l'insecte qui bouge est beetle
-            Beetle* beetlePointer = dynamic_cast<Beetle*>(insectStart);
-            if (beetlePointer == nullptr){throw HiveException("Map::moveinsect","Erreur du dynamique cast");}
-            if(beetlePointer->getInsectUnder() != nullptr) {//Si y a un insecte en dessous
+            // Récupérer les insectes aux positions de départ et d'arrivée
+            Insect* movingInsect = getInsectAt(pos1_);
+            Insect* targetInsect = getInsectAt(pos2_);
 
-                putInsectTo(insectStart->getInsectUnder(),pos1_);
+            // Vérification qu'il y a un insecte à déplacer
+            if (movingInsect == nullptr) {
+                throw HiveException("Map::moveInsect", "Aucun insecte à déplacer à la position donnée.");
             }
-            if(insectEnd!= nullptr) {// Si il arrive sur un  insecte
 
-                beetlePointer->setAboveOf(insectEnd);
+            // Si l'insecte est un scarabée
+            if (movingInsect->getIT() == beetle) {
+                // Cast dynamique pour obtenir un pointeur de type Beetle
+                Beetle* beetlePointer = dynamic_cast<Beetle*>(movingInsect);
+                if (beetlePointer == nullptr) {
+                    throw HiveException("Map::moveInsect", "Erreur du dynamic_cast pour le scarabée.");
+                }
 
+                // Si le scarabée a un insecte en dessous
+                if (beetlePointer->getInsectUnder() != nullptr) {
+                    // Remettre l'insecte en dessous à la position actuelle
+                    putInsectTo(beetlePointer->getInsectUnder(), pos1_);
+                } else {
+                    // Pas d'insecte en dessous, retirer l'insecte de la position initiale
+                    removeInsectAt(pos1_);
+                }
+
+
+
+                // Si un insecte est présent à la position cible, positionner le scarabée au-dessus
+                if (targetInsect != nullptr) {
+                    beetlePointer->setAboveOf(targetInsect);
+                }
+
+                // Déplacer le scarabée à la position cible
+                putInsectTo(beetlePointer, pos2_);
+
+            } else {
+                // Cas général pour les autres types d'insectes
+                putInsectTo(movingInsect, pos2_);
+                removeInsectAt(pos1_);
             }
-        }
-        if(!(isSlotFree(pos1_) || pos1_ == pos2_)){
+
+
+        /*if(!(isSlotFree(pos1_) || pos1_ == pos2_)){
             if(slot[posToIndex(pos1_)]->getIT()==beetle) {
-                /*
-                Beetle b=slot[posToIndex(pos1_)];
-                Insect* insectAbove=b.getInsectUnder();
-                b.setAboveOf(slot[posToIndex(pos2_)]);
+                Beetle* b = dynamic_cast<Beetle*>(slot[posToIndex(pos1_)]);
+                //Beetle b=slot[posToIndex(pos1_)];
+                Insect* insectUnder=b->getInsectUnder();
+                b->setAboveOf(slot[posToIndex(pos2_)]);
                 putInsectTo(slot[posToIndex(pos1_)], pos2_);
-                if (insectAbove!=nullptr) {
-                    putInsectTo(insectAbove, pos1_);
+                if (insectUnder!=nullptr) {
+                    putInsectTo(insectUnder, pos1_);
                 } else {
                     removeInsectAt(pos1_);
-                }*/
+                }
                 slot[posToIndex(pos1_)]->setAboveOf(slot[posToIndex(pos2_)]);
                 putInsectTo(slot[posToIndex(pos1_)], pos2_);
                 removeInsectAt(pos1_);
@@ -132,7 +160,7 @@ public:
                 putInsectTo(slot[posToIndex(pos1_)], pos2_);
                 removeInsectAt(pos1_);
             }
-        }
+        }*/
         addToHistoric(pos1_,pos2_);//If the movement is a rewind, goBack will manage the historic
     }
 
