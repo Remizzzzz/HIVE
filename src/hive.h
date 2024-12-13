@@ -190,6 +190,9 @@ private:
         player_.inputs.reset();
     }
 
+
+
+
     int displayMenu();
 
 public:
@@ -207,21 +210,20 @@ public:
                 player1(1), player2(2), currentPlayer(&player1),
                 inputsManager(mode, renderedMapSideSize, map),
                 solver(map, trueMapSideSize)
-                rewindNb(1), map(trueMapSideSize,rewindNb),
-                player1(1), player2(2), currentPlayer(&player1),
-                inputsManager(mode, renderedMapSideSize, map),
-                solver(map, trueMapSideSize)
     {
     };*/
 
     ~Hive(){
         delete renderer;
+        for (const auto& insect : insects) {
+            delete insect;
+        }
     }
+    int launchGame();
     void static displayRules() ;
     void changeSettings();
     void saveGame(const std::string& filename)const;
-    void loadGame();
-
+    void loadGame(const std::string& filename);
     int initIfNeeded(){
         if (!isInit){
             if (displayMenu() == 1){
@@ -230,9 +232,7 @@ public:
                 }
                 generateAllInsects();
                 std::cout << insects.size();
-                std::cout<<"ok";
-                renderer->render(*currentPlayer);
-                std::cout<<"DEBUG ok";
+                renderer->displayMap(*currentPlayer);
                 isInit = true;
                 return 1;
             }else{

@@ -35,7 +35,7 @@ public:
     bool  getColor() const { return color; }
     vec2i getCoordinates() const { return coordinates; }
     void setCoordinates(const vec2i & coordinates_){coordinates = coordinates_;}
-    //static int  get_counter() { return counter; }// A voir si utile
+    static int  get_counter() { return counter; }// A voir si utile
     //static int  get_max_instance() { return max_instance; }// A voir si utile
 
 

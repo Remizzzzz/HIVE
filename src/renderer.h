@@ -37,9 +37,6 @@ protected:
 };
 
 class ConsoleRenderer : public Renderer {
-private:
-
-
 public:
     /**
      * @brief Constructeur de la classe ConsoleRenderer.

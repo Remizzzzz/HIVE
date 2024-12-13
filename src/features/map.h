@@ -13,16 +13,28 @@
 #include "insect.h"
 #include "../utils/utils.h"
 class Map{
-private:
-
+    public:
     class movement{
     public:
         vec2i from{};
         vec2i to{};
 
+        // Getter pour 'from'
+        const vec2i& getFrom() const {
+            return from;
+        }
+
+        // Getter pour 'to'
+        const vec2i& getTo() const {
+            return to;
+        }
+
+
         movement(const vec2i & from_, const vec2i & to_) : from(from_), to(to_) {};
         movement() = default;
     };
+private:
+
 
     //friend class renderer;
 
@@ -65,8 +77,14 @@ public:
         return slot[posToIndex(pos_)];
     }
 
+    Map & operator=(const Map &) {
+        return *this;
+    }
     const int & getSideSize() const{
         return sideSize;
+    }
+    const int & getRewind() const{
+        return rewind;
     }
     const vec2i getRelativePos() const{
         return relativePos;
@@ -77,6 +95,10 @@ public:
     }
 
     std::vector<vec2i> setRule( bool color_insect);
+
+    const std::list<movement>& getHistoric() const {
+        return historic;
+    }
 
     /**
      * @brief \n set the slot on position pos_ to nullptr

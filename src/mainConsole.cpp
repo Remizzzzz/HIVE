@@ -6,7 +6,7 @@
 #include "hive.h"
 
 #include <conio.h>  // Pour _kbhit() et _getch()
-
+#include <fstream>
 
 int main() {
     /*int sideSize = 8; // Taille de la carte
