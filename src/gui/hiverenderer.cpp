@@ -153,7 +153,7 @@ void hiveRenderer::handleButtonClick() {
                                 insectType beetleInsectType=b->getInsectUnder()->getIT();
                                 bool  beetleInsectPlayer=b->getInsectUnder()->getColor();
                                 lastClicked->setInsectType(beetleInsectType);
-                                lastClicked->setPlayer(beetleInsectPlayer);
+                                lastClicked->setPlayer(!beetleInsectPlayer);
                                 lastClicked->updateState(0);
                             } else {
                                 lastClicked->setInsectType(none);
