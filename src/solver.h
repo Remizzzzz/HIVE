@@ -90,6 +90,7 @@ public:
             //if (map.isSlotFree(destination)){
             map.moveInsect(start,destination);
             map.getInsectAt(destination)->setCoordinates(destination);
+
             turn++;
             /*}
             else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {//???

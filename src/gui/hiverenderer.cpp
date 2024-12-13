@@ -3,6 +3,8 @@
 #include "./ui_hiverenderer.h"
 #include <QPixmap>
 #include <QIcon>
+
+#include "MainWindow.h"
 #include "ParamButton.h"
 //#include "hive.h" -> Déclenche ENORMEMENT d'erreur
 hiveRenderer::hiveRenderer(QWidget *parent)
@@ -130,8 +132,12 @@ void hiveRenderer::handleButtonClick() {
     // Récupérez le bouton qui a déclenché le signal
     HexagonalButton *button = qobject_cast<HexagonalButton *>(sender());
     Player * actualP=hive.getPlayer1();
+    Player * opponent = hive.getPlayer2();
     vec2i deck(-1,-1);
-    if (playerTurn)actualP=hive.getPlayer2();//Si c'est au tour du joueur 2, on change le joueur actuel
+    if (playerTurn){
+        actualP=hive.getPlayer2();//Si c'est au tour du joueur 2, on change le joueur actuel
+        opponent=hive.getPlayer1();
+    }
     if (button) {
         //Affichez le texte du bouton dans le label
         infoLabel->setText(QString("Bouton cliqué : %1, selection : %2, tour %3").arg(button->text()).arg(inputT).arg(hive.getSolver()->getTurn()));
@@ -171,6 +177,9 @@ void hiveRenderer::handleButtonClick() {
                         updatePlayerTurn();
                         button->updateState(0);
                         button->setPlayer(!playerTurn);
+                        if (opponent->lostGame(hive.getMap())) {
+                            showWinner();
+                        }
                     }
                 } else {
                     lastClicked->updateState(0);
@@ -244,7 +253,43 @@ void hiveRenderer::handleButtonClick() {
         }
     }
 }
+void hiveRenderer::showWinner() {
+    // Création d'une nouvelle fenêtre pour afficher les règles du jeu
+    QWidget *winWindow = new QWidget;
+    winWindow->setWindowTitle("Winner !");
+    winWindow->setFixedSize(1000, 600);
 
+    // Mise en page
+    QVBoxLayout *layout = new QVBoxLayout;
+
+    // Les règles (à écrire)
+    QString message = QString("Congratulations ! Player %1 just won the game !!").arg(!playerTurn);
+    QLabel *winLabel = new QLabel(message, winWindow);
+    winLabel->setAlignment(Qt::AlignCenter);
+    QFont winFont = winLabel->font();
+    winFont.setPointSize(16);
+    winLabel->setFont(winFont);
+    layout->addWidget(winLabel);
+
+    // Bouton de retour pour revenir à la fenêtre principale
+    QPushButton *backButton = new QPushButton("Retour au menu", winWindow);
+    backButton->setFixedSize(200, 50); // Ajuste la taille du bouton
+
+    connect(backButton, &QPushButton::clicked, [this, winWindow]() {
+        MainWindow w;
+        winWindow->close();
+        w.show();
+        this->close();
+    });
+    layout->addWidget(backButton);
+    layout->setAlignment(backButton, Qt::AlignCenter);
+
+    winWindow->setLayout(layout);
+    winWindow->show();
+
+    // Cache temporairement la fenêtre principale
+    this->hide();
+}
 void hiveRenderer::handleParamButtonClick() {
     auto *button = qobject_cast<ParamButton *>(sender());
 }

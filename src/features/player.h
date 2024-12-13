@@ -63,7 +63,15 @@ public:
         Insect * insect = deck.insects.at(deckIndex_);
         activeInsects.push_back(insect);
     }
-
+    bool lostGame(Map &m) {
+        for (auto it : activeInsects) {
+            if (it->getIT()==bee) {
+                Bee b=dynamic_cast<Bee*>(it);
+                return b.isCircled(m);
+            }
+        }
+        return false;
+    }
     void setHumanity(const bool & isHuman_) {
         isHuman = isHuman_;
     }

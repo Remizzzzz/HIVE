@@ -34,6 +34,7 @@ public:
             playerTurn=true;
         }
     }
+    void showWinner();
 private:
     Hive hive;
     int buttonSize=25;
