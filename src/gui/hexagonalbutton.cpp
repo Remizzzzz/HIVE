@@ -30,7 +30,6 @@ void HexagonalButton::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     QPen pen(Qt::black,2);
     painter.setPen(pen);
-    qDebug() << "Painting button: currentEvent=" << currentEvent << "iT=" << iT;
     // Définir la couleur en fonction de l'état
     switch (currentEvent) {
         case 0: // La case est un insecte

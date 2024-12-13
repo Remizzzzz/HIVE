@@ -194,10 +194,16 @@ int Insect::getFormerNeighbour(vec2i oldPosition, vec2i newPosition, Map &m) con
 // Fonction qui dit si la reine abeille est encerclée (partie terminée)
 bool Bee::isCircled(Map &m) {
     try{
-    std::list<vec2i> neighbors = m.getNeighbours(getCoordinates());
-    for (auto it = neighbors.begin(); it != neighbors.end(); ++it) { // On itère dans les voisins
+    std::list<vec2i> neighbors = m.getNeighbours(this->getCoordinates());
+
+    /*qDebug() << "Voisins trouvés :";
+    for (const auto& n : neighbors) {
+        qDebug() << "  Voisin :" << n;
+    }*/
+
+    for (auto it : neighbors) { // On itère dans les voisins
         // Quand on trouve une case vide, on renvoie false. La reine n'est pas encerclée
-        if(m.isSlotFree(*it) == 1) return false;
+        if(m.isSlotFree(it)) return false;
     }
     // La reine est encerclée.
     return true;

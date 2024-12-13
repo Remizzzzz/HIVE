@@ -67,6 +67,7 @@ public:
         for (auto it : activeInsects) {
             if (it->getIT()==bee) {
                 Bee b=dynamic_cast<Bee*>(it);
+                b.setCoordinates(it->getCoordinates());
                 return b.isCircled(m);
             }
         }

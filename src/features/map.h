@@ -9,9 +9,23 @@
 #include <iostream>
 #include <vector>
 #include <list>
-
+#include <QDebug>
 #include "insect.h"
 #include "../utils/utils.h"
+
+//Test debug
+#include <QDebug>
+
+inline QDebug operator<<(QDebug debug, const vec2i& vec) {
+    debug.nospace() << "(" << vec.getI() << ", " << vec.getJ() << ")";
+    return debug.space();
+}
+
+
+
+
+
+
 class Map{
     public:
     class movement{
@@ -194,7 +208,6 @@ public:
     //return positions of the filled slots around pos_
     std::list<vec2i> getNeighbours(const vec2i & pos_) const{
         std::list<vec2i> neighbours{};
-
         if(pos_.getI() % 2 == 0) {
            neighbours.push_back(pos_ - vec2i(1,1));
            neighbours.push_back( pos_ - vec2i(1,0));

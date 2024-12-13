@@ -178,7 +178,9 @@ void hiveRenderer::handleButtonClick() {
                         button->updateState(0);
                         button->setPlayer(!playerTurn);
                         if (opponent->lostGame(hive.getMap())) {
-                            showWinner();
+                            showWinner(actualP);
+                        } else if (actualP->lostGame(hive.getMap())) {
+                            showWinner(opponent);
                         }
                     }
                 } else {
@@ -253,7 +255,7 @@ void hiveRenderer::handleButtonClick() {
         }
     }
 }
-void hiveRenderer::showWinner() {
+void hiveRenderer::showWinner(Player* winner) {
     // Création d'une nouvelle fenêtre pour afficher les règles du jeu
     QWidget *winWindow = new QWidget;
     winWindow->setWindowTitle("Winner !");
@@ -263,27 +265,13 @@ void hiveRenderer::showWinner() {
     QVBoxLayout *layout = new QVBoxLayout;
 
     // Les règles (à écrire)
-    QString message = QString("Congratulations ! Player %1 just won the game !!").arg(!playerTurn);
+    QString message = QString("Congratulations ! Player %1 just won the game !!").arg(winner->getId());
     QLabel *winLabel = new QLabel(message, winWindow);
     winLabel->setAlignment(Qt::AlignCenter);
     QFont winFont = winLabel->font();
     winFont.setPointSize(16);
     winLabel->setFont(winFont);
     layout->addWidget(winLabel);
-
-    // Bouton de retour pour revenir à la fenêtre principale
-    QPushButton *backButton = new QPushButton("Retour au menu", winWindow);
-    backButton->setFixedSize(200, 50); // Ajuste la taille du bouton
-
-    connect(backButton, &QPushButton::clicked, [this, winWindow]() {
-        MainWindow w;
-        winWindow->close();
-        w.show();
-        this->close();
-    });
-    layout->addWidget(backButton);
-    layout->setAlignment(backButton, Qt::AlignCenter);
-
     winWindow->setLayout(layout);
     winWindow->show();
 
