@@ -36,7 +36,7 @@ class Hive{
     Player player1;
     Player player2;
 
-    Player * currentPlayer;
+    Player * currentPlayer=&player1;
 
     InputsManager inputsManager;
 
@@ -50,6 +50,23 @@ private:
 
         int cpt1 = 0;
         int cpt2 = 0;
+
+        for (int i = 0; i < 2; ++i) {
+            bool color = bool(int (float (i) / 1.f));
+            Insect * insect = new Bee(color);
+            insects.push_back(insect);
+
+            if (color){
+                insect->setCoordinates({-1,cpt1});
+                player1.deck.addInsect(insect);
+                cpt1++;
+            }
+            else{
+                insect->setCoordinates({renderedMapSideSize,cpt2});
+                player2.deck.addInsect(insect);
+                cpt2++;
+            }
+        }
 
         for (int i = 0; i < 6; ++i) {
             bool color = bool(int (float (i) / 3.f));
@@ -90,23 +107,6 @@ private:
             bool color = bool(int (float (i) / 3.f));
 
             Insect * insect = new Grasshopper(color);
-            insects.push_back(insect);
-
-            if (color){
-                insect->setCoordinates({-1,cpt1});
-                player1.deck.addInsect(insect);
-                cpt1++;
-            }
-            else{
-                insect->setCoordinates({renderedMapSideSize,cpt2});
-                player2.deck.addInsect(insect);
-                cpt2++;
-            }
-        }
-
-        for (int i = 0; i < 2; ++i) {
-            bool color = bool(int (float (i) / 1.f));
-            Insect * insect = new Bee(color);
             insects.push_back(insect);
 
             if (color){
@@ -177,14 +177,6 @@ private:
 
     }
 
-    void switchPlayer(){
-        if (currentPlayer == &player1){
-            currentPlayer = &player2;
-        }
-        else{
-            currentPlayer = &player1;
-        }
-    }
 
     void static resetInputs(Player & player_){
         player_.inputs.reset();
@@ -290,6 +282,15 @@ public:
     InputsManager* getInputsManager() {return &inputsManager;}
     Solver* getSolver() {return &solver;}
     Map& getMap(){return map;}
+    bool getCurrentPlayer(){return currentPlayer->getId();}
+    void switchPlayer(){
+        if (currentPlayer == &player1){
+            currentPlayer = &player2;
+        }
+        else{
+            currentPlayer = &player1;
+        }
+    }
 };
 
 

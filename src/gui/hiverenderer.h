@@ -27,8 +27,13 @@ public:
         }
     }
     bool getInputT(){return inputT;}
-    void updateTurn(){turn++;}
-    int getTurn(){return turn;}
+    void updatePlayerTurn() {
+        if (playerTurn) {
+            playerTurn=false;
+        } else {
+            playerTurn=true;
+        }
+    }
 private:
     Hive hive;
     int buttonSize=25;
@@ -37,13 +42,13 @@ private:
     int cols=renderedMapSize*2; //30 colonnes
     HexagonalButton* lastClicked=nullptr;
     bool inputT=true;
+    bool playerTurn=false;
     HexagonalButton* buttons[31][30]; //Le 31 est pour les decks
     Ui::hiveRenderer *ui;
     QWidget *centralWidget;      // Conteneur principal
     QLabel *infoLabel;           // Label pour afficher les infos
     void setupHexagonalGrid(int rows, int cols, int buttonSize);
     void setupDeck(int buttonSize);
-    int turn=0;
 
 private slots : //Private slots, c'est pour détecter les signaux des boutons
     void handleButtonClick(); // Slot pour gérer les clics de bouton

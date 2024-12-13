@@ -27,9 +27,6 @@ private:
 
 
     lv::Random random;
-
-private:
-
     void moveCursor(Player & player, const int cursorId_, const int i_, const int j_) const{
 
         Inputs & inputs = player.inputs;
@@ -159,7 +156,7 @@ public:
         }
     }
 
-    void updatePlayerInputsQt(Player * player_, vec2i clickedPos, bool inputT, bool turn) {
+    void updatePlayerInputsQt(Player * player_, vec2i clickedPos, bool inputT, bool turnP) {
         Inputs & inputs = player_->inputs;
         const int deck=-1;
         if (inputT) {//Si c'est la première sélection
@@ -172,7 +169,7 @@ public:
                 //inputs.setPossibleDestinations(test);inputs.getStart()
                 //inputs.setPossibleDestinations(map.setRule(map.getInsectAt(inputs.getStart())->getColor()));
 
-                inputs.setPossibleDestinations(map.setRule(!turn));
+                inputs.setPossibleDestinations(map.setRule(!turnP));
             }
         } else {//Si c'est la deuxième sélection
             auto it = std::find(inputs.getPossibleDestinations().begin(), inputs.getPossibleDestinations().end(), clickedPos);

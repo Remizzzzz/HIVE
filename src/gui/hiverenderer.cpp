@@ -131,11 +131,10 @@ void hiveRenderer::handleButtonClick() {
     HexagonalButton *button = qobject_cast<HexagonalButton *>(sender());
     Player * actualP=hive.getPlayer1();
     vec2i deck(-1,-1);
-    bool playerTurn=turn%2;
     if (playerTurn)actualP=hive.getPlayer2();//Si c'est au tour du joueur 2, on change le joueur actuel
     if (button) {
         //Affichez le texte du bouton dans le label
-        infoLabel->setText(QString("Bouton cliqué : %1, selection : %2, tour %3").arg(button->text()).arg(inputT).arg(turn));
+        infoLabel->setText(QString("Bouton cliqué : %1, selection : %2, tour %3").arg(button->text()).arg(inputT).arg(hive.getSolver()->getTurn()));
         if (!getInputT()){//Si c'est la deuxième selection
             if (lastClicked!=nullptr){
                 if (button->getState()==3) { //Si la case sélectionnée est bien dans les mouvements possibles
@@ -168,10 +167,11 @@ void hiveRenderer::handleButtonClick() {
                         } else { //Si c'est mapToMapMovement
                             hive.getSolver()->mapToMapMovement(*actualP);
                         }
+                        hive.switchPlayer();
+                        updatePlayerTurn();
                         button->updateState(0);
-                        button->setPlayer(turn%2);
+                        button->setPlayer(!playerTurn);
                     }
-                    turn++;
                 } else {
                     lastClicked->updateState(0);
                 }
@@ -189,22 +189,55 @@ void hiveRenderer::handleButtonClick() {
             updateInputT();
 
         } else {//Si c'est la première sélection
-            if (button->getInsectType()!=none && button->getPlayer()==turn%2) {
+            if (button->getInsectType()!=none && button->getPlayer()==playerTurn) {
+                if (!hive.getSolver()->queenInDeck(*actualP) || hive.getSolver()->getTurn()<4) {//Si la reine n'est pas dans le deck, ou si le tour est inférieur à 4
+                    if (!hive.getSolver()->queenInDeck(*actualP)) {
+                        button->updateState(1); //Insect a été sélectionné
+                        lastClicked=button;
 
-                button->updateState(1); //Insect a été sélectionné
-                lastClicked=button;
+                        //Pour toujours avoir un index valide
+                        if (button->getCoordinates()==deck) {
+                            vec2i index(-1,actualP->getDeck().returnIndex(button->getInsectType()));
+                            button->setCoordinates(index);
+                        }
 
-                //Pour toujours avoir un index valide
-                if (button->getCoordinates()==deck) {
-                    vec2i index(-1,actualP->getDeck().returnIndex(button->getInsectType()));
-                    button->setCoordinates(index);
+                        hive.getInputsManager()->updatePlayerInputsQt(actualP,button->getCoordinates(),inputT,playerTurn);
+                        for (auto b : actualP->getInputs().getPossibleDestinations()) {//On itère dans la liste des destionations possibles
+                            buttons[b.getI()][b.getJ()]->updateState(3);
+                        }
+                        updateInputT();
+                    } else {
+                        if (button->getCoordinates()!=deck) {
+                            lastClicked=nullptr;
+                        }else {
+                            button->updateState(1); //Insect a été sélectionné
+                            lastClicked=button;
+                            //Pour toujours avoir un index valide
+                            vec2i index(-1,actualP->getDeck().returnIndex(button->getInsectType()));
+                            button->setCoordinates(index);
+                            hive.getInputsManager()->updatePlayerInputsQt(actualP,button->getCoordinates(),inputT,playerTurn);
+                            for (auto b : actualP->getInputs().getPossibleDestinations()) {//On itère dans la liste des destionations possibles
+                                buttons[b.getI()][b.getJ()]->updateState(3);
+                            }
+                            updateInputT();
+                        }
+                    }
+                } else {
+                    if (button->getInsectType()!=bee) {
+                        lastClicked=nullptr;
+                    } else {
+                        button->updateState(1); //Insect a été sélectionné
+                        lastClicked=button;
+                        //Pour toujours avoir un index valide
+                        vec2i index(-1,actualP->getDeck().returnIndex(button->getInsectType()));
+                        button->setCoordinates(index);
+                        hive.getInputsManager()->updatePlayerInputsQt(actualP,button->getCoordinates(),inputT,playerTurn);
+                        for (auto b : actualP->getInputs().getPossibleDestinations()) {//On itère dans la liste des destionations possibles
+                            buttons[b.getI()][b.getJ()]->updateState(3);
+                        }
+                        updateInputT();
+                    }
                 }
-
-                hive.getInputsManager()->updatePlayerInputsQt(actualP,button->getCoordinates(),inputT,playerTurn);
-                for (auto b : actualP->getInputs().getPossibleDestinations()) {//On itère dans la liste des destionations possibles
-                    buttons[b.getI()][b.getJ()]->updateState(3);
-                }
-                updateInputT();
             } else if (button->getInsectType()==none){
                 lastClicked=nullptr;
             }
