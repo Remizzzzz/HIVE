@@ -142,17 +142,16 @@ void hiveRenderer::handleButtonClick() {
 
                         button->setInsectType(lastClicked->getInsectType());
 
-                        if (lastClicked->getInsectType()==beetle) {
-                            Insect *b=hive.getMap().getInsectAt(actualP->getInputs().getStart());
+                        if (lastClicked->getInsectType()==beetle && lastClicked->getCoordinates().getI()>-1) {
+
+                            Beetle* b = dynamic_cast<Beetle*>(hive.getMap().getInsectAt(actualP->getInputs().getStart()));
+
                             if (b->getInsectUnder()!=nullptr) {
-                                /*
-                                beetleInsectType=b.getInsectUnder()->getIT();
-                                beetleInsectPlayer=b.getInsectUnder()->getColor();
+
+                                insectType beetleInsectType=b->getInsectUnder()->getIT();
+                                bool  beetleInsectPlayer=b->getInsectUnder()->getColor();
                                 lastClicked->setInsectType(beetleInsectType);
                                 lastClicked->setPlayer(beetleInsectPlayer);
-                                lastClicked->updateState(0);*/
-                                lastClicked->setInsectType(bee);
-                                lastClicked->setPlayer(0);
                                 lastClicked->updateState(0);
                             } else {
                                 lastClicked->setInsectType(none);

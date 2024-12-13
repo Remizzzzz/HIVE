@@ -129,10 +129,12 @@ public:
                 // Si un insecte est présent à la position cible, positionner le scarabée au-dessus
                 if (targetInsect != nullptr) {
                     beetlePointer->setAboveOf(targetInsect);
+                }else {
+                    beetlePointer->setAboveOf(nullptr);
                 }
 
                 // Déplacer le scarabée à la position cible
-                putInsectTo(beetlePointer, pos2_);
+                putInsectTo(movingInsect, pos2_);
 
             } else {
                 // Cas général pour les autres types d'insectes
