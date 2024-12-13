@@ -1,30 +1,77 @@
-# CMake version minimum requise
-cmake_minimum_required(VERSION 3.16)
-
-# Projet principal C++ (HIVE)
-project(HIVE)
+cmake_minimum_required(VERSION 3.29)
+project(HiveQt)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_PREFIX_PATH "C:/Qt/6.8.0/mingw_64")
 
-# Inclure les répertoires nécessaires
-include_directories(.)
+find_package(Qt6 COMPONENTS
+        Core
+        Gui
+        Widgets
+        REQUIRED)
 
-add_executable(HIVE
-        main.cpp
-        src/utils/hiveException.h
-        src/utils/utils.cpp
-        src/utils/utils.h
-        src/features/insect.cpp
-        src/features/insect.h
-        src/features/map.cpp
-        src/features/map.h
-        src/features/deck.h
-        src/features/inputs.h
-        src/features/inputs.cpp
-        src/inputsManager.h
-        src/solver.h
-        src/renderer.h
-        src/hive.h
+include_directories(${CMAKE_SOURCE_DIR}/src)
+
+# Ajouter les fichiers source de la partie console
+file(GLOB CONSOLE_SOURCES
+        src/utils/*.cpp
+        src/features/*.cpp
         src/hive.cpp
-        src/features/inputsManager.cpp
-        main.cpp)
+        src/hive.h
+        src/inputsManager.h
+        src/renderer.h
+        src/solver.h
+)
+
+# Ajouter les fichiers sources de la partie Qt
+file(GLOB QT_SOURCES
+        src/mainQt.cpp  # Le point d'entrée de votre application Qt
+        src/gui/*.cpp     # Tout code supplémentaire pour l'interface graphique Qt
+)
+
+# Créer l'exécutable pour l'interface Qt
+add_executable(HiveQt ${QT_SOURCES} ${CONSOLE_SOURCES})
+add_executable(HiveConsole ${CONSOLE_SOURCES} src/mainConsole.cpp)
+
+if (WIN32)#Pour empêcher l'ouverture de la console
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
+endif ()
+
+
+target_link_libraries(HiveQt
+        Qt::Core
+        Qt::Gui
+        Qt::Widgets
+)
+
+if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    set(DEBUG_SUFFIX)
+    if (MSVC AND CMAKE_BUILD_TYPE MATCHES "Debug")
+        set(DEBUG_SUFFIX "d")
+    endif ()
+    set(QT_INSTALL_PATH "${CMAKE_PREFIX_PATH}")
+    if (NOT EXISTS "${QT_INSTALL_PATH}/bin")
+        set(QT_INSTALL_PATH "${QT_INSTALL_PATH}/..")
+        if (NOT EXISTS "${QT_INSTALL_PATH}/bin")
+            set(QT_INSTALL_PATH "${QT_INSTALL_PATH}/..")
+        endif ()
+    endif ()
+    if (EXISTS "${QT_INSTALL_PATH}/plugins/platforms/qwindows${DEBUG_SUFFIX}.dll")
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E make_directory
+                "$<TARGET_FILE_DIR:${PROJECT_NAME}>/plugins/platforms/")
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                "${QT_INSTALL_PATH}/plugins/platforms/qwindows${DEBUG_SUFFIX}.dll"
+                "$<TARGET_FILE_DIR:${PROJECT_NAME}>/plugins/platforms/")
+    endif ()
+    foreach (QT_LIB Core Gui Widgets)
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                "${QT_INSTALL_PATH}/bin/Qt6${QT_LIB}${DEBUG_SUFFIX}.dll"
+                "$<TARGET_FILE_DIR:${PROJECT_NAME}>")
+    endforeach (QT_LIB)
+endif ()

@@ -3,8 +3,8 @@
 
 #include <iostream>
 #include "features/map.h"
-#include "src/features/inputs.h"
-#include "src/features/player.h"
+#include "features/inputs.h"
+#include "features/player.h"
 
 // Dans tout le renderer, idColor = 0, affiche sans couleur spécifique, idColor = 1, cursor Start avant selec
 // idColor = 2, cursor start apres select, idColor = 1, cursor parmi les possibles, idColor = 3, movement possibles
@@ -90,6 +90,7 @@ public:
                 }
             }
         }
+
     }
 
     /**

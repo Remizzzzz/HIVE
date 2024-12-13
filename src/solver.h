@@ -18,29 +18,29 @@ class Solver{
 private:
     Map & map;
 
-    const int & renderedMapSideSize;
+    const int & trueMapSideSize;
 
 public:
 
-    Solver(Map & map_, const int & renderedMapSideSize_) :
-            map(map_), renderedMapSideSize(renderedMapSideSize_){};
+    Solver(Map & map_, const int & trueMapSideSize_) :
+        map(map_), trueMapSideSize(trueMapSideSize_){};
 
 
 private:
     //0 -> map, 1 -> deck 1, -> 1 deck 2
     int getStartLocation(Player & player_) const{
-        return 1 * (player_.inputs.getStart().getI() == -1) + 2 * (player_.inputs.getStart().getI() == renderedMapSideSize);
+        return 1 * (player_.inputs.getStart().getI() == -1) + 2 * (player_.inputs.getStart().getI() == trueMapSideSize);
     }
 
     bool isStartValid(Player & player_) const{
 
-        if (player_.inputs.getStart().getI() >= 0 && player_.inputs.getStart().getI() < renderedMapSideSize &&
-            player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < renderedMapSideSize
+        if (player_.inputs.getStart().getI() >= 0 && player_.inputs.getStart().getI() < trueMapSideSize &&
+            player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < trueMapSideSize
             && !map.isSlotFree(player_.inputs.getStart())){
             return true;
         }
 
-        if ((player_.inputs.getStart().getI() == -1 || player_.inputs.getStart().getI() == renderedMapSideSize) &&
+        if ((player_.inputs.getStart().getI() == -1 || player_.inputs.getStart().getI() == trueMapSideSize) &&
             (player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < player_.getDeck().getInsectNb())){
             return true;
         }
@@ -49,29 +49,28 @@ private:
     }
 
     bool isDestinationValid(Player & player_) const{
-        return player_.inputs.getDestination().getI() >= 0 && player_.inputs.getDestination().getI() < renderedMapSideSize &&
-               player_.inputs.getDestination().getJ() >= 0 && player_.inputs.getDestination().getJ() < renderedMapSideSize;
+        return player_.inputs.getDestination().getI() >= 0 && player_.inputs.getDestination().getI() < trueMapSideSize &&
+                player_.inputs.getDestination().getJ() >= 0 && player_.inputs.getDestination().getJ() < trueMapSideSize;
     }
-
+public:
     void deckToMapMovement(Player & player_) {
         const vec2i & start = player_.inputs.getStart();
         const vec2i & destination = player_.inputs.getDestination();
 
-        if (player_.getDeck().isIndexValid(start.getJ())) {
+        if (player_.getDeck().isIndexValid(start.getJ())){
             if (map.isSlotFree(destination)) {
-                player_.deck.insects.at(start.getJ())->setCoordinates(destination);
                 map.putInsectTo(player_.getDeck().getInsectAt(start.getJ()), destination);
+                map.getInsectAt(destination)->setCoordinates(destination);
                 player_.addActiveInsectsFromDeck(start.getJ());
                 player_.deck.removeAt(start.getJ());
-            } else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {
+            } else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {//Ca sert a quoi ça ?
                 //---------------A FAIRE--------------------
                 /*
                  deck1.getInsectAt(cursor1.getJ())
                 map.putInsect(deck1.getInsectAt(cursor1.getJ()),destination);
                 deck1.deleteAt(cursor1.getJ());
                  */
-            }
-            else{
+            } else {
                 player_.inputs.setMessage("Can't put your insect here");
             }
         } else throw HiveException("solver.h:Solver:deckToMapGestion", "cursor1 is invalid for deck1");
@@ -82,21 +81,21 @@ private:
         const vec2i & destination = player_.inputs.getDestination();
 
         if (!map.isSlotFree(start)){
-            if (map.isSlotFree(destination)){
-                player_.deck.insects.at(start.getJ())->setCoordinates(destination);
+            //if (map.isSlotFree(destination)){
                 map.moveInsect(start,destination);
-            }
-            else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {
+                map.getInsectAt(destination)->setCoordinates(destination);
+            /*}
+            else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {//???
                 //---------------A FAIRE--------------------
                 /*
                  deck2.getInsectAt(cursor1.getJ())
                 map.putInsect(deck2.getInsectAt(cursor1.getJ()),destination);
                 deck2.deleteAt(cursor1.getJ());
-                 */
+                 *
             }
             else{
                 player_.inputs.setMessage("Can't put your insect here");
-            }
+            }*/
         }
     }
 

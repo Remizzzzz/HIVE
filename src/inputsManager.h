@@ -12,15 +12,15 @@
 #include "utils/utils.h"
 #include "utils/hiveException.h"
 #include "utils/random.hpp"
-
 #include <iostream>
 #include <conio.h>
-
+#include <solver.h>
+#include <features/map.h>
+#include <algorithm>
 
 enum Mode{PvP,PvAI};
 
 class InputsManager{
-
 private:
     const int renderedMapSideSize;
     Map & map;
@@ -50,10 +50,10 @@ private:
                 std::cout << "laaaaa";
                 if (inputs.getPossibleDestinationsNumber() > 1){
                     if (i_ + j_ > 0){
-                        inputs.setDestionationIndex((inputs.getDestinationIndex() + 1) % inputs.getPossibleDestinationsNumber());
+                        inputs.setDestinationIndex((inputs.getDestinationIndex() + 1) % inputs.getPossibleDestinationsNumber());
                     }
                     else{
-                        inputs.setDestionationIndex(((inputs.getDestinationIndex() - 1) < 0) * (inputs.getPossibleDestinationsNumber() - 1) +
+                        inputs.setDestinationIndex(((inputs.getDestinationIndex() - 1) < 0) * (inputs.getPossibleDestinationsNumber() - 1) +
                                                             ((inputs.getDestinationIndex() - 1) >= 0) * (inputs.getDestinationIndex() - 1));
                     }
                 }
@@ -99,15 +99,16 @@ public:
 
                 break;
             case 2:
+                    //lancer exception
                 if (!inputs.isPossibleDestinationsEmpty()){
-                    inputs.setDestionationIndex(random.getRandomInt(0,int (inputs.getPossibleDestinationsNumber())));
+                    inputs.setDestinationIndex(random.getRandomInt(0,int (inputs.getPossibleDestinationsNumber())));
                 }
                 else{
                     //lancer exception
                 }
                 break;
             default:
-                //Lancer exception
+                throw HiveException("inputsManager.h:InputsManager:moveCursor", "cursorId_ invalid");
                 break;
         }
 
@@ -157,6 +158,48 @@ public:
             }
         }
     }
+
+    void updatePlayerInputsQt(Player * player_, vec2i clickedPos, bool inputT, bool turn) {
+        Inputs & inputs = player_->inputs;
+        const int deck=-1;
+        if (inputT) {//Si c'est la première sélection
+            inputs.setStart(clickedPos);
+            if (clickedPos.getI()!=deck) {//Si la position n'est pas dans le deck
+                std::vector<vec2i> possibleMovements = map.getInsectAt(clickedPos)->getPossibleMovements(map);
+                inputs.setPossibleDestinations(map.getInsectAt(clickedPos)->getPossibleMovements(map));
+            } else {
+                //Si la position est dans le deck
+                vec2i test1(10,15);
+                vec2i test2(10,16);
+                vec2i test3(10,17);
+                vec2i test4(11,15);
+                vec2i test5(11,16);
+                vec2i test6(11,17);
+                vec2i test7(12,15);
+                vec2i test8(12,16);
+                vec2i test9(12,17);
+                vec2i test10(13,15);
+                vec2i test12(13,16);
+                vec2i test11(13,17);
+                std::vector<vec2i> test={test1,test2,test3,test4,test5,test6,test7,test8,test9,test10,test11,test12};
+                //inputs.setPossibleDestinations(test);inputs.getStart()
+                //inputs.setPossibleDestinations(map.setRule(map.getInsectAt(inputs.getStart())->getColor()));
+
+                inputs.setPossibleDestinations(map.setRule(!turn));
+            }
+        } else {//Si c'est la deuxième sélection
+            auto it = std::find(inputs.getPossibleDestinations().begin(), inputs.getPossibleDestinations().end(), clickedPos);
+            if (it != inputs.getPossibleDestinations().end()) {//On trouvera toujours l'index, la vérification de l'existence est faite avant l'appel de fonction
+                inputs.setDestinationIndex(std::distance(inputs.getPossibleDestinations().begin(), it));
+            }
+        }
+    }
+
+    void resetPlayerInputs(Player* player_) {
+        player_->inputs.resetQt();
+    }
+
+
 };
 
 

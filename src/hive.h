@@ -207,6 +207,10 @@ public:
                 player1(1), player2(2), currentPlayer(&player1),
                 inputsManager(mode, renderedMapSideSize, map),
                 solver(map, trueMapSideSize)
+                rewindNb(1), map(trueMapSideSize,rewindNb),
+                player1(1), player2(2), currentPlayer(&player1),
+                inputsManager(mode, renderedMapSideSize, map),
+                solver(map, trueMapSideSize)
     {
     };*/
 
@@ -277,7 +281,14 @@ public:
         return 1;
     }
 
-
+    void runQt() {
+        generateAllInsects();
+    }
+    Player* getPlayer1() {return &player1;}
+    Player* getPlayer2() {return &player2;}
+    InputsManager* getInputsManager() {return &inputsManager;}
+    Solver* getSolver() {return &solver;}
+    Map& getMap(){return map;}
 };
 
 

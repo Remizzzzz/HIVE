@@ -43,8 +43,8 @@ public:
         return destinationIndex;
     }
 
-    const vec2i getDestination() const{
-        if(destinationIndex >= possibleDestinations.size()) return {-2,-2};
+    const vec2i & getDestination() const{
+        if(destinationIndex >= possibleDestinations.size()) throw HiveException("A remplir", "");
         return possibleDestinations[destinationIndex];
     }
 
@@ -61,7 +61,7 @@ public:
         start = start_;
     }
 
-    void setDestionationIndex(int destinationIndex_){
+    void setDestinationIndex(int destinationIndex_){
         destinationIndex = destinationIndex_;
     }
 
@@ -116,6 +116,13 @@ public:
         start = {0,0};
         possibleDestinations.clear();
         destinationIndex = 0;
+    }
+    void resetQt() {
+        vec2i reset(-1,-1);
+        start=reset;
+        while (!possibleDestinations.empty()) {
+            possibleDestinations.clear();
+        }
     }
 
 };

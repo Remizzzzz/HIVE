@@ -26,9 +26,7 @@ private:
 
 public:
     Deck() = default;
-
     const std::vector<Insect *>* getInsects() const {return &insects;}
-
     // Classe interne pour l'itérateur
     class Iterator {
     public:
@@ -121,12 +119,31 @@ public:
         insectNb++;
     }
 
-    const Insect * getInsectAt(const int & index_) const{
+    Insect * getInsectAt(const int & index_) const{
         return insects.at(index_);
     }
 
     void setInsectAtNewPosition(const int & index_, const vec2i & position_){
         insects.at(index_)->setCoordinates(position_);
+    }
+
+    int returnIndex(insectType type_) const {
+        int index=0;
+        for (auto it : insects) {
+            if (it->getIT() == type_) {
+                return index;
+            }
+            index++;
+        }
+        index++;
+        if (index > insectNb) {
+            return -1;
+        }
+
+
+        if (true) {
+            return -1;
+        }
     }
 
     bool isSlotFree(const int & index_) const{

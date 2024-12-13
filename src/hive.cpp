@@ -24,26 +24,8 @@
      * @brief Affiche un menu interactif pour l'utilisateur.
      */
     int Hive::displayMenu() {
-    int versionChoice = 0;
-    do {
-        std::cout << "=== Choisissez le type d'interface ===\n";
-        std::cout << "1. Interface Console (texte)\n";
-        std::cout << "2. Interface Graphique\n";
-        std::cout << "Choisissez une option (1 ou 2) : ";
-        std::cin >> versionChoice;
-
-        if (versionChoice != 1 && versionChoice != 2) {
-            std::cout << "Option invalide, veuillez réessayer.\n";
-        }
-    } while (versionChoice != 1 && versionChoice != 2);
-
-    if (versionChoice == 1) {
-        renderer = new ConsoleRenderer(map, &player1, &player2, 30);
-        version = console;
-    } else {
-        renderer = new GraphicRenderer(map, &player1, &player2, 30);
-        version = graphic;
-    }
+    renderer = new ConsoleRenderer(map, &player1, &player2, 30);
+    version = console;
 
     int choice = 0;
     do {
