@@ -264,7 +264,7 @@ public:
 
 class Ant : public virtual Insect {
 public:
-    Ant(bool col) : Insect(col, ant,"A") {}
+    Ant(bool col) : Insect(col, ant,"An") {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
     [[nodiscard]] std::string getPrintableValue(int idColor) const override
     {

@@ -230,11 +230,12 @@ public:
                 }
                 generateAllInsects();
                 std::cout << insects.size();
+                std::cout<<"ok";
                 renderer->render(*currentPlayer);
+                std::cout<<"DEBUG ok";
                 isInit = true;
                 return 1;
-            }
-            else{
+            }else{
                 return 0;
             }
 

@@ -169,19 +169,6 @@ public:
                 inputs.setPossibleDestinations(map.getInsectAt(clickedPos)->getPossibleMovements(map));
             } else {
                 //Si la position est dans le deck
-                vec2i test1(10,15);
-                vec2i test2(10,16);
-                vec2i test3(10,17);
-                vec2i test4(11,15);
-                vec2i test5(11,16);
-                vec2i test6(11,17);
-                vec2i test7(12,15);
-                vec2i test8(12,16);
-                vec2i test9(12,17);
-                vec2i test10(13,15);
-                vec2i test12(13,16);
-                vec2i test11(13,17);
-                std::vector<vec2i> test={test1,test2,test3,test4,test5,test6,test7,test8,test9,test10,test11,test12};
                 //inputs.setPossibleDestinations(test);inputs.getStart()
                 //inputs.setPossibleDestinations(map.setRule(map.getInsectAt(inputs.getStart())->getColor()));
 

@@ -43,8 +43,8 @@ public:
         return destinationIndex;
     }
 
-    const vec2i & getDestination() const{
-        if(destinationIndex >= possibleDestinations.size()) throw HiveException("A remplir", "");
+    const vec2i getDestination() const{
+        if(destinationIndex >= possibleDestinations.size()) return {-2,-2};
         return possibleDestinations[destinationIndex];
     }
 

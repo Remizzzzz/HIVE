@@ -221,10 +221,10 @@ public:
         std::cout << "\033[37m";
         for (int i = 0; i < renderedSideSize; ++i){
             if (i%2 == 0) {
-                std::cout << "\033[37m  -";
+                std::cout << "\033[37m-";
             }
             else {
-                std::cout << "\033[37m-";
+                std::cout << "\033[37m  -";
             }
 
             for (int j = 0; j < renderedSideSize; ++j) {
@@ -293,7 +293,9 @@ public:
         //system("cls");
         std::cout << '\n';
         renderDeck1(currentPlayer_);
+        std::cout<<"1";
         renderMap(currentPlayer_);
+        std::cout<<"2";
         renderDeck2(currentPlayer_);
         std::cout << '\n';
     }
