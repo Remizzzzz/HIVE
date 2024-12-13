@@ -315,72 +315,74 @@ std::vector<vec2i> Grasshopper::getPossibleMovements(Map &m) const {
 
 
 // Méthodes de Ant
-// L'idée ? faire une boucle auto gérée : On prend une case (la première étant celle de départ) et on prend toutes les cases vides adjacentes dans une liste.
-// On parcourt cette liste, si le potential movement est un possible movement, on ajoute ses cases vides adjacentes à potential movement,
-// puis on l'enlève de potential movement et on l'ajoute à possible movement. Une fois qu'on ne peut plus ajouter, c'est fini !
 std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const {
     std::vector<vec2i> possibleMovements;
-    std::vector<vec2i> potentialMovements;
-    std::vector<vec2i> impossibleMovements;
-    try{
-    if (!this->isLinkingHive(m)) {
-        // Initialiser les voisins vides immédiats comme mouvements potentiels
-        std::list<vec2i> neighbors = m.getNeighbours(getCoordinates());
+    try {
 
-        for (auto &neighbor : neighbors) {
-            if (m.isSlotFree(neighbor)) {
-                potentialMovements.push_back(neighbor);
-            }
-        }
-        bool valid = false; // Indique si le mouvement est valide
-        // Parcourir les mouvements potentiels
-        auto it = potentialMovements.begin();// Je fais comme ça parce que chatGPT m'a dit que ct pas bien de faire while (!potentialMovements.empty())
-        while (it != potentialMovements.end()) {
-            std::list<vec2i> newNeighbours = m.getNeighbours(*it); //On récupère les voisins de la case vide
-            for (auto &neighbour : newNeighbours) {
-                if (!m.isSlotFree(neighbour) && neighbour != getCoordinates()) {
-                    // Si la case a un voisin non vide et ce voisin n'est pas Ant
-                    valid = true;
-                    // Ajouter les voisins vides de la case non encore traités à potentialMovements
+        std::vector<vec2i> possiblePlace;
+        if(!isLinkingHive(m) && m.isSlotUsable(getCoordinates())) {
+            // Découvrir tous les insectes connectés
+            std::vector<vec2i> insectSet = {this->getCoordinates()}; // Liste des insectes connectés
+            std::set<vec2i> visited;                      // Ensemble pour éviter les doublons
+            std::set<vec2i> toCheck;                      // Cases vides adjacentes à vérifier
 
-                    for (auto &newNeighbour : newNeighbours) {
-                            if (m.isSlotFree(newNeighbour)) {
-                                if (std::find(potentialMovements.begin(), potentialMovements.end(), newNeighbour) == potentialMovements.end() && //Si la case n'est pas dans les mouvements potentiels
-                                    std::find(possibleMovements.begin(), possibleMovements.end(), newNeighbour) == possibleMovements.end() && //Et qu'elle n'est pas dans les mouvements possibles
-                                    std::find(impossibleMovements.begin(), impossibleMovements.end(), newNeighbour) == impossibleMovements.end()) { //Ni dans les mouvements impossibles
-                                    potentialMovements.push_back(newNeighbour);
-                                    }
+            // Parcours dynamique avec `while`
+            size_t index = 0; // Indice pour parcourir `insectSet`
+            while (index < insectSet.size()) {
+                vec2i current = insectSet[index];
+                visited.insert(current);
+
+                // Récupérer les voisins de l'insecte courant
+                for (const auto& neighbor : m.getNeighbours(current)) {
+                    if (!m.isSlotFree(neighbor)) {
+                        // Si un insecte voisin est trouvé, l'ajouter à `insectSet` s'il n'a pas encore été visité
+                        if (visited.find(neighbor) == visited.end() &&
+                            std::find(insectSet.begin(), insectSet.end(), neighbor) == insectSet.end()) {
+                            insectSet.push_back(neighbor);
                             }
                     }
-                    break; // Arrêter la vérification dès qu'un voisin valide est trouvé
+                }
+                ++index; // Avancer l'indice pour explorer le prochain insecte
+            }
+            //const vec2i& current = this->getCoordinates();
+            visited.erase(getCoordinates());
+            // Convertir l'ensemble des positions valides en vecteur
+
+
+
+            // Itérer sur tous les insectes dans l'ensemble
+            for (const auto& insect : visited) {
+                for (const auto& neighbor : m.getNeighbours(insect)) {
+
+                    if (m.isSlotFree(neighbor)) {
+                        // Ajouter les cases vides à `toCheck`
+                        toCheck.insert(neighbor);
+                    }
                 }
             }
 
-            if (valid) {
-                // Mouvement validé, le supprimer de potentialMovements
-                possibleMovements.push_back(*it); // Ajouter à possibleMovements
-                it = potentialMovements.erase(it);
-                valid=false;
-            } else {
-                // Mouvement invalide, l'ajouter à impossibleMovements
-                impossibleMovements.push_back(*it);
-                it = potentialMovements.erase(it);
+            /*for (const auto& slot : insectSet) {
+                toCheck.erase(slot);
+            }*/
+            for (const auto& slot : toCheck) {
+                if(!m.isSlotUsable(slot)) toCheck.erase(slot);
             }
+            // Convertir l'ensemble des positions valides en vecteur
+            possiblePlace.assign(toCheck.begin(), toCheck.end());
+
+
         }
+        return possiblePlace;
 
-        return possibleMovements;
-    }
     } catch (const std::string& e) {
-        throw HiveException("Ant::getPossibleMovements", e);
+        throw HiveException("Map::setRule", e);
+    } catch (const std::exception& e) {
+        throw HiveException("Map::setRule", e.what());
+    } catch (...) {
+        throw HiveException("Map::setRule", "Erreur inattendue lors du calcul des emplacements possibles.");
     }
-    catch (...) {
-        throw HiveException("Ant::getPossibleMovements", "Erreur dans lafonction pour récupérer les mouvements de Ant");
-    }
-    vec2i erreur(3,3);
-    possibleMovements.push_back(erreur);
-    return possibleMovements;
-}
 
+}
 
 // Méthodes de spider
 std::vector<vec2i> Spider::getPossibleMovements(Map &m) const {
