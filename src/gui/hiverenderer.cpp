@@ -3,6 +3,7 @@
 #include "./ui_hiverenderer.h"
 #include <QPixmap>
 #include <QIcon>
+#include "ParamButton.h"
 //#include "hive.h" -> Déclenche ENORMEMENT d'erreur
 hiveRenderer::hiveRenderer(QWidget *parent)
     : QMainWindow(parent),
@@ -68,6 +69,7 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
     auto *button = new QPushButton;
     button->setParent(centralWidget);
     button->move(15, 50);
+    connect(button, &QPushButton::clicked, this, &hiveRenderer::handleParamButtonClick);
 }
 
 void hiveRenderer::setupDeck(int buttonSize){
@@ -133,7 +135,7 @@ void hiveRenderer::handleButtonClick() {
     if (playerTurn)actualP=hive.getPlayer2();//Si c'est au tour du joueur 2, on change le joueur actuel
     if (button) {
         //Affichez le texte du bouton dans le label
-        infoLabel->setText(QString("Bouton cliqué : %1 selection : %2").arg(button->text(),inputT));
+        infoLabel->setText(QString("Bouton cliqué : %1, selection : %2, tour %3").arg(button->text()).arg(inputT).arg(turn));
         if (!getInputT()){//Si c'est la deuxième selection
             if (lastClicked!=nullptr){
                 if (button->getState()==3) { //Si la case sélectionnée est bien dans les mouvements possibles
@@ -170,11 +172,8 @@ void hiveRenderer::handleButtonClick() {
                         button->setPlayer(turn%2);
                     }
                     turn++;
-                }
-                if (lastClicked!=button) {
-                    lastClicked->updateState(2);
                 } else {
-                    button->updateState(0);
+                    lastClicked->updateState(0);
                 }
                 for (auto b : actualP->getInputs().getPossibleDestinations()) {
                     HexagonalButton * selec=buttons[b.getI()][b.getJ()];
@@ -211,4 +210,8 @@ void hiveRenderer::handleButtonClick() {
             }
         }
     }
+}
+
+void hiveRenderer::handleParamButtonClick() {
+    auto *button = qobject_cast<ParamButton *>(sender());
 }
