@@ -5,31 +5,44 @@
 #ifndef HIVE_MAP_H
 #define HIVE_MAP_H
 
+
 #include <iostream>
 #include <vector>
 #include <list>
 
 #include "insect.h"
-
+#include "../utils/utils.h"
 class Map{
-private:
-
+    public:
     class movement{
     public:
         vec2i from{};
         vec2i to{};
 
+        // Getter pour 'from'
+        const vec2i& getFrom() const {
+            return from;
+        }
+
+        // Getter pour 'to'
+        const vec2i& getTo() const {
+            return to;
+        }
+
+
         movement(const vec2i & from_, const vec2i & to_) : from(from_), to(to_) {};
         movement() = default;
     };
+private:
+
 
     //friend class renderer;
 
-    std::vector<const Insect *> slots{};
+    std::vector<Insect *> slot{};
     std::list<movement> historic{};
     vec2i relativePos{};
-    int sideSize{32};
-    int rewind=5;
+    const int sideSize;
+    int rewind;
 
 
     /**
@@ -46,67 +59,157 @@ private:
 
 public:
 
-    explicit Map(int & sideSize_,int &n) : sideSize(sideSize_),rewind(n){
+    explicit Map(const int & sideSize_,int &n) : sideSize(sideSize_),rewind(n){
         for(int i = 0; i < sideSize * sideSize; i++){
-            slots.push_back(nullptr);
+            slot.push_back(nullptr);
         }
     }
-
+    Map (int &sSize, int &n, vec2i rPos, std::list<movement> h):sideSize(sSize),rewind(n),relativePos(rPos),historic(h) {
+        for(int i = 0; i < sideSize * sideSize; i++){
+            slot.push_back(nullptr);
+        }
+    }
     /**
-     * @brief \n put in the slot on position pos_ the instect instect_
+     * @brief \n put in the slot on position pos_ the insect insect_
      * @param insect_ : insect to put
      * @param pos_ : position of the slot in which the insect will be put
      */
-    void putInsect(const Insect * insect_, const vec2i & pos_){
-        slots[posToIndex(pos_)] = insect_;
+    void putInsectTo(Insect * insect_, const vec2i & pos_){
+        slot[posToIndex(pos_)] = insect_;
     }
-    const Insect * getInsect(const vec2i & pos_) {
-        return slots[posToIndex(pos_)];
+    Insect * getInsectAt(const vec2i & pos_) const{
+        return slot[posToIndex(pos_)];
     }
+
+    Map & operator=(const Map &) {
+        return *this;
+    }
+    const int & getSideSize() const{
+        return sideSize;
+    }
+    const int & getRewind() const{
+        return rewind;
+    }
+    const vec2i getRelativePos() const{
+        return relativePos;
+    }
+
+    std::vector<Insect *> getSlots() const{
+        return slot;
+    }
+
+    std::vector<vec2i> setRule( bool color_insect);
+
+    const std::list<movement>& getHistoric() const {
+        return historic;
+    }
+
     /**
      * @brief \n set the slot on position pos_ to nullptr
      * @param pos_ : position of the slot to remove
      */
-    void removeInsect(const vec2i & pos_){
-        slots[posToIndex(pos_)] = nullptr;
+    void removeInsectAt(const vec2i & pos_){
+        slot[posToIndex(pos_)] = nullptr;
     }
 
     /**
      * @brief \n check if the slop in position pos_ is free
      * @param pos_ : position of the slot to check
      */
-    bool isSlotFree(const vec2i & pos_){
-        return slots[posToIndex(pos_)] == nullptr;
+    bool isSlotFree( const vec2i & pos_) const{
+        return slot[posToIndex(pos_)] == nullptr;
     }
 
     /**@brief move the insect on pos1_ to the pos2_.*/
-    void move(const vec2i & pos1_, const vec2i & pos2_){
-        if(!(isSlotFree(pos1_) || pos1_ == pos2_)){
-            putInsect(slots[posToIndex(pos1_)], pos2_);
-            removeInsect(pos1_);
-        }
+    void moveInsect(const vec2i & pos1_, const vec2i & pos2_){
+
+            // Récupérer les insectes aux positions de départ et d'arrivée
+            Insect* movingInsect = getInsectAt(pos1_);
+            Insect* targetInsect = getInsectAt(pos2_);
+
+            // Vérification qu'il y a un insecte à déplacer
+            if (movingInsect == nullptr) {
+                throw HiveException("Map::moveInsect", "Aucun insecte à déplacer à la position donnée.");
+            }
+
+            // Si l'insecte est un scarabée
+            if (movingInsect->getIT() == beetle) {
+                // Cast dynamique pour obtenir un pointeur de type Beetle
+                Beetle* beetlePointer = dynamic_cast<Beetle*>(movingInsect);
+                if (beetlePointer == nullptr) {
+                    throw HiveException("Map::moveInsect", "Erreur du dynamic_cast pour le scarabée.");
+                }
+
+                // Si le scarabée a un insecte en dessous
+                if (beetlePointer->getInsectUnder() != nullptr) {
+                    // Remettre l'insecte en dessous à la position actuelle
+                    putInsectTo(beetlePointer->getInsectUnder(), pos1_);
+                } else {
+                    // Pas d'insecte en dessous, retirer l'insecte de la position initiale
+                    removeInsectAt(pos1_);
+                }
+
+
+
+                // Si un insecte est présent à la position cible, positionner le scarabée au-dessus
+                if (targetInsect != nullptr) {
+                    beetlePointer->setAboveOf(targetInsect);
+                }else {
+                    beetlePointer->setAboveOf(nullptr);
+                }
+
+                // Déplacer le scarabée à la position cible
+                putInsectTo(movingInsect, pos2_);
+
+            } else {
+                // Cas général pour les autres types d'insectes
+                putInsectTo(movingInsect, pos2_);
+                removeInsectAt(pos1_);
+            }
+
+
+        /*if(!(isSlotFree(pos1_) || pos1_ == pos2_)){
+            if(slot[posToIndex(pos1_)]->getIT()==beetle) {
+                Beetle* b = dynamic_cast<Beetle*>(slot[posToIndex(pos1_)]);
+                //Beetle b=slot[posToIndex(pos1_)];
+                Insect* insectUnder=b->getInsectUnder();
+                b->setAboveOf(slot[posToIndex(pos2_)]);
+                putInsectTo(slot[posToIndex(pos1_)], pos2_);
+                if (insectUnder!=nullptr) {
+                    putInsectTo(insectUnder, pos1_);
+                } else {
+                    removeInsectAt(pos1_);
+                }
+                slot[posToIndex(pos1_)]->setAboveOf(slot[posToIndex(pos2_)]);
+                putInsectTo(slot[posToIndex(pos1_)], pos2_);
+                removeInsectAt(pos1_);
+            } else {
+                putInsectTo(slot[posToIndex(pos1_)], pos2_);
+                removeInsectAt(pos1_);
+            }
+        }*/
         addToHistoric(pos1_,pos2_);//If the movement is a rewind, goBack will manage the historic
     }
 
     //return positions of the filled slots around pos_
-    std::list<vec2i> getNeighbours(const vec2i & pos_){
+    std::list<vec2i> getNeighbours(const vec2i & pos_) const{
         std::list<vec2i> neighbours{};
 
         if(pos_.getI() % 2 == 0) {
-           neighbours.push_back(pos_ - vec2i(-sideSize,0));
-           neighbours.push_back( pos_ - vec2i(-sideSize + 1,0));
-           neighbours.push_back( pos_ - vec2i(-1,0));
+           neighbours.push_back(pos_ - vec2i(1,1));
            neighbours.push_back( pos_ - vec2i(1,0));
-           neighbours.push_back( pos_ - vec2i(sideSize,0));
-           neighbours.push_back( pos_ - vec2i(sideSize + 1,0));
+           neighbours.push_back( pos_ - vec2i(0,1));
+           neighbours.push_back( pos_ - vec2i(0,-1));
+           neighbours.push_back( pos_ - vec2i(-1,1));
+           neighbours.push_back( pos_ - vec2i(-1,0));
         }
         else{
-           neighbours.push_back( pos_ - vec2i(-sideSize - 1,0));
-           neighbours.push_back( pos_ - vec2i(-sideSize,0));
-           neighbours.push_back( pos_ - vec2i(-1,0));
            neighbours.push_back( pos_ - vec2i(1,0));
-           neighbours.push_back( pos_ - vec2i(sideSize - 1,0));
-           neighbours.push_back( pos_ - vec2i(sideSize,0));
+           neighbours.push_back( pos_ - vec2i(1,-1));
+           neighbours.push_back( pos_ - vec2i(0,1));
+           neighbours.push_back( pos_ - vec2i(0,-1));
+           neighbours.push_back( pos_ - vec2i(-1,0));
+           neighbours.push_back( pos_ - vec2i(-1,-1));
         }
 
         return neighbours;
@@ -120,12 +223,11 @@ public:
     }
     void goBack() {
         if (!historic.empty()) {
-            move(historic.front().to,historic.front().from); //Rewind move
+            moveInsect(historic.front().to,historic.front().from); //Rewind move
             historic.pop_front();          // Erase the head of historic (here, the goBack move)
             historic.pop_front();               // Erase the head of historic again (here, the move we just rewinded)
         }
     }
-
 //------- ANTI MAP EXIT -------
 private:
 
@@ -136,19 +238,19 @@ private:
         bool b = false;
 
         for(int i = 0; i < sideSize * sideSize ; i += sideSize){
-            b = b || (slots[i] == nullptr);
+            b = b || (slot[i] != nullptr);
         }
         return b;
     }
 
     /**
-     * @brief check if an instect is close to the right border
+     * @brief check if an insect is close to the right border
      */
     bool isRightBorderTouched(){
         bool b = false;
 
         for(int i = sideSize - 1; i < sideSize * sideSize ; i += sideSize){
-            b = b || (slots[i] == nullptr);
+            b = b || (slot[i] != nullptr);
         }
         return b;
     }
@@ -160,7 +262,7 @@ private:
         bool b = false;
 
         for(int i = 0; i < sideSize; i++){
-            b = b || (slots[i] == nullptr);
+            b = b || (slot[i] == nullptr);
         }
         return b;
     }
@@ -172,7 +274,7 @@ private:
         bool b = false;
 
         for(int i = sideSize * (sideSize - 1); i < sideSize; i++){
-            b = b || (slots[i] == nullptr);
+            b = b || (slot[i] == nullptr);
         }
         return b;
     }
@@ -190,7 +292,7 @@ private:
                     for(int j = 0; j < sideSize; j++){
                         vec2i curr = vec2i(i,j);
                         if(!isSlotFree(curr)){
-                            move(curr,curr + tVec);
+                            moveInsect(curr,curr + tVec);
                         }
                     }
                 }
@@ -201,7 +303,7 @@ private:
                     for(int j = sideSize - 1; j >= 0; j--){
                         vec2i curr = vec2i(i,j);
                         if(!isSlotFree(curr)){
-                            move(curr,curr + tVec);
+                            moveInsect(curr,curr + tVec);
                         }
                     }
                 }
@@ -215,7 +317,7 @@ private:
                     for(int j = 0; j < sideSize; j++){
                         vec2i curr = vec2i(i,j);
                         if(!isSlotFree(curr)){
-                            move(curr,curr + tVec);
+                            moveInsect(curr,curr + tVec);
                         }
                     }
                 }
@@ -226,7 +328,7 @@ private:
                     for(int j = sideSize - 1; j >= 0; j--){
                         vec2i curr = vec2i(i,j);
                         if(!isSlotFree(curr)){
-                            move(curr,curr + tVec);
+                            moveInsect(curr,curr + tVec);
                         }
                     }
                 }
@@ -313,8 +415,8 @@ private:
             }
             for(nCol=1; nCol<31;nCol++)
             {
-                if(size_t index = nRow*32 + nCol && slots[index] != nullptr) {
-                    std::cout << "|" << slots[index]->getPrintableValue() << "|";
+                if(size_t index = nRow*32 + nCol && slot[index] != nullptr) {
+                    std::cout << "|" << slot[index]->getPrintableValue(0) << "|";
                 } else {
                     std::cout << "|  |";
                 }

@@ -1,6 +1,12 @@
-# Ignorer tout par défaut
 *
 
-# Inclure uniquement les fichiers nécessaires au projet HIVE
-!main.cpp
 !src
+!CMakeLists.txt
+!src/**
+!.gitignore
+!assets
+!assets/ant.PNG
+!assets/spider.PNG
+!assets/grasshopper.png
+!assets/bee.png
+!assets/beetle.PNG
