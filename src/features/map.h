@@ -228,6 +228,17 @@ public:
             historic.pop_front();               // Erase the head of historic again (here, the move we just rewinded)
         }
     }
+
+    bool isSlotUsable(const vec2i & pos_) const
+    {
+        size_t compteur =0;
+        std::list<vec2i> neighbours = getNeighbours(pos_);
+        for(auto & neighbour : neighbours)
+        {
+            if(!isSlotFree(neighbour)) compteur++;
+        }
+        return compteur < 5;
+    }
 //------- ANTI MAP EXIT -------
 private:
 
