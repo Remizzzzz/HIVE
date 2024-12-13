@@ -64,7 +64,11 @@ public:
             slot.push_back(nullptr);
         }
     }
-
+    Map (int &sSize, int &n, vec2i rPos, std::list<movement> h):sideSize(sSize),rewind(n),relativePos(rPos),historic(h) {
+        for(int i = 0; i < sideSize * sideSize; i++){
+            slot.push_back(nullptr);
+        }
+    }
     /**
      * @brief \n put in the slot on position pos_ the insect insect_
      * @param insect_ : insect to put
