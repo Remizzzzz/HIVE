@@ -265,6 +265,7 @@ std::vector<vec2i> Beetle:: getPossibleMovements(Map &m) const{
 
 
 
+//Grasshoper
 std::vector<vec2i> Grasshopper::getPossibleMovements(Map &m) const {
     std::vector<vec2i> possibleMovements;
 
@@ -276,16 +277,22 @@ std::vector<vec2i> Grasshopper::getPossibleMovements(Map &m) const {
 
         // Récupérer les voisins hexagonaux directs
         std::list<vec2i> neighboursList = m.getNeighbours(getCoordinates());
-
+        std::list<vec2i> neighbours;
+        int count = 0;
         for (const auto& neighbour : neighboursList) {
+
             // Vérifie si le voisin contient une pièce
             if (!m.isSlotFree(neighbour)) {
                 vec2i current = neighbour;
-                vec2i direction = current - getCoordinates(); // Calculer la direction du mouvement
+
+                //vec2i direction = current - getCoordinates(); // Calculer la direction du mouvement
 
                 // Avancer dans la direction jusqu'à trouver une case libre ou sortir des limites
                 while ( !m.isSlotFree(current)) {
-                    current = current + direction;
+                    neighbours = m.getNeighbours(current);
+                    auto it = std::begin(neighbours);
+                    std::advance(it, count); // Avance l'itérateur jusqu'à l'indexe count
+                    current = *it;
                 }
 
                 // Ajouter la case libre trouvée si elle est valide
@@ -293,6 +300,7 @@ std::vector<vec2i> Grasshopper::getPossibleMovements(Map &m) const {
                     possibleMovements.push_back(current);
                 }
             }
+            count++;
         }
     } catch (const std::string& e) {
         throw HiveException("Grasshopper::getPossibleMovements", e);
@@ -302,7 +310,6 @@ std::vector<vec2i> Grasshopper::getPossibleMovements(Map &m) const {
 
     return possibleMovements; // Retourner la liste finale
 }
-
 
 
 
