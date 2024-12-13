@@ -214,7 +214,7 @@ std::vector<vec2i> Bee::getPossibleMovements(Map &m) const {
     try{
     std::vector<vec2i> possibleMovements;
     // Vérifie que l'abeille puisse bouger sans casser la ruche en deux
-    if(!this->isLinkingHive(m)) {
+    if(!this->isLinkingHive(m) && m.isSlotUsable(getCoordinates())) {
         std::list<vec2i> neighbors = m.getNeighbours(getCoordinates()); // Récupère les voisins de la case
         // Parcourt chaque voisin
         for (auto neighbor : neighbors) {
@@ -390,7 +390,7 @@ std::vector<vec2i> Spider::getPossibleMovements(Map &m) const {
         std::vector<vec2i> possibleMovements;
 
         // Vérifie que l'insecte puisse bouger
-        if (!this->isLinkingHive(m)) {
+        if (!this->isLinkingHive(m) && m.isSlotUsable(getCoordinates())) {
             // 1er niveau de voisins
             std::list<vec2i> firstLevel = m.getNeighbours(getCoordinates());
 
