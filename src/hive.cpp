@@ -567,6 +567,7 @@ int Hive::launchGame() {
             }
         }
     }
+    return 1;
 }
 
 
