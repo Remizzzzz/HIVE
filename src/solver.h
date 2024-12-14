@@ -45,8 +45,8 @@ private:
                 player_.inputs.getDestination().getJ() >= 0 && player_.inputs.getDestination().getJ() < trueMapSideSize;
     }
 public:
-    int getTurn()const {return turn/2;}
-    bool queenInDeck(Player & player_) {
+    [[nodiscard]] int getTurn()const {return turn/2;}
+    static bool queenInDeck(Player & player_) {
         bool result = true;
         std::vector<Insect*> activeList =player_.getActiveInsects();
         for (auto it : activeList) {
