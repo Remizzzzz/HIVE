@@ -49,7 +49,7 @@ public:
      * @brief Affiche les indentations pour simuler les décalages de la grille hexagonale.
      * @param rowIndex L'indice de la ligne à afficher.
      */
-    void displayIndentation(size_t rowIndex) const {
+    static void displayIndentation(size_t rowIndex) {
         // Lignes impaires (indexées 1, 3, 5...) doivent être décalées vers la droite
         if ((rowIndex-1) % 2 == 1) {
             std::cout << "  ";  // Ajoute des espaces pour décaler
@@ -107,7 +107,7 @@ public:
 
     }
 
-    void displayDeck(Player* P, int indexPlayer) const{
+    static void displayDeck(Player* P, int indexPlayer) {
 
         for(int index=0; index< P->getDeck().getInsectNb();index++)
         {
@@ -207,7 +207,7 @@ public:
         std::cout << "\n\033[37m";
     }
 
-    bool isVec2iInVector(const std::vector<vec2i> & vector_, const vec2i & vec2i_) const{
+    static bool isVec2iInVector(const std::vector<vec2i> & vector_, const vec2i & vec2i_) {
         for(const auto & elt : vector_){
             if (elt == vec2i_) return true;
         }
@@ -286,7 +286,7 @@ public:
 
     }
 
-    void render(const Player & currentPlayer_) const{
+    void render(const Player & currentPlayer_) const override{
         //system("cls");
         std::cout << '\n';
         renderDeck1(currentPlayer_);

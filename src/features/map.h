@@ -91,24 +91,24 @@ public:
     void putInsectTo(Insect * insect_, const vec2i & pos_){
         slot[posToIndex(pos_)] = insect_;
     }
-    Insect * getInsectAt(const vec2i & pos_) const{
+    [[nodiscard]] Insect * getInsectAt(const vec2i & pos_) const{
         return slot[posToIndex(pos_)];
     }
 
     Map & operator=(const Map &) {
         return *this;
     }
-    const int & getSideSize() const{
+    [[nodiscard]] const int & getSideSize() const{
         return sideSize;
     }
-    const int & getRewind() const{
+    [[nodiscard]] const int & getRewind() const{
         return rewind;
     }
-    const vec2i getRelativePos() const{
+    [[nodiscard]] const vec2i getRelativePos() const{
         return relativePos;
     }
 
-    std::vector<Insect *> getSlots() const{
+    [[nodiscard]] std::vector<Insect *> getSlots() const{
         return slot;
     }
 
@@ -238,11 +238,11 @@ public:
         if (!historic.empty()) {
             moveInsect(historic.front().to,historic.front().from); //Rewind move
             historic.pop_front();          // Erase the head of historic (here, the goBack move)
-            historic.pop_front();               // Erase the head of historic again (here, the move we just rewinded)
+            historic.pop_front();          // Erase the head of historic again (here, the move we just rewinded)
         }
     }
 
-    bool isSlotUsable(const vec2i & pos_) const
+    [[nodiscard]] bool isSlotUsable(const vec2i & pos_) const
     {
         size_t compteur =0;
         std::list<vec2i> neighbours = getNeighbours(pos_);
@@ -394,70 +394,6 @@ public:
             relativePos += tVec;
         }
     }
-
-
-private:
-    /**
-     * @brief \n write map on default std::cout
-     */
-    void getMap() const {
-        // to show the useful part of the map, i.e. a centered square of (sideSize - numbers of rows used to prevent
-        // pawns to go beyond limits)
-        size_t nRow = 1;
-        size_t nCol = 1;
-        while(nRow<32)
-        {
-            if(nRow==1 and nCol==1)
-            {
-                std::cout << "  ";
-                for(nCol=1; nCol<31;nCol++){
-                    std::cout << " /\\ ";
-                }
-                std::cout << std::endl << "  ";
-            }
-            else if(nCol==31) // si l'on finit une ligne
-            {
-                std::cout << "\n ";
-                if(nRow% 2 == 0) {
-                    std::cout << "\\/";
-                }
-                std::cout << "/\\\\";
-                for(nCol=1; nCol<31;nCol++)
-                {
-                    std::cout << "//\\\\";
-                }
-                std::cout << "//\\";
-                if(nRow % 2 == 1)
-                {
-                    std::cout << "\\/";
-                }
-                std::cout << std::endl;
-                if(nRow % 2 == 0)
-                {
-                    std::cout << "  ";
-                }
-            }
-            for(nCol=1; nCol<31;nCol++)
-            {
-                if(size_t index = nRow*32 + nCol && slot[index] != nullptr) {
-                    std::cout << "|" << slot[index]->getPrintableValue(0) << "|";
-                } else {
-                    std::cout << "|  |";
-                }
-                if(nRow==31)
-                {
-                    std::cout << "\n";
-                    for(nCol=1; nCol<31;nCol++){
-                        std::cout << " \\/ ";
-                    }
-                    std::cout << std::endl << "  ";
-                }
-                nRow++;
-            }
-        }
-    }
-
-
 };
 
 #endif //HIVE_MAP_H
