@@ -69,13 +69,7 @@ public:
                 player_.addActiveInsectsFromDeck(start.getJ());
                 player_.deck.removeAt(start.getJ());
                 turn++;
-            } else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {//Ca sert a quoi ça ?
-                //---------------A FAIRE--------------------
-                /*
-                 deck1.getInsectAt(cursor1.getJ())
-                map.putInsect(deck1.getInsectAt(cursor1.getJ()),destination);
-                deck1.deleteAt(cursor1.getJ());
-                 */
+            } else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {
             } else {
                 player_.inputs.setMessage("Can't put your insect here");
             }
@@ -92,18 +86,6 @@ public:
             map.getInsectAt(destination)->setCoordinates(destination);
 
             turn++;
-            /*}
-            else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {//???
-                //---------------A FAIRE--------------------
-                /*
-                 deck2.getInsectAt(cursor1.getJ())
-                map.putInsect(deck2.getInsectAt(cursor1.getJ()),destination);
-                deck2.deleteAt(cursor1.getJ());
-                 *
-            }
-            else{
-                player_.inputs.setMessage("Can't put your insect here");
-            }*/
         }
     }
 
