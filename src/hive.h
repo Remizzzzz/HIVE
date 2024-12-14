@@ -195,15 +195,7 @@ public:
              inputsManager(mode, renderedMapSideSize, map),
              solver(map, renderedMapSideSize),renderer( nullptr){}
 
-    /*Hive(Mode mode_, Version version_, int rewindNb_ = 3)
-            :   mode(mode_), version(version_),
-                insects(),
-                rewindNb(rewindNb_), map(trueMapSideSize,rewindNb),
-                player1(1), player2(2), currentPlayer(&player1),
-                inputsManager(mode, renderedMapSideSize, map),
-                solver(map, trueMapSideSize)
-    {
-    };*/
+
 
     ~Hive(){
         delete renderer;
