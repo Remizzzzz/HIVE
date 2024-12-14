@@ -116,7 +116,7 @@ public:
             {
                 std::cout << " " << getSlotContent(P->getDeck().getInsectAt(index),1) << "  ";
             }
-                // si cursor en ligne renderedSideSize donc dans le deck joueur rouge
+            // si cursor en ligne renderedSideSize donc dans le deck joueur rouge
             else if((P->getInputs().getStart().getI()==-1 && indexPlayer==1)&& P->getInputs().getStart().getJ()==index)
             {
                 std::cout << " " << getSlotContent(P->getDeck().getInsectAt(index),1) << "  ";
