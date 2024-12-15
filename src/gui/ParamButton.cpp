@@ -3,7 +3,7 @@
 //
 
 #include "ParamButton.h"
-ParamButton::ParamButton( QWidget *parent)
-    : QPushButton(parent) {}
-
-void ParamButton::paintEvent(QPaintEvent *event){}
+ParamButton::ParamButton( QWidget *parent, QString label)
+    : QPushButton(parent) {
+    setText(label);
+}

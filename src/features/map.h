@@ -9,17 +9,10 @@
 #include <iostream>
 #include <vector>
 #include <list>
-#include <QDebug>
 #include "insect.h"
 #include "../utils/utils.h"
 
-//Test debug
-#include <QDebug>
 
-inline QDebug operator<<(QDebug debug, const vec2i& vec) {
-    debug.nospace() << "(" << vec.getI() << ", " << vec.getJ() << ")";
-    return debug.space();
-}
 
 
 

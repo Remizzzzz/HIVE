@@ -10,16 +10,18 @@
 #include <QPolygon>
 #include <QRegion>
 #include "../features/insect.h"
-
+enum buttonType {Rewind};
 class ParamButton : public QPushButton {
     Q_OBJECT
     public:
-    explicit ParamButton(QWidget *parent = nullptr);
-    void paintEvent(QPaintEvent *event) override;
+    explicit ParamButton(QWidget *parent = nullptr, QString label="");
     void updateState(int event){currentEvent=event;}
     int getState(){return currentEvent;}
+    void setType(buttonType t){bT=t;}
+    buttonType getType(){return bT;}
 private:
     int currentEvent=0;
+    buttonType bT;
 };
 
 

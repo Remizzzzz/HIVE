@@ -12,6 +12,7 @@ class HexagonalButton : public QPushButton {
 
 public:
     explicit HexagonalButton(int size, QWidget *parent = nullptr);
+    HexagonalButton& operator =(const HexagonalButton &other);
     void setInsectType(insectType IT);
     insectType getInsectType();
     void paintEvent(QPaintEvent *event) override;

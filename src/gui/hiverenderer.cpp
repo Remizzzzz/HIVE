@@ -67,11 +67,12 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
         yconv=0;
     }
 
-    // DEBUG BUTTON
-    auto *button = new QPushButton;
+    auto rewind=QString("Rewind");
+    auto *button = new ParamButton(this,rewind);
+    button->setType(Rewind);
     button->setParent(centralWidget);
     button->move(15, 50);
-    connect(button, &QPushButton::clicked, this, &hiveRenderer::handleParamButtonClick);
+    connect(button, &ParamButton::clicked, this, &hiveRenderer::handleParamButtonClick);
 }
 
 void hiveRenderer::setupDeck(int buttonSize){
@@ -286,4 +287,12 @@ void hiveRenderer::showWinner(Player* winner) {
 }
 void hiveRenderer::handleParamButtonClick() {
     auto *button = qobject_cast<ParamButton *>(sender());
+    if (button->getType()==Rewind) {
+        vec2i from =hive.getMap().getHistoric().front().from;
+        vec2i to = hive.getMap().getHistoric().front().to;
+        buttons[from.getI()][from.getJ()]=buttons[to.getI()][to.getJ()];
+        buttons[to.getI()][to.getJ()]->updateState(2);
+        buttons[to.getI()][to.getJ()]->setInsectType(none);
+        hive.getMap().goBack();
+    }
 }

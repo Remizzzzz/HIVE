@@ -8,7 +8,11 @@ HexagonalButton::HexagonalButton(int size, QWidget *parent)
     QRegion region(hexagon);  // Appliquer le polygone comme masque
     setMask(region);  // Le masque définit la zone cliquable du bouton
 }
-
+HexagonalButton& HexagonalButton::operator=(const HexagonalButton &other) {
+    this->player=other.player;
+    this->currentEvent=other.currentEvent;
+    iT=other.iT;
+}
 void HexagonalButton::createHexagon(int size) {
     hexagon.clear();
     // Coordonnées des sommets d'un hexagone
