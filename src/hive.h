@@ -191,7 +191,7 @@ private:
 public:
     Hive() : mode(PvP), version(console),
              insects(),
-             rewindNb(5), map(trueMapSideSize,rewindNb),
+             rewindNb(5),rewindUsed(rewindNb), map(trueMapSideSize,rewindNb),
              player1(1), player2(2), currentPlayer(&player1),
              inputsManager(mode, renderedMapSideSize, map),
              solver(map, renderedMapSideSize),renderer( nullptr){}
@@ -206,12 +206,12 @@ public:
     }
     int getRewindUsed(){return rewindUsed;}
     void incrRewindUsed(){rewindUsed++;}
-    void decrRewindUsed(){rewindUsed--;}
+    void decrRewindUsed(){if (rewindUsed>0) rewindUsed--;}
     int getRewindMax(){return rewindNb;}
     int launchGame();
     void static displayRules() ;
     void changeSettings();
-    void saveGame(const std::string& filename)const;
+    void saveGame(const std::string& filename) const;
     void loadGame(const std::string& filename);
     int initIfNeeded(){
         if (!isInit){

@@ -3,7 +3,7 @@
 #include "./ui_hiverenderer.h"
 #include <QPixmap>
 #include <QIcon>
-
+#include <QDebug>
 #include "MainWindow.h"
 #include "ParamButton.h"
 //#include "hive.h" -> Déclenche ENORMEMENT d'erreur
@@ -291,16 +291,31 @@ void hiveRenderer::showWinner(Player* winner) {
     // Cache temporairement la fenêtre principale
     this->hide();
 }
+
 void hiveRenderer::handleParamButtonClick() {
     auto *button = qobject_cast<ParamButton *>(sender());
     if (button->getType()==Rewind) {
         if (hive.getRewindUsed()<hive.getRewindMax()) {
             vec2i from =hive.getMap().getHistoric().front().from;
             vec2i to = hive.getMap().getHistoric().front().to;
-            *buttons[from.getI()][from.getJ()]=*buttons[to.getI()][to.getJ()];
-            buttons[to.getI()][to.getJ()]->updateState(2);
-            buttons[to.getI()][to.getJ()]->setInsectType(none);
-            hive.getMap().goBack();
+            qDebug()<<"\nfrom I : "<<from.getI();
+            if(from.getI()>=0) {
+                //c'etait un map to map movement
+                *buttons[from.getI()][from.getJ()]=*buttons[to.getI()][to.getJ()];
+                buttons[to.getI()][to.getJ()]->updateState(2);
+                buttons[to.getI()][to.getJ()]->setInsectType(none);
+                hive.getMap().goBack();
+            } else {
+                int sizeDeck=15;
+                Player * actualP=hive.getPlayer1();
+                if (playerTurn) {
+                    actualP=hive.getPlayer2();//Si c'est au tour du joueur 2, on change le joueur actuel
+                }
+                *buttons[30][from.getJ()+(!playerTurn)*sizeDeck]=*buttons[to.getI()][to.getJ()];
+                buttons[to.getI()][to.getJ()]->updateState(2);
+                buttons[to.getI()][to.getJ()]->setInsectType(none);
+                hive.getSolver()->goBackDeck(*actualP, from, to);
+            }
             updatePlayerTurn();
             hive.incrRewindUsed();
         }

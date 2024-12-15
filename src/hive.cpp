@@ -207,9 +207,11 @@ void Hive::changeSettings() {
 }
 
 
-void Hive::saveGame(const std::string& filename) const {
+void Hive::saveGame(const std::string& filename) const{
     std::ofstream file(filename, std::ios::trunc);
-
+    Player player1=this->player1;
+    Player player2=this->player2;
+    Map map=this->map;
     if (!file.is_open()) {
         throw HiveException("saveGame", "Impossible d'ouvrir le fichier de sauvegarde.");
     }
@@ -223,7 +225,7 @@ void Hive::saveGame(const std::string& filename) const {
 
     // Sauvegarder l'état de la carte (Map)
     file << "Map:" << std::endl;
-    for (const auto& movement : map.getHistoric()) {
+    for (auto& movement : map.getHistoric()) {
         file << movement.getFrom().getI() << "," <<movement.getFrom().getJ() << " "  <<
             movement.getTo().getI() << "," <<movement.getTo().getJ() << std::endl;
     }
@@ -257,7 +259,7 @@ void Hive::saveGame(const std::string& filename) const {
     file << "Player Name:"<< std::endl << player1.getName() << std::endl;
 
     // Sauvegarder les éléments du Deck du Player
-    file << "Deck Size:"<< std::endl << player1.getDeck().getInsects()->size() << std::endl;
+    file << "Deck Size:"<< std::endl << player1.deck.getInsects()->size() << std::endl;
 
     // Sauvegarder les id des Insects actifs du Player
     file << "Active Insects Count:"<< std::endl << player1.getActiveInsects().size() << std::endl;

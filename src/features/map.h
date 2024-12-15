@@ -108,7 +108,7 @@ public:
 
     std::vector<vec2i> setRule( bool color_insect);
 
-    const std::list<movement>& getHistoric() const {
+    std::list<movement>& getHistoric() {
         return historic;
     }
 
@@ -175,6 +175,7 @@ public:
                 removeInsectAt(pos1_);
             }
         addToHistoric(pos1_,pos2_);//If the movement is a rewind, goBack will manage the historic
+
     }
 
     //return positions of the filled slots around pos_
@@ -208,10 +209,12 @@ public:
     }
     void goBack() {
         if (!historic.empty()) {
-            moveInsect(historic.front().to,historic.front().from); //Rewind move
+            vec2i oldC=historic.front().from;
+            vec2i curC=historic.front().to;
+            moveInsect(curC,oldC); //Rewind move
             historic.pop_front();          // Erase the head of historic (here, the goBack move)
             historic.pop_front();          // Erase the head of historic again (here, the move we just rewinded)
-        }
+    }
     }
 
     [[nodiscard]] bool isSlotUsable(const vec2i & pos_) const

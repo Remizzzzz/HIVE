@@ -48,7 +48,7 @@ public:
         return inputs;
     }
 
-    const Deck & getDeck() const{
+    Deck& getDeck () {
         return deck;
     }
     const std::string getName() const{

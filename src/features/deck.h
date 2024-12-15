@@ -26,7 +26,7 @@ private:
 
 public:
     Deck() = default;
-    const std::vector<Insect *>* getInsects() const {return &insects;}
+    std::vector<Insect *>* getInsects() {return &insects;}
     // Classe interne pour l'itérateur
     class Iterator {
     public:
@@ -118,6 +118,7 @@ public:
 
         insectNb++;
     }
+
 
     Insect * getInsectAt(const int & index_) const{
         return insects.at(index_);

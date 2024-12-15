@@ -10,7 +10,7 @@
 #include "features/map.h"
 #include "features/deck.h"
 #include "features/player.h"
-
+#include "utils/utils.h"
 #include "utils/hiveException.h"
 
 class Solver{
@@ -66,6 +66,7 @@ public:
             if (map.isSlotFree(destination)) {
                 map.putInsectTo(player_.getDeck().getInsectAt(start.getJ()), destination);
                 map.getInsectAt(destination)->setCoordinates(destination);
+                map.addToHistoric(start,destination);//If the movement is a rewind, goBack will manage the historic
                 player_.addActiveInsectsFromDeck(start.getJ());
                 player_.deck.removeAt(start.getJ());
                 turn++;
@@ -81,14 +82,18 @@ public:
         const vec2i & destination = player_.inputs.getDestination();
 
         if (!map.isSlotFree(start)){
-            //if (map.isSlotFree(destination)){
             map.moveInsect(start,destination);
             map.getInsectAt(destination)->setCoordinates(destination);
-
             turn++;
         }
     }
-
+    void goBackDeck(Player & player_, vec2i from, vec2i to) {
+        Insect* ins=map.getInsectAt(to);
+        std::vector<Insect*> *deckList=player_.getDeck().getInsects();
+        deckList->insert(deckList->begin()+from.getJ(),ins);
+        map.removeInsectAt(to);
+        map.getHistoric().pop_front();
+    }
     int update(Player & player_){
 
         if (player_.inputs.isPossibleDestinationsNeeded()){
