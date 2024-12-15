@@ -173,28 +173,6 @@ public:
                 putInsectTo(movingInsect, pos2_);
                 removeInsectAt(pos1_);
             }
-
-
-        /*if(!(isSlotFree(pos1_) || pos1_ == pos2_)){
-            if(slot[posToIndex(pos1_)]->getIT()==beetle) {
-                Beetle* b = dynamic_cast<Beetle*>(slot[posToIndex(pos1_)]);
-                //Beetle b=slot[posToIndex(pos1_)];
-                Insect* insectUnder=b->getInsectUnder();
-                b->setAboveOf(slot[posToIndex(pos2_)]);
-                putInsectTo(slot[posToIndex(pos1_)], pos2_);
-                if (insectUnder!=nullptr) {
-                    putInsectTo(insectUnder, pos1_);
-                } else {
-                    removeInsectAt(pos1_);
-                }
-                slot[posToIndex(pos1_)]->setAboveOf(slot[posToIndex(pos2_)]);
-                putInsectTo(slot[posToIndex(pos1_)], pos2_);
-                removeInsectAt(pos1_);
-            } else {
-                putInsectTo(slot[posToIndex(pos1_)], pos2_);
-                removeInsectAt(pos1_);
-            }
-        }*/
         addToHistoric(pos1_,pos2_);//If the movement is a rewind, goBack will manage the historic
     }
 
@@ -237,13 +215,18 @@ public:
 
     [[nodiscard]] bool isSlotUsable(const vec2i & pos_) const
     {
-        size_t compteur =0;
-        std::list<vec2i> neighbours = getNeighbours(pos_);
-        for(auto & neighbour : neighbours)
+        if(pos_.getI() > 0 && pos_.getI() < getSideSize() && pos_.getJ() > 0 && pos_.getJ() < getSideSize())
         {
-            if(!isSlotFree(neighbour)) compteur++;
+            size_t compteur =0;
+            std::list<vec2i> neighbours = getNeighbours(pos_);
+            for(auto & neighbour : neighbours)
+            {
+                if(!isSlotFree(neighbour)) compteur++;
+            }
+            return compteur < 5;
         }
-        return compteur < 5;
+        return true;
+
     }
 //------- ANTI MAP EXIT -------
 private:
