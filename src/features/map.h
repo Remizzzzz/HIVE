@@ -11,6 +11,7 @@
 #include <list>
 #include "insect.h"
 #include "../utils/utils.h"
+//#include <QDebug>
 
 
 
@@ -201,7 +202,7 @@ public:
     //Function that adds a move to historic
     void addToHistoric(const vec2i & from, const vec2i & to) {
         historic.emplace_front(from,to);
-        while (historic.size() > rewind){ //While just in case, but if works normally
+        while (historic.size() > rewind){ //While just in case, but it works normally
             historic.pop_back();
         }
     }

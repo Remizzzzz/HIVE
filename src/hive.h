@@ -31,6 +31,7 @@ class Hive{
     int trueMapSideSize{32};
     int renderedMapSideSize{30};
     int rewindNb;
+    int rewindUsed;
     Map map;
 
     Player player1;
@@ -190,7 +191,7 @@ private:
 public:
     Hive() : mode(PvP), version(console),
              insects(),
-             rewindNb(1), map(trueMapSideSize,rewindNb),
+             rewindNb(5), map(trueMapSideSize,rewindNb),
              player1(1), player2(2), currentPlayer(&player1),
              inputsManager(mode, renderedMapSideSize, map),
              solver(map, renderedMapSideSize),renderer( nullptr){}
@@ -203,6 +204,10 @@ public:
             delete insect;
         }
     }
+    int getRewindUsed(){return rewindUsed;}
+    void incrRewindUsed(){rewindUsed++;}
+    void decrRewindUsed(){rewindUsed--;}
+    int getRewindMax(){return rewindNb;}
     int launchGame();
     void static displayRules() ;
     void changeSettings();

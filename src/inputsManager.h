@@ -17,7 +17,6 @@
 #include <solver.h>
 #include <features/map.h>
 #include <algorithm>
-
 enum Mode{PvP,PvAI};
 
 class InputsManager{
@@ -168,7 +167,6 @@ public:
                 //Si la position est dans le deck
                 //inputs.setPossibleDestinations(test);inputs.getStart()
                 //inputs.setPossibleDestinations(map.setRule(map.getInsectAt(inputs.getStart())->getColor()));
-
                 inputs.setPossibleDestinations(map.setRule(!turnP));
             }
         } else {//Si c'est la deuxième sélection

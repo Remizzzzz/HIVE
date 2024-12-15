@@ -175,11 +175,15 @@ void hiveRenderer::handleButtonClick() {
                             lastClicked->setInsectType(none);
                             lastClicked->updateState(2);//La case devient vide
                         }
+
                         if (actualP->getInputs().getStart().getI()==-1) {//Si c'est deckToMap movement
                             hive.getSolver()->deckToMapMovement(*actualP);
+                            hive.decrRewindUsed();
                         } else { //Si c'est mapToMapMovement
                             hive.getSolver()->mapToMapMovement(*actualP);
+                            hive.decrRewindUsed();
                         }
+
                         hive.switchPlayer();
                         updatePlayerTurn();
                         button->updateState(0);
@@ -217,6 +221,8 @@ void hiveRenderer::handleButtonClick() {
                         if (button->getCoordinates()==deck) {
                             vec2i i(-1,actualP->getDeck().returnIndex(button->getInsectType()));
                             index=i;
+                        } else {
+                            index=button->getCoordinates();
                         }
 
                         hive.getInputsManager()->updatePlayerInputsQt(actualP,index,inputT,playerTurn);
@@ -288,11 +294,15 @@ void hiveRenderer::showWinner(Player* winner) {
 void hiveRenderer::handleParamButtonClick() {
     auto *button = qobject_cast<ParamButton *>(sender());
     if (button->getType()==Rewind) {
-        vec2i from =hive.getMap().getHistoric().front().from;
-        vec2i to = hive.getMap().getHistoric().front().to;
-        buttons[from.getI()][from.getJ()]=buttons[to.getI()][to.getJ()];
-        buttons[to.getI()][to.getJ()]->updateState(2);
-        buttons[to.getI()][to.getJ()]->setInsectType(none);
-        hive.getMap().goBack();
+        if (hive.getRewindUsed()<hive.getRewindMax()) {
+            vec2i from =hive.getMap().getHistoric().front().from;
+            vec2i to = hive.getMap().getHistoric().front().to;
+            *buttons[from.getI()][from.getJ()]=*buttons[to.getI()][to.getJ()];
+            buttons[to.getI()][to.getJ()]->updateState(2);
+            buttons[to.getI()][to.getJ()]->setInsectType(none);
+            hive.getMap().goBack();
+            updatePlayerTurn();
+            hive.incrRewindUsed();
+        }
     }
 }

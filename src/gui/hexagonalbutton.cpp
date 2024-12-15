@@ -10,8 +10,9 @@ HexagonalButton::HexagonalButton(int size, QWidget *parent)
 }
 HexagonalButton& HexagonalButton::operator=(const HexagonalButton &other) {
     this->player=other.player;
-    this->currentEvent=other.currentEvent;
+    this->updateState(other.currentEvent);
     iT=other.iT;
+    return *this;
 }
 void HexagonalButton::createHexagon(int size) {
     hexagon.clear();
