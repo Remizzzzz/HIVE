@@ -506,19 +506,20 @@ std::vector<vec2i> Ladybug::getPossibleMovements(Map &m) const {
 
             for (const auto &level1 : firstLevel) {
                 // Si le slot contient un pion, on peut monter dessus
+
                 if (!m.isSlotFree(level1)) {
                     // 2e niveau de voisins
                     std::list<vec2i> secondLevel = m.getNeighbours(level1);
 
                     for (const auto &level2 : secondLevel) {
                         //on verifie quye les cases du niveau 2 contiennent un pion et q'on ne retourne pas à la case d'origine
-                        if (!m.isSlotFree(level2) && level2 != getCoordinates() && getFormerNeighbour(level1, level2, m) == 1) {
+                        if (!m.isSlotFree(level2) && level2 != getCoordinates()) {
                             // 3e niveau de voisins
                             std::list<vec2i> thirdLevel = m.getNeighbours(level2);
 
                             for (const auto &level3 : thirdLevel) {
                                 // on redescend de la ruche en dernier mouvement, dans une case vide
-                                if (m.isSlotFree(level3) && level3 != level1 && getFormerNeighbour(level2, level3, m) == 1) {
+                                if (m.isSlotFree(level3) && level3 != getCoordinates()) {
                                     possibleMovements.push_back(level3);
                                 }
                             }
