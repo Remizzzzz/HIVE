@@ -139,6 +139,38 @@ void HexagonalButton::paintEvent(QPaintEvent *event) {
 
             painter.drawPixmap(topLeft, scaledImage);
         }
+    } else if (iT==mosquitoe) {
+        QPixmap buttonImageGrasshopper("../assets/mosquitoe.png");
+        if (buttonImageGrasshopper.isNull()) {
+            painter.setBrush(QBrush(Qt::blue));
+            painter.drawPolygon(hexagon);
+        } else {
+            QSize newSize(25, 25);
+            // Redimensionner l'image pour qu'elle s'adapte au bouton
+            QPixmap scaledImage = buttonImageGrasshopper.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+            // Calculer la position centrale pour afficher l'image
+            QPoint center = rect().center();
+            QPoint topLeft(1, center.y() - scaledImage.height() / 2);
+
+            painter.drawPixmap(topLeft, scaledImage);
+        }
+    }else if (iT==ladybug) {
+        QPixmap buttonImageGrasshopper("../assets/ladybug.png");
+        if (buttonImageGrasshopper.isNull()) {
+            painter.setBrush(QBrush(Qt::blue));
+            painter.drawPolygon(hexagon);
+        } else {
+            QSize newSize(25, 25);
+            // Redimensionner l'image pour qu'elle s'adapte au bouton
+            QPixmap scaledImage = buttonImageGrasshopper.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+            // Calculer la position centrale pour afficher l'image
+            QPoint center = rect().center();
+            QPoint topLeft(0, center.y() - scaledImage.height() / 2);
+
+            painter.drawPixmap(topLeft, scaledImage);
+        }
     }
 }
 void HexagonalButton::setInsectType(insectType IT){

@@ -75,7 +75,7 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
 }
 
 void hiveRenderer::setupDeck(int buttonSize){
-    int sizeDeck=11;
+    int sizeDeck=15;
     vec2i deck(-1,-1);
     for (int num=0;num<2;num++){
         if (num==0) {
@@ -120,6 +120,11 @@ void hiveRenderer::setupDeck(int buttonSize){
         buttons[30][9+num*sizeDeck]->setInsectType(spider);
         buttons[30][10+num*sizeDeck]->setInsectType(spider);
 
+        buttons[30][11+num*sizeDeck]->setInsectType(mosquitoe);
+        buttons[30][12+num*sizeDeck]->setInsectType(mosquitoe);
+
+        buttons[30][13+num*sizeDeck]->setInsectType(ladybug);
+        buttons[30][14+num*sizeDeck]->setInsectType(ladybug);
     }
 }
 
@@ -134,6 +139,7 @@ void hiveRenderer::handleButtonClick() {
     Player * actualP=hive.getPlayer1();
     Player * opponent = hive.getPlayer2();
     vec2i deck(-1,-1);
+    vec2i index(-1,-1);
     if (playerTurn){
         actualP=hive.getPlayer2();//Si c'est au tour du joueur 2, on change le joueur actuel
         opponent=hive.getPlayer1();
@@ -208,11 +214,11 @@ void hiveRenderer::handleButtonClick() {
 
                         //Pour toujours avoir un index valide
                         if (button->getCoordinates()==deck) {
-                            vec2i index(-1,actualP->getDeck().returnIndex(button->getInsectType()));
-                            button->setCoordinates(index);
+                            vec2i i(-1,actualP->getDeck().returnIndex(button->getInsectType()));
+                            index=i;
                         }
 
-                        hive.getInputsManager()->updatePlayerInputsQt(actualP,button->getCoordinates(),inputT,playerTurn);
+                        hive.getInputsManager()->updatePlayerInputsQt(actualP,index,inputT,playerTurn);
                         for (auto b : actualP->getInputs().getPossibleDestinations()) {//On itère dans la liste des destionations possibles
                             buttons[b.getI()][b.getJ()]->updateState(3);
                         }
@@ -224,9 +230,9 @@ void hiveRenderer::handleButtonClick() {
                             button->updateState(1); //Insect a été sélectionné
                             lastClicked=button;
                             //Pour toujours avoir un index valide
-                            vec2i index(-1,actualP->getDeck().returnIndex(button->getInsectType()));
-                            button->setCoordinates(index);
-                            hive.getInputsManager()->updatePlayerInputsQt(actualP,button->getCoordinates(),inputT,playerTurn);
+                            vec2i i(-1,actualP->getDeck().returnIndex(button->getInsectType()));
+                            index=i;
+                            hive.getInputsManager()->updatePlayerInputsQt(actualP,index,inputT,playerTurn);
                             for (auto b : actualP->getInputs().getPossibleDestinations()) {//On itère dans la liste des destionations possibles
                                 buttons[b.getI()][b.getJ()]->updateState(3);
                             }
@@ -240,9 +246,9 @@ void hiveRenderer::handleButtonClick() {
                         button->updateState(1); //Insect a été sélectionné
                         lastClicked=button;
                         //Pour toujours avoir un index valide
-                        vec2i index(-1,actualP->getDeck().returnIndex(button->getInsectType()));
-                        button->setCoordinates(index);
-                        hive.getInputsManager()->updatePlayerInputsQt(actualP,button->getCoordinates(),inputT,playerTurn);
+                        vec2i i(-1,actualP->getDeck().returnIndex(button->getInsectType()));
+                        index=i;
+                        hive.getInputsManager()->updatePlayerInputsQt(actualP,index,inputT,playerTurn);
                         for (auto b : actualP->getInputs().getPossibleDestinations()) {//On itère dans la liste des destionations possibles
                             buttons[b.getI()][b.getJ()]->updateState(3);
                         }
