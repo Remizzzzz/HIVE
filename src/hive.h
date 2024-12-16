@@ -204,8 +204,6 @@ public:
             delete insect;
         }
     }
-    Mode getMode() { return mode; }
-    void setGameMode(Mode newMode) { mode = newMode; }
     int getRewindUsed() {return rewindUsed;}
     void incrRewindUsed() {rewindUsed++;}
     void decrRewindUsed() {if (rewindUsed>0) rewindUsed--;}
@@ -214,11 +212,6 @@ public:
         rewindNb = newRewindNumber;
         rewindUsed= rewindNb;
     }
-    void enableExtension(insectType insectType, bool enable) {
-        if (enable) extensions.insert(insectType);
-        else extensions.erase(insectType);
-    }
-    bool hasExtension(insectType insectType) const { return extensions.find(insectType) != extensions.end(); }
     int launchGame();
     void static displayRules() ;
     void changeSettings();

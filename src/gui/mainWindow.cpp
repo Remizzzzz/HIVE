@@ -130,7 +130,7 @@ void MainWindow::initializeSettingsWidget() {
     auto *modeComboBox = new QComboBox(settingsWidget);
     modeComboBox->addItem("Joueur vs Joueur (PvP)");
     modeComboBox->addItem("Joueur vs IA (PvAI)");
-    modeComboBox->setCurrentIndex(hive.getMode() == PvP ? 0 : 1);
+    modeComboBox->setCurrentIndex(modeComboBox->findData(hiveMode));
     layout->addWidget(modeLabel);
     layout->addWidget(modeComboBox);
 
@@ -138,8 +138,8 @@ void MainWindow::initializeSettingsWidget() {
     auto *extensionsLabel = new QLabel("Activer/Désactiver les extensions", settingsWidget);
     auto *ladybugCheckBox = new QCheckBox("Activer l'extension Ladybug", settingsWidget);
     auto *mosquitoCheckBox = new QCheckBox("Activer l'extension Mosquito", settingsWidget);
-    ladybugCheckBox->setCheckState(hive.hasExtension(ladybug) ? Qt::Checked : Qt::Unchecked);
-    mosquitoCheckBox->setCheckState(hive.hasExtension(mosquitoe) ? Qt::Checked : Qt::Unchecked);
+    ladybugCheckBox->setCheckState(hasLadybug ? Qt::Checked : Qt::Unchecked);
+    mosquitoCheckBox->setCheckState(hasMosquito ? Qt::Checked : Qt::Unchecked);
     layout->addWidget(extensionsLabel);
     layout->addWidget(ladybugCheckBox);
     layout->addWidget(mosquitoCheckBox);
@@ -148,7 +148,7 @@ void MainWindow::initializeSettingsWidget() {
     auto *rewindLabel = new QLabel("Modifier le nombre de rewinds (0 à 10)", settingsWidget);
     auto *rewindSpinBox = new QSpinBox(settingsWidget);
     rewindSpinBox->setRange(0, 10);
-    rewindSpinBox->setValue(hive.getRewindMax());
+    rewindSpinBox->setValue(hiveNbRewind);
     layout->addWidget(rewindLabel);
     layout->addWidget(rewindSpinBox);
 
@@ -158,10 +158,12 @@ void MainWindow::initializeSettingsWidget() {
 
     // Mettre à jour les paramètres
     connect(applyButton, &QPushButton::clicked, [this, modeComboBox, ladybugCheckBox, mosquitoCheckBox, rewindSpinBox]() {
-        hive.setGameMode(modeComboBox->currentIndex() == 0 ? PvP : PvAI);
-        hive.enableExtension(ladybug, ladybugCheckBox->isChecked());
-        hive.enableExtension(mosquitoe, mosquitoCheckBox->isChecked());
-        hive.setRewindNumber(rewindSpinBox->value());
+        hiveMode = modeComboBox->currentIndex() == 0 ? PvP : PvAI;
+        if (ladybugCheckBox->isChecked()) hasLadybug = true;
+        else hasLadybug = false;
+        if (mosquitoCheckBox->isChecked()) hasMosquito = true;
+        else hasMosquito = false;
+        hiveNbRewind = rewindSpinBox->value();
 
         stackedWidget->setCurrentIndex(0);
     });
@@ -184,7 +186,8 @@ void MainWindow::changeSettings() {
 
 void MainWindow::startNewGame() {
     // Créer et afficher la fenêtre secondaire
-    auto *hive = new hiveRenderer();
+    //auto *hive = new hiveRenderer(nullptr, hiveNbRewind, hiveMode, hasLadybug, hasMosquito);
+    auto *hive = new hiveRenderer(nullptr, hiveNbRewind);
     hive->show();
     this->close();
 }
@@ -203,7 +206,7 @@ void MainWindow::launchConsoleApp() {
     this->close();
 }
 
-// Idem que saveGame, jsp comment faut appeler le fichier du coup g mis ça pour l'instant
-void MainWindow::resumeGame() { hive.loadGame("backup.tkt"); }
+// Jsp comment appeler loadGame ...
+void MainWindow::resumeGame() { /* hive.loadGame("backup.tkt"); */ }
 
 void MainWindow::quitMenu() { this->close(); }

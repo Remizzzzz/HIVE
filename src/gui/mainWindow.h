@@ -29,8 +29,10 @@ private slots:
     void quitMenu();
 
 private:
-    Ui::MainWindow *ui;
-    Hive hive;
+    Mode hiveMode;
+    int hiveNbRewind;
+    bool hasLadybug;
+    bool hasMosquito;
 
     // Boutons du menu
     QPushButton *startButton;
