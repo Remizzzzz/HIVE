@@ -204,6 +204,10 @@ public:
             delete insect;
         }
     }
+    void setRewind(int r) {
+        rewindNb=r;
+        rewindUsed=rewindNb;
+    }
     int getRewindUsed(){return rewindUsed;}
     void incrRewindUsed(){rewindUsed++;}
     void decrRewindUsed(){if (rewindUsed>0) rewindUsed--;}

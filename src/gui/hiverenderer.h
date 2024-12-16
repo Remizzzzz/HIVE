@@ -17,7 +17,7 @@ class hiveRenderer : public QMainWindow
     Q_OBJECT
 
 public:
-    hiveRenderer(QWidget *parent = nullptr);
+    hiveRenderer(QWidget *parent = nullptr, int rewind=5);
     ~hiveRenderer();
     void updateInputT(){
         if (inputT){
