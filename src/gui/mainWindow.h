@@ -3,26 +3,49 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QLabel>
 #include <QPushButton>
-#include <QVBoxLayout>
+#include <QStackedWidget>
+#include "hive.h"
 
-class MainWindow : public QMainWindow
-{
+QT_BEGIN_NAMESPACE
+namespace Ui { class MainWindow; }
+QT_END_NAMESPACE
+
+
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    ~MainWindow() = default;
 
-    private slots:
-        void openSecondaryWindow();   // Ouvre la fenêtre secondaire
-    void launchConsoleApp();      // Lance l'application console
-    void showGameRules();  // Lance l'affichage des règles du jeu
+private slots:
+    void startNewGame();
+    void resumeGame();
+    void showTutorial();
+    void changeSettings();
+    void launchConsoleApp();  // Lance l'application console
+    void quitMenu();
 
 private:
-    QPushButton *rulesButton;
-    QPushButton *secondaryWindowButton;
-    QPushButton *consoleAppButton;
+    Ui::MainWindow *ui;
+    Hive hive;
+
+    // Boutons du menu
+    QPushButton *startButton;
+    QPushButton *tutorialButton;
+    QPushButton *resumeButton;
+    QPushButton *settingsButton;
+    QPushButton *launchConsoleButton;
+    QPushButton *quitButton;
+
+    // Zone où s'affichera tous les trucs du menu
+    QStackedWidget *stackedWidget;
+
+    void initializeEmptyWidget();
+    void initializeTutorialWidget();
+    void initializeSettingsWidget();
 };
 
 #endif // MAINWINDOW_H
