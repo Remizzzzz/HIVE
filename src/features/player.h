@@ -55,8 +55,17 @@ public:
         return name;
     }
 
-    const std::vector<Insect *> & getActiveInsects() const{
+    const std::vector<Insect *> & getActiveInsects() const {
         return activeInsects;
+    }
+    void removeActiveInsect(Insect* i) {
+        int id=0;
+        for (auto it : activeInsects) {
+            if (it == i) {
+                activeInsects.erase(activeInsects.begin()+id);
+            }
+            id++;
+        }
     }
 
     void addActiveInsectsFromDeck(const int & deckIndex_){

@@ -135,6 +135,7 @@ hiveRenderer::~hiveRenderer()
 }
 
 void hiveRenderer::handleButtonClick() {
+
     // Récupérez le bouton qui a déclenché le signal
     HexagonalButton *button = qobject_cast<HexagonalButton *>(sender());
     Player * actualP=hive.getPlayer1();
@@ -192,6 +193,11 @@ void hiveRenderer::handleButtonClick() {
                             showWinner(actualP);
                         } else if (actualP->lostGame(hive.getMap())) {
                             showWinner(opponent);
+                        }
+                        qDebug()<<"\nHistorique : ";
+                        for (auto move : hive.getMap().getHistoric()) {
+                            qDebug()<<"\n("<<move.from.getI()<<","<<move.from.getJ()<<")";
+                            qDebug()<<"-> ("<<move.to.getI()<<","<<move.to.getJ()<<")";
                         }
                     }
                 } else {
@@ -294,6 +300,7 @@ void hiveRenderer::showWinner(Player* winner) {
 
 void hiveRenderer::handleParamButtonClick() {
     auto *button = qobject_cast<ParamButton *>(sender());
+    qDebug()<<"\n nombre Rewind : "<<hive.getRewindMax()-hive.getRewindUsed();
     if (button->getType()==Rewind) {
         if (hive.getRewindUsed()<hive.getRewindMax()) {
             vec2i from =hive.getMap().getHistoric().front().from;
@@ -307,17 +314,29 @@ void hiveRenderer::handleParamButtonClick() {
                 hive.getMap().goBack();
             } else {
                 int sizeDeck=15;
-                Player * actualP=hive.getPlayer1();
+                int index=0;
+                Player * actualP=hive.getPlayer2();
                 if (playerTurn) {
-                    actualP=hive.getPlayer2();//Si c'est au tour du joueur 2, on change le joueur actuel
+                    actualP=hive.getPlayer1();//Si c'est au tour du joueur 1, on change le joueur actuel
                 }
-                *buttons[30][from.getJ()+(!playerTurn)*sizeDeck]=*buttons[to.getI()][to.getJ()];
+
+                while (buttons[30][from.getJ()+index+(!playerTurn)*sizeDeck]->getState()!=2) {
+                    index++;
+                }
+                qDebug()<<"\n"<<buttons[30][from.getJ()+(!playerTurn)*sizeDeck]->getState();
+                *buttons[30][from.getJ()+index+(!playerTurn)*sizeDeck]=*buttons[to.getI()][to.getJ()];
                 buttons[to.getI()][to.getJ()]->updateState(2);
                 buttons[to.getI()][to.getJ()]->setInsectType(none);
                 hive.getSolver()->goBackDeck(*actualP, from, to);
             }
             updatePlayerTurn();
+            hive.getSolver()->decrTurn();
             hive.incrRewindUsed();
+        }
+        qDebug()<<"\nHistorique : ";
+        for (auto move : hive.getMap().getHistoric()) {
+            qDebug()<<"\n("<<move.from.getI()<<","<<move.from.getJ()<<")";
+            qDebug()<<"-> ("<<move.to.getI()<<","<<move.to.getJ()<<")";
         }
     }
 }

@@ -23,7 +23,7 @@ private:
     int getStartLocation(Player & player_) const{
         return 1 * (player_.inputs.getStart().getI() == -1) + 2 * (player_.inputs.getStart().getI() == trueMapSideSize);
     }
-    int turn=0; //Sert pour compter les tours
+    int turn=1; //Sert pour compter les tours
     bool isStartValid(Player & player_) const{
 
         if (player_.inputs.getStart().getI() >= 0 && player_.inputs.getStart().getI() < trueMapSideSize &&
@@ -45,7 +45,10 @@ private:
                 player_.inputs.getDestination().getJ() >= 0 && player_.inputs.getDestination().getJ() < trueMapSideSize;
     }
 public:
-    [[nodiscard]] int getTurn()const {return turn/2;}
+    [[nodiscard]] int getTurn()const {
+        if (turn%2) return turn/2+1;
+        return turn/2;
+    }
     static bool queenInDeck(Player & player_) {
         bool result = true;
         std::vector<Insect*> activeList =player_.getActiveInsects();
@@ -83,6 +86,7 @@ public:
 
         if (!map.isSlotFree(start)){
             map.moveInsect(start,destination);
+            map.addToHistoric(start,destination);
             map.getInsectAt(destination)->setCoordinates(destination);
             turn++;
         }
@@ -92,8 +96,10 @@ public:
         std::vector<Insect*> *deckList=player_.getDeck().getInsects();
         deckList->insert(deckList->begin()+from.getJ(),ins);
         map.removeInsectAt(to);
+        player_.removeActiveInsect(ins);
         map.getHistoric().pop_front();
     }
+    void decrTurn(){turn--;}
     int update(Player & player_){
 
         if (player_.inputs.isPossibleDestinationsNeeded()){

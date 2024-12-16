@@ -444,6 +444,46 @@ std::vector<vec2i> Spider::getPossibleMovements(Map &m) const {
 }
 
 
+std::vector<vec2i> Ladybug::getPossibleMovements(Map &m) const {
+    try{
+        std::vector<vec2i> possibleMovements;
+        // Vérifie que l'insecte puisse bouger
+        if (!this->isLinkingHive(m)) {
+            // 1er niveau de voisins
+            std::list<vec2i> firstLevel = m.getNeighbours(getCoordinates());
+
+            for (const auto &level1 : firstLevel) {
+                // Si le slot contient un pion, on peut monter dessus
+
+                if (!m.isSlotFree(level1)) {
+                    // 2e niveau de voisins
+                    std::list<vec2i> secondLevel = m.getNeighbours(level1);
+
+                    for (const auto &level2 : secondLevel) {
+                        //on verifie quye les cases du niveau 2 contiennent un pion et q'on ne retourne pas à la case d'origine
+                        if (!m.isSlotFree(level2) && level2 != getCoordinates()) {
+                            // 3e niveau de voisins
+                            std::list<vec2i> thirdLevel = m.getNeighbours(level2);
+
+                            for (const auto &level3 : thirdLevel) {
+                                // on redescend de la ruche en dernier mouvement, dans une case vide
+                                if (m.isSlotFree(level3) && level3 != getCoordinates()) {
+                                    possibleMovements.push_back(level3);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return possibleMovements;
+    } catch (const std::string& e) {
+        throw HiveException("Spider::getPossibleMovements", e);
+    }
+    catch (...) {
+        throw HiveException("Spider::getPossibleMovements", "Erreur dans lafonction pour récupérer les mouvements de Spider");
+    }
+}
 
 // Méthodes de mosquito
 std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) const{
@@ -490,6 +530,11 @@ std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) const{
                                 possibleMovements.insert(movement);
                             }
                         break;
+                        case ladybug:
+                            for (const auto& movement : Ladybug::getPossibleMovements(m)) {
+                                possibleMovements.insert(movement);
+                            }
+                        break;
                     }}
             }
 
@@ -506,46 +551,6 @@ std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) const{
 }
 
 
-std::vector<vec2i> Ladybug::getPossibleMovements(Map &m) const {
-    try{
-        std::vector<vec2i> possibleMovements;
-        // Vérifie que l'insecte puisse bouger
-        if (!this->isLinkingHive(m)) {
-            // 1er niveau de voisins
-            std::list<vec2i> firstLevel = m.getNeighbours(getCoordinates());
-
-            for (const auto &level1 : firstLevel) {
-                // Si le slot contient un pion, on peut monter dessus
-
-                if (!m.isSlotFree(level1)) {
-                    // 2e niveau de voisins
-                    std::list<vec2i> secondLevel = m.getNeighbours(level1);
-
-                    for (const auto &level2 : secondLevel) {
-                        //on verifie quye les cases du niveau 2 contiennent un pion et q'on ne retourne pas à la case d'origine
-                        if (!m.isSlotFree(level2) && level2 != getCoordinates()) {
-                            // 3e niveau de voisins
-                            std::list<vec2i> thirdLevel = m.getNeighbours(level2);
-
-                            for (const auto &level3 : thirdLevel) {
-                                // on redescend de la ruche en dernier mouvement, dans une case vide
-                                if (m.isSlotFree(level3) && level3 != getCoordinates()) {
-                                    possibleMovements.push_back(level3);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return possibleMovements;
-    } catch (const std::string& e) {
-        throw HiveException("Spider::getPossibleMovements", e);
-    }
-    catch (...) {
-    throw HiveException("Spider::getPossibleMovements", "Erreur dans lafonction pour récupérer les mouvements de Spider");
-}
-}
 
 
 

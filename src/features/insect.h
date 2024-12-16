@@ -305,54 +305,6 @@ public:
     }
 };
 
-
-class Mosquitoe : public virtual Insect, public virtual Ant, public virtual Bee, public virtual Grasshopper,
-public virtual Beetle, public virtual Spider  {
-public:
-    Mosquitoe(bool col)
-        : Insect(col, mosquitoe,"M"), Ant(col), Bee(col), Grasshopper(col), Beetle(col), Spider(col) {}
-
-    std::vector<vec2i> getPossibleMovements(Map &m) const override;
-    [[nodiscard]] std::string getPrintableValue(int idColor) const override
-    {
-        if(idColor == 0)
-        {
-            std::string color;
-            std::stringstream s;
-            if(getColor() == true ) {
-                color = "\033[34m";
-            }else {
-                color = "\033[31m";
-            }
-            s << color<< "M " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 1)
-        {
-            std::string color="\033[92m";
-            std::stringstream s;
-            s << color << "M " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 2)
-        {
-            std::string color="\033[32m";
-            std::stringstream s;
-            s << color << "M " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 3)
-        {
-            std::string color="\033[35m";
-            std::stringstream s;
-            s << color << "M " << "\033[0m";
-            return s.str();
-        }
-        throw HiveException("Mosquitoe: Unknown color", "Insect.h : Insect::Mosquitoe::getPrintableValue");
-
-    }
-};
-
 class Ladybug : public virtual Insect {
 public:
     Ladybug(bool col) : Insect(col, ladybug,"La") {}
@@ -393,6 +345,53 @@ public:
             return s.str();
         }
         throw HiveException("Ladybug: Unknown color", "Insect.h : Insect::Ladybug::getPrintableValue");
+    }
+};
+
+class Mosquitoe : public virtual Insect, public virtual Ant, public virtual Bee, public virtual Grasshopper,
+public virtual Beetle, public virtual Spider, public virtual Ladybug  {
+public:
+    Mosquitoe(bool col)
+        : Insect(col, mosquitoe,"M"), Ant(col), Bee(col), Grasshopper(col), Beetle(col), Spider(col), Ladybug(col) {}
+
+    std::vector<vec2i> getPossibleMovements(Map &m) const override;
+    [[nodiscard]] std::string getPrintableValue(int idColor) const override
+    {
+        if(idColor == 0)
+        {
+            std::string color;
+            std::stringstream s;
+            if(getColor() == true ) {
+                color = "\033[34m";
+            }else {
+                color = "\033[31m";
+            }
+            s << color<< "M " << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 1)
+        {
+            std::string color="\033[92m";
+            std::stringstream s;
+            s << color << "M " << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 2)
+        {
+            std::string color="\033[32m";
+            std::stringstream s;
+            s << color << "M " << "\033[0m";
+            return s.str();
+        }
+        else if(idColor == 3)
+        {
+            std::string color="\033[35m";
+            std::stringstream s;
+            s << color << "M " << "\033[0m";
+            return s.str();
+        }
+        throw HiveException("Mosquitoe: Unknown color", "Insect.h : Insect::Mosquitoe::getPrintableValue");
+
     }
 };
 
