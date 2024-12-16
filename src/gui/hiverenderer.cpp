@@ -71,8 +71,14 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
     auto *button = new ParamButton(this,rewind);
     button->setType(Rewind);
     button->setParent(centralWidget);
-    button->move(15, 50);
+    button->move(15, 30);
     connect(button, &ParamButton::clicked, this, &hiveRenderer::handleParamButtonClick);
+
+    auto *saveButton = new ParamButton(this, QString("Save game"));
+    saveButton->setType(Save);
+    saveButton->setParent(centralWidget);
+    saveButton->move(15, 60);
+    connect(saveButton, &ParamButton::clicked, this, &hiveRenderer::handleSaveButtonClick);
 }
 
 void hiveRenderer::setupDeck(int buttonSize){
@@ -339,4 +345,9 @@ void hiveRenderer::handleParamButtonClick() {
             qDebug()<<"-> ("<<move.to.getI()<<","<<move.to.getJ()<<")";
         }
     }
+}
+
+void hiveRenderer::handleSaveButtonClick() {
+    /* Jsp ce qu'il faut mettre dans le nom du fichier donc g mis ça pour l'instant */
+    hive.saveGame("backup.txt");
 }

@@ -204,10 +204,18 @@ public:
             delete insect;
         }
     }
-    int getRewindUsed(){return rewindUsed;}
-    void incrRewindUsed(){rewindUsed++;}
-    void decrRewindUsed(){if (rewindUsed>0) rewindUsed--;}
-    int getRewindMax(){return rewindNb;}
+    Mode getMode() { return mode; }
+    void setGameMode(Mode newMode) { mode = newMode; }
+    int getRewindUsed() {return rewindUsed;}
+    void incrRewindUsed() {rewindUsed++;}
+    void decrRewindUsed() {if (rewindUsed>0) rewindUsed--;}
+    int getRewindMax() {return rewindNb;}
+    void setRewindNumber(int newRewindNumber) { rewindNb = newRewindNumber; }
+    void enableExtension(insectType insectType, bool enable) {
+        if (enable) extensions.insert(insectType);
+        else extensions.erase(insectType);
+    }
+    bool hasExtension(insectType insectType) const { return extensions.find(insectType) != extensions.end(); }
     int launchGame();
     void static displayRules() ;
     void changeSettings();
