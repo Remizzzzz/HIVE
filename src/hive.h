@@ -210,7 +210,10 @@ public:
     void incrRewindUsed() {rewindUsed++;}
     void decrRewindUsed() {if (rewindUsed>0) rewindUsed--;}
     int getRewindMax() {return rewindNb;}
-    void setRewindNumber(int newRewindNumber) { rewindNb = newRewindNumber; }
+    void setRewindNumber(int newRewindNumber) {
+        rewindNb = newRewindNumber;
+        rewindUsed= rewindNb;
+    }
     void enableExtension(insectType insectType, bool enable) {
         if (enable) extensions.insert(insectType);
         else extensions.erase(insectType);

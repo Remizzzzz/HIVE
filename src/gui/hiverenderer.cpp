@@ -17,7 +17,7 @@ hiveRenderer::hiveRenderer(QWidget *parent, int rewind)
     infoLabel->setGeometry(0, 0, width(), 30);  // Placer le label en haut
     centralWidget->setGeometry(0, 50, width(), height() - 50);  // Ajuster la taille du widget central
     hive.runQt();
-    hive.setRewind(rewind);
+    hive.setRewindNumber(rewind);
     // Créer la grille hexagonale de boutons
     setupHexagonalGrid(rows, cols, buttonSize);  // 30x30 boutons, taille de 25 pixels max, à cause du displacement, le rapport entre la hauteur et la largeur est de 1*4 pour une map 2x2
     setupDeck(buttonSize);
