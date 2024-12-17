@@ -7,17 +7,23 @@
 #include "MainWindow.h"
 #include "ParamButton.h"
 //#include "hive.h" -> Déclenche ENORMEMENT d'erreur
-hiveRenderer::hiveRenderer(QWidget *parent, int rewind, bool load)
+hiveRenderer::hiveRenderer(QWidget *parent, int rewind,bool ladybug, bool mosquitoe, bool load)
     : QMainWindow(parent),
     centralWidget(new QWidget(this)),
     infoLabel(new QLabel("Cliquez sur un bouton", this)),
-    ui(new Ui::hiveRenderer)
+    ui(new Ui::hiveRenderer),
+    ladExten(ladybug),
+    mosExten(mosquitoe)
 {ui->setupUi(this);
     infoLabel->setAlignment(Qt::AlignCenter);
     infoLabel->setGeometry(0, 0, width(), 30);  // Placer le label en haut
     centralWidget->setGeometry(0, 50, width(), height() - 50);  // Ajuster la taille du widget central
     hive.runQt();
     hive.setRewindNumber(rewind);
+    if (ladExten) sizeDeck+=2;
+
+    if (mosExten) sizeDeck+=2;
+
     // Créer la grille hexagonale de boutons
     setupHexagonalGrid(rows, cols, buttonSize);  // 30x30 boutons, taille de 25 pixels max, à cause du displacement, le rapport entre la hauteur et la largeur est de 1*4 pour une map 2x2
     setupDeck(buttonSize);
@@ -126,12 +132,16 @@ void hiveRenderer::setupDeck(int buttonSize){
 
         buttons[30][9+num*sizeDeck]->setInsectType(spider);
         buttons[30][10+num*sizeDeck]->setInsectType(spider);
-
-        buttons[30][11+num*sizeDeck]->setInsectType(mosquitoe);
-        buttons[30][12+num*sizeDeck]->setInsectType(mosquitoe);
-
-        buttons[30][13+num*sizeDeck]->setInsectType(ladybug);
-        buttons[30][14+num*sizeDeck]->setInsectType(ladybug);
+        if (mosExten) {
+            buttons[30][11+num*sizeDeck]->setInsectType(mosquitoe);
+            buttons[30][12+num*sizeDeck]->setInsectType(mosquitoe);
+        }
+        if (ladExten){
+            int mos=0;
+            if (mosExten) mos=1;
+            buttons[30][11+2*mos+num*sizeDeck]->setInsectType(ladybug);
+            buttons[30][12+2*mos+num*sizeDeck]->setInsectType(ladybug);
+        }
     }
 }
 void hiveRenderer::loadGame(bool load) {
@@ -343,16 +353,18 @@ void hiveRenderer::handleParamButtonClick() {
             } else {
                 int sizeDeck=15;
                 int index=0;
+                int turn=1;
                 Player * actualP=hive.getPlayer2();
                 if (playerTurn) {
                     actualP=hive.getPlayer1();//Si c'est au tour du joueur 1, on change le joueur actuel
+                    turn=0;
                 }
 
-                while (buttons[30][from.getJ()+index+(!playerTurn)*sizeDeck]->getState()!=2) {
+                while (buttons[30][from.getJ()+index+(turn)*sizeDeck]->getState()!=2) {
                     index++;
                 }
-                qDebug()<<"\n"<<buttons[30][from.getJ()+(!playerTurn)*sizeDeck]->getState();
-                *buttons[30][from.getJ()+index+(!playerTurn)*sizeDeck]=*buttons[to.getI()][to.getJ()];
+                qDebug()<<"\n"<<buttons[30][from.getJ()+(turn)*sizeDeck]->getState();
+                *buttons[30][from.getJ()+index+(turn)*sizeDeck]=*buttons[to.getI()][to.getJ()];
                 buttons[to.getI()][to.getJ()]->updateState(2);
                 buttons[to.getI()][to.getJ()]->setInsectType(none);
                 hive.getSolver()->goBackDeck(*actualP, from, to);
