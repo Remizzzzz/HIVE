@@ -188,6 +188,7 @@ void MainWindow::startNewGame() {
     // Créer et afficher la fenêtre secondaire
     //auto *hive = new hiveRenderer(nullptr, hiveNbRewind, hiveMode, hasLadybug, hasMosquito, load);
     auto *hive = new hiveRenderer(nullptr, hiveNbRewind, hiveMode, hasLadybug, hasMosquito, load);
+    hive->setStyleSheet("background-color: black;");
     hive->show();
     this->close();
 }

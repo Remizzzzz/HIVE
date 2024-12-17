@@ -17,7 +17,7 @@ class hiveRenderer : public QMainWindow
     Q_OBJECT
 
 public:
-    hiveRenderer(QWidget *parent = nullptr, int rewind=5,Mode hiveMode, bool ladybug=false, bool mosquitoe=false, bool load=false);
+    hiveRenderer(QWidget *parent = nullptr, int rewind=5,Mode mod=PvP, bool ladybug=false, bool mosquitoe=false, bool load=false);
     ~hiveRenderer();
     void updateInputT(){
         if (inputT){
@@ -35,6 +35,9 @@ public:
         }
     }
     void showWinner(Player* winner);
+
+
+
 private:
     Hive hive;
     int buttonSize=25;

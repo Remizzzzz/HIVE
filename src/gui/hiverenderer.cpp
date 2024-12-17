@@ -7,7 +7,7 @@
 #include "MainWindow.h"
 #include "ParamButton.h"
 //#include "hive.h" -> Déclenche ENORMEMENT d'erreur
-hiveRenderer::hiveRenderer(QWidget *parent, int rewind, Mode mod=PvP, bool ladybug, bool mosquitoe, bool load)
+hiveRenderer::hiveRenderer(QWidget *parent, int rewind, Mode mod, bool ladybug, bool mosquitoe, bool load)
     : QMainWindow(parent),
     centralWidget(new QWidget(this)),
     infoLabel(new QLabel("Cliquez sur un bouton", this)),
@@ -81,12 +81,15 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
     button->setParent(centralWidget);
     button->move(15, 30);
     connect(button, &ParamButton::clicked, this, &hiveRenderer::handleParamButtonClick);
+    button->setStyleSheet("background: grey;");
 
     auto *saveButton = new ParamButton(this, QString("Save game"));
     saveButton->setType(Save);
     saveButton->setParent(centralWidget);
     saveButton->move(15, 60);
     connect(saveButton, &ParamButton::clicked, this, &hiveRenderer::handleSaveButtonClick);
+    saveButton->setStyleSheet("background : grey;");
+
 }
 
 void hiveRenderer::setupDeck(int buttonSize){
