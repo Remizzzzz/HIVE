@@ -67,17 +67,21 @@ public:
     explicit InputsManager(Mode mode_, const int renderedMapSideSize_, Map & map_):
     renderedMapSideSize(renderedMapSideSize_), map(map_), random(){}
 
-    void updateAIInputs(Player & player_){
+    void updateAIInputs(Player & player_, bool Qt=false, bool inputT=false){
         Inputs & inputs = player_.inputs;
-
-        int cursorId = inputs.isStartSelected() + 1;
+        int cursorId=0;
+        if (!Qt) cursorId = inputs.isStartSelected() + 1;
+        else {
+            if (inputT) cursorId=1; //Si c'est la première sélection
+            else cursorId = 2; //Si c'est la deuxième sélection
+        }
 
         int randomValue = random.getRandomInt(0,4);
         const Insect * selectedInsect;
 
         switch (cursorId){
             case 1:
-                if ((player_.deck.isEmpty() && player_.activeInsects.empty())){
+                if (player_.deck.isEmpty() && player_.activeInsects.empty()){
                     throw HiveException("inputsManager.h:InputsManager:updateAIInputs","deck and activeInsects are empty");
                     return;
                 }

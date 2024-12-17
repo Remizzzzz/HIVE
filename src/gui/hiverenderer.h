@@ -17,7 +17,7 @@ class hiveRenderer : public QMainWindow
     Q_OBJECT
 
 public:
-    hiveRenderer(QWidget *parent = nullptr, int rewind=5,bool ladybug=false, bool mosquitoe=false, bool load=false);
+    hiveRenderer(QWidget *parent = nullptr, int rewind=5,Mode hiveMode, bool ladybug=false, bool mosquitoe=false, bool load=false);
     ~hiveRenderer();
     void updateInputT(){
         if (inputT){
@@ -44,6 +44,7 @@ private:
     int cols=renderedMapSize*2; //30 colonnes
     HexagonalButton* lastClicked=nullptr;
     bool mosExten;
+    Mode mode;
     bool ladExten;
     bool inputT=true;
     bool playerTurn=false;

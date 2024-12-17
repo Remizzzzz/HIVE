@@ -7,18 +7,19 @@
 #include "MainWindow.h"
 #include "ParamButton.h"
 //#include "hive.h" -> Déclenche ENORMEMENT d'erreur
-hiveRenderer::hiveRenderer(QWidget *parent, int rewind,bool ladybug, bool mosquitoe, bool load)
+hiveRenderer::hiveRenderer(QWidget *parent, int rewind, Mode mod=PvP, bool ladybug, bool mosquitoe, bool load)
     : QMainWindow(parent),
     centralWidget(new QWidget(this)),
     infoLabel(new QLabel("Cliquez sur un bouton", this)),
     ui(new Ui::hiveRenderer),
     ladExten(ladybug),
-    mosExten(mosquitoe)
+    mosExten(mosquitoe),
+    mode(mod)
 {ui->setupUi(this);
     infoLabel->setAlignment(Qt::AlignCenter);
     infoLabel->setGeometry(0, 0, width(), 30);  // Placer le label en haut
     centralWidget->setGeometry(0, 50, width(), height() - 50);  // Ajuster la taille du widget central
-    hive.runQt();
+    hive.runQt(ladybug, mosquitoe);
     hive.setRewindNumber(rewind);
     if (ladExten) sizeDeck+=2;
 
@@ -218,6 +219,9 @@ void hiveRenderer::handleButtonClick() {
                         if (actualP->getInputs().getStart().getI()==-1) {//Si c'est deckToMap movement
                             hive.getSolver()->deckToMapMovement(*actualP);
                             hive.decrRewindUsed();
+                            if (mode==PvAI) {
+                                //lauchAiMove()
+                            }
                         } else { //Si c'est mapToMapMovement
                             hive.getSolver()->mapToMapMovement(*actualP);
                             hive.decrRewindUsed();

@@ -187,7 +187,7 @@ void MainWindow::changeSettings() {
 void MainWindow::startNewGame() {
     // Créer et afficher la fenêtre secondaire
     //auto *hive = new hiveRenderer(nullptr, hiveNbRewind, hiveMode, hasLadybug, hasMosquito, load);
-    auto *hive = new hiveRenderer(nullptr, hiveNbRewind,hasLadybug, hasMosquito, load);
+    auto *hive = new hiveRenderer(nullptr, hiveNbRewind, hiveMode, hasLadybug, hasMosquito, load);
     hive->show();
     this->close();
 }

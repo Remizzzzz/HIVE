@@ -47,7 +47,7 @@ class Hive{
 
 private:
 
-    void generateAllInsects(){
+    void generateAllInsects(bool Lad=false, bool Mos=false){
 
         int cpt1 = 0;
         int cpt2 = 0;
@@ -139,40 +139,42 @@ private:
                 cpt2++;
             }
         }
+        if (Mos) {
+            for (int i = 0; i < 4; ++i) {
+                bool color = bool(int (float (i) / 2.f));
 
-        for (int i = 0; i < 4; ++i) {
-            bool color = bool(int (float (i) / 2.f));
+                Insect * insect = new Mosquitoe(color);
+                insects.push_back(insect);
 
-            Insect * insect = new Mosquitoe(color);
-            insects.push_back(insect);
-
-            if (color){
-                insect->setCoordinates({-1,cpt1});
-                player1.deck.addInsect(insect);
-                cpt1++;
-            }
-            else{
-                insect->setCoordinates({renderedMapSideSize,cpt2});
-                player2.deck.addInsect(insect);
-                cpt2++;
+                if (color){
+                    insect->setCoordinates({-1,cpt1});
+                    player1.deck.addInsect(insect);
+                    cpt1++;
+                }
+                else{
+                    insect->setCoordinates({renderedMapSideSize,cpt2});
+                    player2.deck.addInsect(insect);
+                    cpt2++;
+                }
             }
         }
+        if (Lad) {
+            for (int i = 0; i < 4; ++i) {
+                bool color = bool(int (float (i) / 2.f));
 
-        for (int i = 0; i < 4; ++i) {
-            bool color = bool(int (float (i) / 2.f));
+                Insect * insect = new Ladybug(color);
+                insects.push_back(insect);
 
-            Insect * insect = new Ladybug(color);
-            insects.push_back(insect);
-
-            if (color){
-                insect->setCoordinates({-1,cpt1});
-                player1.deck.addInsect(insect);
-                cpt1++;
-            }
-            else{
-                insect->setCoordinates({renderedMapSideSize,cpt2});
-                player2.deck.addInsect(insect);
-                cpt2++;
+                if (color){
+                    insect->setCoordinates({-1,cpt1});
+                    player1.deck.addInsect(insect);
+                    cpt1++;
+                }
+                else{
+                    insect->setCoordinates({renderedMapSideSize,cpt2});
+                    player2.deck.addInsect(insect);
+                    cpt2++;
+                }
             }
         }
 
@@ -274,8 +276,8 @@ public:
         return 1;
     }
 
-    void runQt() {
-        generateAllInsects();
+    void runQt(bool Ladybug, bool Mosquitoe) {
+        generateAllInsects(Ladybug, Mosquitoe);
     }
     Player* getPlayer1() {return &player1;}
     Player* getPlayer2() {return &player2;}
