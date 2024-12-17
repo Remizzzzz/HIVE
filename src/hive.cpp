@@ -438,6 +438,8 @@ void Hive::loadGame(const std::string& filename) {
             std::cout << "finmap";
         }
 
+
+
         // Charger les Extensions
         else if (line == "Extensions:" && !extensions_done ) {
             counter++;extensions_done= true; //Extension probleme
@@ -456,6 +458,7 @@ void Hive::loadGame(const std::string& filename) {
         else if (line == "Insects_Hive:"&& !insects_done) {
             for(auto& insect : insects)
             {delete insect;insect= nullptr;}
+            insects.clear();
             //generateAllInsects();
             counter++;insects_done= true;
             std::cout << "Insect_de hive:\n" ;

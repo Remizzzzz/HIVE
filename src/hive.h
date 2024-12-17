@@ -194,9 +194,13 @@ private:
 
 
 
-    int displayMenu();
+
 
 public:
+    Renderer* getRenderer() const{
+        return renderer;
+    }
+    int displayMenu();
     Hive() : mode(PvP), version(console),
              insects(),
              rewindNb(5),rewindUsed(rewindNb), map(trueMapSideSize,rewindNb),

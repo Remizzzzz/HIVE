@@ -12,12 +12,13 @@ int main() {
     bool play = true;
 
     Hive hive;
-    /*hive.generateAllInsects();
+    hive.generateAllInsects();
     hive.getMap().putInsectTo(hive.getInsects()[0], vec2i(15,15));
     hive.getInsects()[0]->setCoordinates(vec2i(15,15));
     hive.saveGame("../hive_parameters.txt");
-
-    throw HiveException("lala","lala");*/
+    hive.displayMenu();
+    hive.getRenderer()->displayMap(*hive.getPlayer1());
+    throw HiveException("lala","lala");
     while(play){
 
         try{
