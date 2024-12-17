@@ -17,7 +17,7 @@ class hiveRenderer : public QMainWindow
     Q_OBJECT
 
 public:
-    hiveRenderer(QWidget *parent = nullptr, int rewind=5);
+    hiveRenderer(QWidget *parent = nullptr, int rewind=5, bool load=false);
     ~hiveRenderer();
     void updateInputT(){
         if (inputT){
@@ -38,6 +38,7 @@ public:
 private:
     Hive hive;
     int buttonSize=25;
+    int sizeDeck=11;
     int renderedMapSize = 30;// Taille de la map
     int rows=renderedMapSize/2; //30 lignes
     int cols=renderedMapSize*2; //30 colonnes
@@ -50,6 +51,7 @@ private:
     QLabel *infoLabel;           // Label pour afficher les infos
     void setupHexagonalGrid(int rows, int cols, int buttonSize);
     void setupDeck(int buttonSize);
+    void loadGame(bool load);
 
 private slots : //Private slots, c'est pour détecter les signaux des boutons
     void handleButtonClick(); // Slot pour gérer les clics de bouton

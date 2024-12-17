@@ -235,12 +235,11 @@ public:
         }
         return 2;
     }
-
+    int getRenderedMapSideSize() const {return renderedMapSideSize;}
     int run(){
         if (initIfNeeded() == 0){
             return 0;
         }
-
         if (currentPlayer->isHuman){
             inputsManager.updatePlayerInputs(*currentPlayer);
         }

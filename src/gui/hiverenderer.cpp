@@ -7,7 +7,7 @@
 #include "MainWindow.h"
 #include "ParamButton.h"
 //#include "hive.h" -> Déclenche ENORMEMENT d'erreur
-hiveRenderer::hiveRenderer(QWidget *parent, int rewind)
+hiveRenderer::hiveRenderer(QWidget *parent, int rewind, bool load)
     : QMainWindow(parent),
     centralWidget(new QWidget(this)),
     infoLabel(new QLabel("Cliquez sur un bouton", this)),
@@ -22,9 +22,9 @@ hiveRenderer::hiveRenderer(QWidget *parent, int rewind)
     setupHexagonalGrid(rows, cols, buttonSize);  // 30x30 boutons, taille de 25 pixels max, à cause du displacement, le rapport entre la hauteur et la largeur est de 1*4 pour une map 2x2
     setupDeck(buttonSize);
     // Configurez la fenêtre
-    setWindowTitle("Test Hive");
+    setWindowTitle("Hive !");
     resize(1000,600);
-
+    loadGame(load);
     // Ajoutez le widget central sans layout
     setCentralWidget(centralWidget);
 }
@@ -83,7 +83,6 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
 }
 
 void hiveRenderer::setupDeck(int buttonSize){
-    int sizeDeck=15;
     vec2i deck(-1,-1);
     for (int num=0;num<2;num++){
         if (num==0) {
@@ -135,9 +134,31 @@ void hiveRenderer::setupDeck(int buttonSize){
         buttons[30][14+num*sizeDeck]->setInsectType(ladybug);
     }
 }
-
-hiveRenderer::~hiveRenderer()
-{
+void hiveRenderer::loadGame(bool load) {
+    if (load) {
+        hive.loadGame("../hive_parameters.txt");
+        int renderedSize=hive.getRenderedMapSideSize();
+        for (int i=0;i<renderedSize;i++) {
+            for (int j=0;j<renderedSize;j++) {
+                vec2i pos(i,j);
+                Insect* in=hive.getMap().getInsectAt(pos);
+                if (in!=nullptr) {
+                    //Actu de la map
+                    buttons[i][j]->setInsectType(in->getIT());
+                    buttons[i][j]->setPlayer(!in->getColor());
+                    buttons[i][j]->updateState(0);
+                    //Actu des decks
+                    int index=0;
+                    while (in->getIT()!=buttons[30][index+!in->getColor()*sizeDeck]->getInsectType()) {
+                        index++;
+                    }
+                    buttons[30][index+!in->getColor()*sizeDeck]->updateState(2);
+                }
+            }
+        }
+    }
+}
+hiveRenderer::~hiveRenderer() {
     delete ui;
 }
 
@@ -349,6 +370,5 @@ void hiveRenderer::handleParamButtonClick() {
 }
 
 void hiveRenderer::handleSaveButtonClick() {
-    /* Jsp ce qu'il faut mettre dans le nom du fichier donc g mis ça pour l'instant */
-    hive.saveGame("backup.txt");
+    hive.saveGame("../hive_parameters.txt");
 }
