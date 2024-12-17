@@ -15,6 +15,11 @@
 #include "inputsManager.h"
 #include "solver.h"
 #include "renderer.h"
+#include <iostream>
+#include <sstream>
+#include <vector>
+#include <string>
+
 
 //enum Mode{PvP,PvAI};
 enum Version{console, graphic};
@@ -45,8 +50,11 @@ class Hive{
 
     Renderer * renderer;
 
-private:
-
+public:
+    std::vector<Insect *>& getInsects() {
+        return insects;
+    }
+    Insect* generateSingleInsect(int type, bool color, vec2i vec);
     void generateAllInsects(){
 
         int cpt1 = 0;
@@ -178,7 +186,7 @@ private:
 
     }
 
-
+private:
     void static resetInputs(Player & player_){
         player_.inputs.reset();
     }

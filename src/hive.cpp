@@ -17,6 +17,8 @@
 #include "hive.h"
 #include "solver.h"
 #include "renderer.h"
+#include <sstream>
+
 
 
 
@@ -52,6 +54,7 @@ int Hive::displayMenu() {
             case 3:  // Resume game
                 std::cout << "Resuming the last game...\n";
                 loadGame("../hive_parameters.txt");
+                isInit = true;
                 break;
 
             case 4:  // Change parameters
@@ -239,7 +242,7 @@ void Hive::saveGame(const std::string& filename) const{
     file << "Insects_Hive:" << std::endl;
     for (const auto& insect : insects) {
         file << insect->getID() << " " << insect->getIT() << " " << insect->getCoordinates().getI()
-        << ","<< insect->getCoordinates().getJ()<< " "<< insect->getColor()<< std::endl;
+        << " "<< insect->getCoordinates().getJ()<< " "<< insect->getColor()<< std::endl;
     }
     file << "Fin_Insects_Hive:"<< std::endl;
     file << "counter:"<< std::endl<< Insect::get_counter() << std::endl;
@@ -434,8 +437,26 @@ void Hive::loadGame(const std::string& filename) {
             map = newMap;  // Assigner la nouvelle carte à l'objet actuel
             std::cout << "finmap";
         }
+
+        // Charger les Extensions
+        else if (line == "Extensions:" && !extensions_done ) {
+            counter++;extensions_done= true; //Extension probleme
+            std::cout << "extensions:\n" ;
+            extensions.clear();
+            while (std::getline(file, line) && line != "Fin_Extensions:") {
+                std::istringstream stream(line);
+                insectType extension;
+                extensions.insert(extension);  // Ajouter l'extension au set
+            }
+        }
+
         // Charger les Insects
-        else if (line == "Insects_Hive:"&& !insects_done) {// probleme rentre pas ici
+
+
+        else if (line == "Insects_Hive:"&& !insects_done) {
+            for(auto& insect : insects)
+            {delete insect;insect= nullptr;}
+            //generateAllInsects();
             counter++;insects_done= true;
             std::cout << "Insect_de hive:\n" ;
             while (std::getline(file, line) && line != "Fin_Insects_Hive:") {
@@ -444,28 +465,11 @@ void Hive::loadGame(const std::string& filename) {
                 std::string color;
                 std::istringstream stream(line);
                 stream >> id >> it >> i >> j >> color;
-
-                vec2i coor ;
-                for (const auto& insect : insects) {
-                    if(insect->getID() == id) {
-                        coor = insect->getCoordinates();
-                    }
-                    //On les pose au bon endroit sur la map
-                    map.moveInsect(coor, vec2i(i, j));
-                }
-            }
-
-        }
-        // Charger les Extensions
-        else if (line == "Extensions:" && !extensions_done ) {
-            counter++;extensions_done= true; //Extension probleme
-            std::cout << "extensions:\n" ;
-            while (std::getline(file, line) && line != "Fin_Extensions:") {
-                std::istringstream stream(line);
-                insectType extension;
-                extensions.insert(extension);  // Ajouter l'extension au set
+                // Extraction des données depuis chaque ligne
+                generateSingleInsect(it,color.data(), {i,j});
             }
         }
+
 
         // Charger les informations des joueurs
         else if (line == "Joueur1:" && !joueur1_done ) {
@@ -572,6 +576,43 @@ int Hive::launchGame() {
     return 1;
 }
 
+
+Insect* Hive::generateSingleInsect(int type, bool color, vec2i vec) {
+    Insect* insect = nullptr;
+
+    // Création de l'insecte en fonction du type
+    switch (type) {
+        case 0: insect = new Bee(color);break;
+        case 1: insect = new Ant(color);break;
+        case 2: insect = new Beetle(color);break;
+        case 3: insect = new Grasshopper(color);break;
+        case 4: insect = new Spider(color);break;
+        case 5: insect = new Mosquitoe(color);break;
+        case 6: insect = new Ladybug(color);break;
+        default:
+            throw HiveException("Hive::generateSingleInsect", "Insecte de type inconnu");
+        return nullptr;
+    }
+    insect->setCoordinates(vec);
+    // Définition des coordonnées et ajout dans le deck
+    if (color) {
+        if(vec.getI() == -1)player1.deck.addInsect(insect);
+        else {
+            map.putInsectTo(insect,vec);
+        }
+
+    } else {
+        if(vec.getI() == 30)player1.deck.addInsect(insect);
+        else {
+            map.putInsectTo(insect,vec);
+        }
+    }
+
+    // Ajout à la liste globale
+    insects.push_back(insect);
+
+    return insect;
+}
 
 
 
