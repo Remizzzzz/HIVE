@@ -13,8 +13,8 @@ int main() {
 
     Hive hive;
     hive.generateAllInsects();
-    hive.getMap().putInsectTo(hive.getInsects()[0], vec2i(15,15));
-    hive.getInsects()[0]->setCoordinates(vec2i(15,15));
+    //hive.getMap().putInsectTo(hive.getInsects()[0], vec2i(15,15));
+    //hive.getInsects()[0]->setCoordinates(vec2i(15,15));
     hive.saveGame("../hive_parameters.txt");
     hive.displayMenu();
     hive.getRenderer()->displayMap(*hive.getPlayer1());

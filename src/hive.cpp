@@ -459,6 +459,7 @@ void Hive::loadGame(const std::string& filename) {
             for(auto& insect : insects)
             {delete insect;insect= nullptr;}
             insects.clear();
+            Insect::setCounter(0);
             //generateAllInsects();
             counter++;insects_done= true;
             std::cout << "Insect_de hive:\n" ;
@@ -468,7 +469,7 @@ void Hive::loadGame(const std::string& filename) {
                 std::string color;
                 std::istringstream stream(line);
                 stream >> id >> it >> i >> j >> color;
-                // Extraction des données depuis chaque ligne
+                // Création des insectes
                 generateSingleInsect(it,color.data(), {i,j});
             }
         }
