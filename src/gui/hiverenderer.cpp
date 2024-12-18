@@ -222,22 +222,34 @@ void hiveRenderer::handleButtonClick() {
                         if (actualP->getInputs().getStart().getI()==-1) {//Si c'est deckToMap movement
                             hive.getSolver()->deckToMapMovement(*actualP);
                             hive.decrRewindUsed();
-                            if (mode==PvAI) {
-                                //lauchAiMove()
-                            }
                         } else { //Si c'est mapToMapMovement
                             hive.getSolver()->mapToMapMovement(*actualP);
                             hive.decrRewindUsed();
                         }
 
-                        hive.switchPlayer();
-                        updatePlayerTurn();
+
                         button->updateState(0);
-                        button->setPlayer(!playerTurn);
+                        button->setPlayer(playerTurn);
                         if (opponent->lostGame(hive.getMap())) {
                             showWinner(actualP);
                         } else if (actualP->lostGame(hive.getMap())) {
                             showWinner(opponent);
+                        }
+                        if (mode==PvP) {
+                            updatePlayerTurn();
+                        } else {
+                            updateInputT();
+                            hive.getInputsManager()->updateAIInputs(*opponent,true,inputT);
+                            updateInputT();
+                            hive.getInputsManager()->updateAIInputs(*opponent,true,inputT);
+                            qDebug()<< "\nAI("<<opponent->getInputs().getStart().getI()<<","<<opponent->getInputs().getStart().getJ()<<")";
+                            if (opponent->getInputs().getStart().getI()==-1) {//Si c'est deckToMap movement
+                                hive.getSolver()->deckToMapMovement(*opponent);
+                                hive.decrRewindUsed();
+                            } else { //Si c'est mapToMapMovement
+                                hive.getSolver()->mapToMapMovement(*opponent);
+                                hive.decrRewindUsed();
+                            }
                         }
                         qDebug()<<"\nHistorique : ";
                         for (auto move : hive.getMap().getHistoric()) {

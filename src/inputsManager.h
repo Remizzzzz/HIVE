@@ -67,14 +67,10 @@ public:
     explicit InputsManager(Mode mode_, const int renderedMapSideSize_, Map & map_):
     renderedMapSideSize(renderedMapSideSize_), map(map_), random(){}
 
-    void updateAIInputs(Player & player_, bool Qt=false, bool inputT=false){
+    void updateAIInputs(Player & player_){
         Inputs & inputs = player_.inputs;
         int cursorId=0;
-        if (!Qt) cursorId = inputs.isStartSelected() + 1;
-        else {
-            if (inputT) cursorId=1; //Si c'est la première sélection
-            else cursorId = 2; //Si c'est la deuxième sélection
-        }
+        cursorId = inputs.isStartSelected() + 1;
 
         int randomValue = random.getRandomInt(0,4);
         const Insect * selectedInsect;
@@ -180,7 +176,24 @@ public:
             }
         }
     }
+    void updateAIInputsQt(Player* player_, ) {
+        Inputs & inputs = player_->inputs;
+        if (player_->getActiveInsects().empty()) {
+            vec2i start(-1,0); //On pose la reine
+            inputs.setStart(start);
+        } else {
+            vec2i start(-1,-1);
+            int action = random.getRandomInt(0,2);
+            switch (action) {
+                case 0:
+                    start.setJ(random.getRandomInt(0,player_->getDeck().getInsectNb()));
+                    inputs.setPossibleDestinations(map.setRule(true));
 
+
+
+
+        }
+    }
     void resetPlayerInputs(Player* player_) {
         player_->inputs.resetQt();
     }
