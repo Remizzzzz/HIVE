@@ -26,6 +26,7 @@ private:
 
 public:
     Deck() = default;
+    ~Deck() = default;
     std::vector<Insect *>* getInsects() {return &insects;}
     // Classe interne pour l'itérateur
     class Iterator {

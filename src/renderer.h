@@ -17,7 +17,7 @@ public:
      * @brief Constructeur de la classe Renderer.
      * @param map_ Référence constante à la carte à afficher.
      */
-    explicit Renderer(const Map &map_,Player* P1_, Player* P2_, int rendered_s_i) : map(map_), P1(P1_), P2(P2_), renderedSideSize(rendered_s_i) {} // A voir comment initialiser l'output
+    explicit Renderer( Map &map_,Player* P1_, Player* P2_, int rendered_s_i) : map(map_), P1(P1_), P2(P2_), renderedSideSize(rendered_s_i) {} // A voir comment initialiser l'output
 
     /**
      * @brief Affiche la carte sur la sortie standard.
@@ -30,19 +30,32 @@ protected:
     Player *P1;
     Player *P2;
     int renderedSideSize;
-    const Map &map;
+    Map &map;
 
+public:
+    void setPlayer1(Player *player) {
+        P1 = player;
+    }
 
+    // Setter pour Player 2
+    void setPlayer2(Player *player) {
+        P2 = player;
+    }
+
+    void setMap(Map map1) {
+        map = map1;
+    }
 
 };
 
 class ConsoleRenderer : public Renderer {
 public:
+
     /**
      * @brief Constructeur de la classe ConsoleRenderer.
      * @param map_ Référence constante à la carte à afficher.
      */
-    explicit ConsoleRenderer(const Map &map_,Player* P1_, Player* P2_, int rendered_s_i) : Renderer(map_,P1_,P2_, rendered_s_i) {}
+    explicit ConsoleRenderer(Map &map_,Player* P1_, Player* P2_, int rendered_s_i) : Renderer(map_,P1_,P2_, rendered_s_i) {}
 
 
     /**
@@ -353,7 +366,7 @@ public:
 
 class GraphicRenderer : public Renderer {
 public:
-    explicit GraphicRenderer(const Map &map_, Player* P1_, Player* P2_, int rendered_s_i) : Renderer(map_,P1_,P2_,rendered_s_i) {}
+    explicit GraphicRenderer( Map &map_, Player* P1_, Player* P2_, int rendered_s_i) : Renderer(map_,P1_,P2_,rendered_s_i) {}
     void displayMap(const Player & currentPlayer_) const override{}
     void render(const Player & currentPlayer_) const override{}
 };

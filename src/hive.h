@@ -5,6 +5,7 @@
 #ifndef HIVE_HIVE_H
 #define HIVE_HIVE_H
 
+#include <unistd.h>
 #include <vector>
 #include <set>
 #include "utils/hiveException.h"
@@ -47,10 +48,10 @@ class Hive{
     InputsManager inputsManager;
 
     Solver solver;
-
+public:
     Renderer * renderer;
 
-public:
+
     std::vector<Insect *>& getInsects() {
         return insects;
     }
@@ -231,6 +232,7 @@ public:
     void loadGame(const std::string& filename);
     int initIfNeeded(){
         if (!isInit){
+
             if (displayMenu() == 1){
                 if (mode == PvAI){
                     player2.setHumanity(false);
@@ -249,14 +251,21 @@ public:
     }
 
     int run(){
+        std::cout << "Dans run va peut etre init";
         if (initIfNeeded() == 0){
-            return 0;
+            std::cout << "insects.size()";
+            sleep(5);
+            return 1;
         }
+        std::cout<< "Dans run pas besoin d'init";
 
         if (currentPlayer->isHuman){
+            std::cout <<"Dans ishuman ";
             inputsManager.updatePlayerInputs(*currentPlayer);
+            std::cout <<"hors de ishuman ";
         }
         else{
+            std::cout<< "Dans isai ";
             inputsManager.updateAIInputs(*currentPlayer);
         }
 

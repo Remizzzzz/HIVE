@@ -63,7 +63,12 @@ private:
     }
 
 public:
-
+    Map& getMap() {
+        return map;
+    }
+    void setMap(Map map1) {
+        map = map1;
+    }
     explicit InputsManager(Mode mode_, const int renderedMapSideSize_, Map & map_):
     renderedMapSideSize(renderedMapSideSize_), map(map_), random(){}
 
@@ -112,10 +117,11 @@ public:
 
 
     void updatePlayerInputs(Player & player_){
+        std::cout << "bien dans update playerinput"<< std::endl;
         Inputs & inputs = player_.inputs;
 
         int key = _getch();
-
+        std::cout << "appel de inputqlqchose"<< std::endl;
         int cursorId = inputs.isStartSelected() + 1;
 
         if (key == 0 || key == 224) {

@@ -223,6 +223,7 @@ void Hive::saveGame(const std::string& filename) const{
     file << "Mode:"<< std::endl << static_cast<int>(mode) << std::endl;
     file << "isInit:" << std::endl<< static_cast<bool>(isInit) << std::endl;
     file << "trueMapSideSize:"<< std::endl << trueMapSideSize << std::endl;
+    file << "currentPlayer:"<< std::endl << (currentPlayer == &player1 ? 1:2 )<< std::endl;
     file << "renderedMapSideSize:"<< std::endl << renderedMapSideSize << std::endl;
     file << "RewindNb:"<< std::endl << rewindNb << std::endl;
 
@@ -343,10 +344,12 @@ void Hive::loadGame(const std::string& filename) {
     bool renderedMapSideSize_done = false;
     bool map_done = false;
     bool insects_done = false;
+    bool currentPlayer_done = false;
     bool extensions_done = false;
     bool joueur1_done = false;
     bool joueur2_done = false;
     int count = 0;
+    int currentPlayeR;
     std::string line;
     // Charger les informations de base
     while (counter < 10) {
@@ -385,6 +388,12 @@ void Hive::loadGame(const std::string& filename) {
             counter++;trueMapSideSize_done= true;
             std::cout << "lalalalatrulap\n";
             file >> trueMapSideSize;
+
+        }
+        else if (line.find("currentPlayer:") != std::string::npos  && !trueMapSideSize_done) {
+            counter++;currentPlayer_done= true;
+            std::cout << "currentplayer\n";
+            file >> currentPlayeR;
 
         }
         else if (line.find("renderedMapSideSize:") != std::string::npos && !renderedMapSideSize_done) {
@@ -456,30 +465,7 @@ void Hive::loadGame(const std::string& filename) {
         // Charger les Insects
 
 
-        else if (line.find("Insects_Hive:") != std::string::npos  && !insects_done) {
-            std::cout << "les inseeeeeeeeeects Insect_de hive:\n" ;
-            for(auto& insect : insects)
-            {delete insect;insect= nullptr;}
-            insects.clear();
-            Insect::setCounter(0);
-            //generateAllInsects();
-            counter++;insects_done= true;
-            std::cout << "Insect_de hive:\n" ;
-            while (std::getline(file, line) && line != "Fin_Insects_Hive:") {
 
-                int id, it, i, j;
-                std::string color;
-                std::istringstream stream(line);
-
-                stream >> id >> it >> i >> j >> color;
-                std::cout<< "id: " << id << std::endl;
-                std::cout<< "it: " << it << std::endl;
-                std::cout<< "coor: " << i <<"," << j << std::endl;
-                std::cout<< "color: " << color << std::endl;
-                // Création des insectes
-                generateSingleInsect(it,color.data(), {i,j});
-            }
-        }
 
 
         // Charger les informations des joueurs
@@ -490,7 +476,7 @@ void Hive::loadGame(const std::string& filename) {
             bool isHuman = false;
             std::string name;
             Deck deck;  // Vous devrez charger le deck à partir du fichier
-            std::vector<Insect*> activeInsects;  // Liste des insectes actifs à charger
+            std::vector<Insect*> activeInsects1;  // Liste des insectes actifs à charger
 
             while (std::getline(file, line) && line != "Fin_Joueur1:") {
                 if (line.find("ID:") != std::string::npos) {
@@ -511,13 +497,16 @@ void Hive::loadGame(const std::string& filename) {
                     while (std::getline(file, line) && line != "Fin_Active_Insect:") {
                         for (const auto& insect : insects) {
                             if(insect->getID() == id) {
-                                activeInsects.push_back(insect);
+                                activeInsects1.push_back(insect);
                             }
                         }
                     }
                 }
             }
-            Player joueur1 = Player(id, isHuman,name, deck,activeInsects);
+
+            Player joueur1 = Player(id, isHuman,name, Deck(),activeInsects1);
+            player1 = joueur1;
+            renderer->setPlayer1(&joueur1);
         }
         // Charger les informations de Joueur2 de manière similaire à Joueur1
         // Charger les informations des joueurs
@@ -528,7 +517,7 @@ void Hive::loadGame(const std::string& filename) {
             bool isHuman = false;
             std::string name;
             Deck deck;  // Vous devrez charger le deck à partir du fichier
-            std::vector<Insect*> activeInsects;  // Liste des insectes actifs à charger
+            std::vector<Insect*> activeInsects2;  // Liste des insectes actifs à charger
 
             while (std::getline(file, line) && line != "Fin_Joueur2:") {
                 if (line.find("ID:") != std::string::npos) {
@@ -549,13 +538,43 @@ void Hive::loadGame(const std::string& filename) {
                     while (std::getline(file, line) && line != "Fin_Active_Insect:") {
                         for (const auto& insect : insects) {
                             if(insect->getID() == id) {
-                                activeInsects.push_back(insect);
+                                activeInsects2.push_back(insect);
                             }
                         }
                     }
                 }
             }
-            Player joueur2 = Player(id, isHuman, name, deck, activeInsects);
+            Player joueur2 = Player(id, isHuman, name, Deck(), activeInsects2);
+            renderer->setPlayer2(&joueur2);
+            player2 = joueur2;
+        }
+        else if (line.find("Insects_Hive:") != std::string::npos  && !insects_done) {
+            for(int i = 0; i < trueMapSideSize * trueMapSideSize; i++){
+                if(map.getSlot(i) != nullptr)
+                map.setSlot(i, nullptr);
+            }
+            std::cout << "les inseeeeeeeeeects Insect_de hive:\n" ;
+            for(auto& insect : insects)
+            {delete insect;insect= nullptr;}
+            insects.clear();
+            Insect::setCounter(0);
+            //generateAllInsects();
+            counter++;insects_done= true;
+            std::cout << "Insect_de hive:\n" ;
+            while (std::getline(file, line) && line != "Fin_Insects_Hive:") {
+
+                int id, it, i, j, color;
+
+                std::istringstream stream(line);
+
+                stream >> id >> it >> i >> j >> color;
+                std::cout<< "id: " << id << std::endl;
+                std::cout<< "it: " << it << std::endl;
+                std::cout<< "coor: " << i <<"," << j << std::endl;
+                std::cout<< "color: " << color << std::endl;
+                // Création des insectes
+                generateSingleInsect(it,color, {i,j});
+            }
         }
 
 
@@ -563,7 +582,12 @@ void Hive::loadGame(const std::string& filename) {
             std::cout<< "ligne avant break "<<line<< std::endl;
         }
     }
+    currentPlayer =  (currentPlayeR == 2) ? &player2 : &player1;
+
     file.close();
+    //renderer->setMap(map);
+    //inputsManager.setMap(map);
+
     std::cout << "Partie chargée avec succès depuis " << filename << std::endl;
 }
 
@@ -589,13 +613,13 @@ int Hive::launchGame() {
 
 Insect* Hive::generateSingleInsect(int type, bool color, vec2i vec) {
     Insect* insect = nullptr;
-
     // Création de l'insecte en fonction du type
     switch (type) {
-        case 0: insect = new Bee(color);break;
-        case 1: insect = new Ant(color);break;
-        case 2: insect = new Beetle(color);break;
-        case 3: insect = new Grasshopper(color);break;
+
+        case 0: insect = new Ant(color);break;
+        case 1: insect = new Beetle(color);break;
+        case 2: insect = new Grasshopper(color);break;
+        case 3: insect = new Bee(color);break;
         case 4: insect = new Spider(color);break;
         case 5: insect = new Mosquitoe(color);break;
         case 6: insect = new Ladybug(color);break;
@@ -610,9 +634,8 @@ Insect* Hive::generateSingleInsect(int type, bool color, vec2i vec) {
         else {
             map.putInsectTo(insect,vec);
         }
-
     } else {
-        if(vec.getI() == 30)player1.deck.addInsect(insect);
+        if(vec.getI() == 30)player2.deck.addInsect(insect);
         else {
             map.putInsectTo(insect,vec);
         }

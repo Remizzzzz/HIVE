@@ -77,6 +77,13 @@ public:
             slot.push_back(nullptr);
         }
     }
+
+    Insect* getSlot(int nb) const {
+        return slot[nb];
+    }
+    void setSlot(int nb, Insect* insect) {
+        slot[nb]  = insect;
+    }
     /**
      * @brief \n put in the slot on position pos_ the insect insect_
      * @param insect_ : insect to put

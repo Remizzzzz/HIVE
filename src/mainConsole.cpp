@@ -12,19 +12,16 @@ int main() {
     bool play = true;
 
     Hive hive;
-    hive.generateAllInsects();
+    //hive.renderer = new ConsoleRenderer(hive.getMap(), hive.getPlayer1(), hive.getPlayer1(), 30);
+    //hive.getRenderer()->displayMap(*hive.getPlayer1());
     //hive.getMap().putInsectTo(hive.getInsects()[0], vec2i(15,15));
     //hive.getInsects()[0]->setCoordinates(vec2i(15,15));
     //hive.saveGame("../hive_parameters.txt");
-    //hive.displayMenu();
-    for( auto insect : hive.getInsects()) {
-        std::cout << insect->getCoordinates().getI() << std::endl;
-    }
-    //hive.displayMenu();
-    hive.loadGame("../hive_parameters.txt");
+
+    /*
+    //sleep(5);
     std::cout << std::endl;
 
-    std::cout << "isInit: " << hive.initIfNeeded() << std::endl;
 
     std::cout << "RewindUsed: " << hive.getRewindUsed() << std::endl;
     std::cout << "RewindMax: " << hive.getRewindMax() << std::endl;
@@ -45,23 +42,30 @@ int main() {
 
     // Affichage de l'état du joueur actuel
     std::cout << "renderer: " << hive.getRenderer() << std::endl;
-    std::cout << "map: " << hive.getMap().getRewind() << std::endl;
-    // Affichage de l'état du joueur actuel
+    std::cout << "map: " << hive.getInputsManager()->getMap().getRewind() << std::endl;
+    // Affichage de l'état du joueur actuel*/
 
 
 
 
-    std::cout << hive.getInsects().at(0)->getCoordinates().getI() << ",";
-    std::cout << hive.getInsects().at(0)->getCoordinates().getI() << std::endl;
-    hive.run();
-    std::cout <<"llaaaa";
-    //sleep(10);
+
+
+    /*hive.displayMenu();
+    for (auto insect : hive.getPlayer1()->getDeck()) {
+        std::cout << insect->getID() << " ";  // Afficher l'adresse de chaque insecte
+    }
+    std::cout << std::endl<< "Deck du j2";
+    for (auto insect : hive.getPlayer2()->getDeck()) {
+        std::cout << insect->getID() << " ";  // Afficher l'adresse de chaque insecte
+    }*/
     //hive.getRenderer()->displayMap(*hive.getPlayer1());
     //throw HiveException("lala","lala");
     while(play){
 
         try{
+            std::cout << "std::boolalpha"<< std::endl;
             play = hive.run();
+            std::cout << "std::boolalpha"<< std::endl;
         }
         catch (const HiveException & HE_){
             std::cout << HE_.getInfos() << '\n';
