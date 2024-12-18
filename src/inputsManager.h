@@ -67,10 +67,14 @@ public:
     explicit InputsManager(Mode mode_, const int renderedMapSideSize_, Map & map_):
     renderedMapSideSize(renderedMapSideSize_), map(map_), random(){}
 
-    void updateAIInputs(Player & player_){
+    void updateAIInputs(Player & player_, bool Qt=false, bool inputT=false){
         Inputs & inputs = player_.inputs;
         int cursorId=0;
-        cursorId = inputs.isStartSelected() + 1;
+        if (!Qt) cursorId = inputs.isStartSelected() + 1;
+        else {
+            if (inputT) cursorId=1; //Si c'est la première sélection
+            else cursorId = 2; //Si c'est la deuxième sélection
+        }
 
         int randomValue = random.getRandomInt(0,4);
         const Insect * selectedInsect;
@@ -82,30 +86,56 @@ public:
                     return;
                 }
 
-                if ((randomValue == 0 || player_.getActiveInsects().empty()) && !player_.getDeck().isEmpty()){
+                if (player_.getActiveInsects().empty() && !player_.getDeck().isEmpty()) {
+                    int index=player_.getDeck().returnIndex(bee); //On place bee pour pas avoir de problèmes de mouvements impossibles
+                    selectedInsect = player_.getDeck().getInsectAt(index);
+                } else if (randomValue == 0 && !player_.getDeck().isEmpty()){
                     selectedInsect = player_.deck.getInsectAt(random.getRandomInt(0,int(player_.getDeck().getInsectNb())));
-                }
-                else{
+                } else{
                     selectedInsect = player_.getActiveInsects()[random.getRandomInt(0,int(player_.getActiveInsects().size()))];
                 }
-
-                inputs.setStart(selectedInsect->getCoordinates());
+                if (!Qt) {//Si on est pas dans Qt
+                    inputs.setStart(selectedInsect->getCoordinates());
+                } else {
+                    vec2i startPos = selectedInsect->getCoordinates();
+                    startPos.setI(-1);
+                    inputs.setStart(startPos);
+                }
 
                 inputs.needPossibleDestinationsUpdate();
 
                 break;
             case 2:
-                    //lancer exception
-                if (!inputs.isPossibleDestinationsEmpty()){
-                    inputs.setDestinationIndex(random.getRandomInt(0,int (inputs.getPossibleDestinationsNumber())));
+                if (!Qt) {
+                    if (!inputs.isPossibleDestinationsEmpty()){
+                        inputs.setDestinationIndex(random.getRandomInt(0,int (inputs.getPossibleDestinationsNumber())));
+                    }
+                    else{
+                        //lancer exception
+                    }
+                } else {
+                    if (inputs.getStart().getI()==-1) {
+                        inputs.setPossibleDestinations(map.setRule(false));
+                        if (!inputs.getPossibleDestinations().empty()) {
+                            inputs.setDestinationIndex(random.getRandomInt(0,inputs.getPossibleDestinationsNumber()));
+                        } else {//Si l'IA ne peut pas poser d'insectes, elle réupdate ses inputs (recursif est pas optimisé, mais moins long à écrire pour l'instant)
+                            updateAIInputs(player_, Qt, !inputT);
+                            updateAIInputs(player_, Qt, inputT);
+                        }
+                    } else {
+                        inputs.setPossibleDestinations(map.getInsectAt(inputs.getStart())->getPossibleMovements(map));
+                        if (!inputs.getPossibleDestinations().empty()) {
+                            inputs.setDestinationIndex(random.getRandomInt(0,inputs.getPossibleDestinationsNumber()));
+                        } else {//Si l'IA ne peut pas déplacer d'insectes, elle réupdate ses inputs (recursif est pas optimisé, mais moins long à écrire pour l'instant)
+                            updateAIInputs(player_, Qt, !inputT);
+                            updateAIInputs(player_, Qt, inputT);
+                        }
+                    }
                 }
-                else{
-                    //lancer exception
-                }
-                break;
+            break;
             default:
                 throw HiveException("inputsManager.h:InputsManager:moveCursor", "cursorId_ invalid");
-                break;
+            break;
         }
 
     }
@@ -176,24 +206,7 @@ public:
             }
         }
     }
-    void updateAIInputsQt(Player* player_) {
-        Inputs & inputs = player_->inputs;
-        if (player_->getActiveInsects().empty()) {
-            vec2i start(-1,0); //On pose la reine
-            inputs.setStart(start);
-        } else {
-            vec2i start(-1,-1);
-            int action = random.getRandomInt(0,2);
-            switch (action) {
-                case 0:
-                    start.setJ(random.getRandomInt(0,player_->getDeck().getInsectNb()));
-                inputs.setPossibleDestinations(map.setRule(true));
-            }
 
-
-
-        }
-    }
     void resetPlayerInputs(Player* player_) {
         player_->inputs.resetQt();
     }

@@ -242,6 +242,16 @@ void hiveRenderer::handleButtonClick() {
                             hive.getInputsManager()->updateAIInputs(*opponent,true,inputT);
                             updateInputT();
                             hive.getInputsManager()->updateAIInputs(*opponent,true,inputT);
+                            HexagonalButton* startButton;
+                            if (opponent->getInputs().getStart().getI()==-1) {
+                                startButton=buttons[30][sizeDeck+opponent->getInputs().getStart().getJ()];
+                            } else {
+                                startButton=buttons[sizeDeck+opponent->getInputs().getStart().getI()][sizeDeck+opponent->getInputs().getStart().getJ()];
+                            }
+                            vec2i v=opponent->getInputs().getPossibleDestinations()[opponent->getInputs().getDestinationIndex()];
+                            *buttons[v.getI()][v.getJ()]=*startButton;
+                            buttons[v.getI()][v.getJ()]->updateState(0);
+                            startButton->updateState(2);
                             qDebug()<< "\nAI("<<opponent->getInputs().getStart().getI()<<","<<opponent->getInputs().getStart().getJ()<<")";
                             if (opponent->getInputs().getStart().getI()==-1) {//Si c'est deckToMap movement
                                 hive.getSolver()->deckToMapMovement(*opponent);
