@@ -7,7 +7,7 @@
 
 #include <conio.h>  // Pour _kbhit() et _getch()
 #include <fstream>
-
+#include <unistd.h>
 int main() {
     bool play = true;
 
@@ -15,10 +15,14 @@ int main() {
     hive.generateAllInsects();
     //hive.getMap().putInsectTo(hive.getInsects()[0], vec2i(15,15));
     //hive.getInsects()[0]->setCoordinates(vec2i(15,15));
-    hive.saveGame("../hive_parameters.txt");
-    hive.displayMenu();
-    hive.getRenderer()->displayMap(*hive.getPlayer1());
-    throw HiveException("lala","lala");
+    //hive.saveGame("../hive_parameters.txt");
+    //hive.displayMenu();
+    for( auto insect : hive.getInsects()) {
+        std::cout << insect->getCoordinates().getI() << std::endl;
+    }
+    //sleep(10);
+    //hive.getRenderer()->displayMap(*hive.getPlayer1());
+    //throw HiveException("lala","lala");
     while(play){
 
         try{
