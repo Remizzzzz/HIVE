@@ -176,7 +176,7 @@ public:
             }
         }
     }
-    void updateAIInputsQt(Player* player_, ) {
+    void updateAIInputsQt(Player* player_) {
         Inputs & inputs = player_->inputs;
         if (player_->getActiveInsects().empty()) {
             vec2i start(-1,0); //On pose la reine
@@ -187,8 +187,8 @@ public:
             switch (action) {
                 case 0:
                     start.setJ(random.getRandomInt(0,player_->getDeck().getInsectNb()));
-                    inputs.setPossibleDestinations(map.setRule(true));
-
+                inputs.setPossibleDestinations(map.setRule(true));
+            }
 
 
 
