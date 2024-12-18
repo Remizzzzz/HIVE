@@ -5,7 +5,7 @@
 #ifndef HIVE_MAP_H
 #define HIVE_MAP_H
 
-#include <QDebug>
+//#include <QDebug>
 #include <iostream>
 #include <vector>
 #include <list>

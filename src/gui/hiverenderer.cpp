@@ -1,6 +1,6 @@
 #include "hiverenderer.h"
 #include "hexagonalbutton.h"
-#include "./ui_hiverenderer.h"
+#include "ui_hiverenderer.h"
 #include <QPixmap>
 #include <QIcon>
 #include <QDebug>

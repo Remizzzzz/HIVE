@@ -30,6 +30,8 @@ class Insect{
 public:
     Insect( bool col, insectType type, std::string PV_) : id(counter++), iT(type), color(col),coordinates({-1,-1}), PV(PV_) {};//Ici -1 c'est pour NULL, mais la valeur doit être int
 
+    virtual ~Insect() = default;
+
     int  getID() const { return id; }
     insectType  getIT() const { return iT; }
     bool  getColor() const { return color; }

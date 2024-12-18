@@ -9,23 +9,22 @@
 #include <fstream>
 
 int main() {
-    bool play = true;
 
-    Hive hive;
+    try
+        {
+        bool play = true;
 
+        Hive hive;
 
-    while(play){
-
-        try{
+        while(play){
             play = hive.run();
         }
-        catch (const HiveException & HE_){
-            std::cout << HE_.getInfos() << '\n';
-        }
+
     }
-
-
-
+    catch (const HiveException & HE_)
+    {
+        std::cout << HE_.getInfos() << '\n';
+    }
 
 
     return 0;

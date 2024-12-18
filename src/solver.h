@@ -17,22 +17,22 @@ class Solver{
 
 private:
     Map & map;
+    const int & renderedMapSideSize;
 
-    const int & trueMapSideSize;
     //0 -> map, 1 -> deck 1, -> 1 deck 2
     int getStartLocation(Player & player_) const{
-        return 1 * (player_.inputs.getStart().getI() == -1) + 2 * (player_.inputs.getStart().getI() == trueMapSideSize);
+        return 1 * (player_.inputs.getStart().getI() == -1) + 2 * (player_.inputs.getStart().getI() == renderedMapSideSize);
     }
     int turn=1; //Sert pour compter les tours
     bool isStartValid(Player & player_) const{
 
-        if (player_.inputs.getStart().getI() >= 0 && player_.inputs.getStart().getI() < trueMapSideSize &&
-            player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < trueMapSideSize
+        if (player_.inputs.getStart().getI() >= 0 && player_.inputs.getStart().getI() < renderedMapSideSize &&
+            player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < renderedMapSideSize
             && !map.isSlotFree(player_.inputs.getStart())){
             return true;
         }
 
-        if ((player_.inputs.getStart().getI() == -1 || player_.inputs.getStart().getI() == trueMapSideSize) &&
+        if ((player_.inputs.getStart().getI() == -1 || player_.inputs.getStart().getI() == renderedMapSideSize) &&
             (player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < player_.getDeck().getInsectNb())){
             return true;
         }
@@ -41,8 +41,8 @@ private:
     }
 
     bool isDestinationValid(Player & player_) const{
-        return player_.inputs.getDestination().getI() >= 0 && player_.inputs.getDestination().getI() < trueMapSideSize &&
-                player_.inputs.getDestination().getJ() >= 0 && player_.inputs.getDestination().getJ() < trueMapSideSize;
+        return player_.inputs.getDestination().getI() >= 0 && player_.inputs.getDestination().getI() < renderedMapSideSize &&
+                player_.inputs.getDestination().getJ() >= 0 && player_.inputs.getDestination().getJ() < renderedMapSideSize;
     }
 public:
     [[nodiscard]] int getTurn()const {
@@ -59,8 +59,9 @@ public:
         }
         return result;
     }
-    Solver(Map & map_, const int & trueMapSideSize_) :
-    map(map_), trueMapSideSize(trueMapSideSize_){};
+    Solver(Map & map_, const int & renderedMapSideSize_) :
+    map(map_), renderedMapSideSize(renderedMapSideSize_){}
+
     void deckToMapMovement(Player & player_) {
         const vec2i & start = player_.inputs.getStart();
         const vec2i & destination = player_.inputs.getDestination();
@@ -99,10 +100,21 @@ public:
         player_.removeActiveInsect(ins);
         map.getHistoric().pop_front();
     }
+
+    void fullGoBack(Player & player_, vec2i from, vec2i to) {}
+
     void decrTurn(){turn--;}
     int update(Player & player_){
 
-        if (player_.inputs.isPossibleDestinationsNeeded()){
+        if (player_.inputs.isLeaveNeeded())
+        {
+            return 2;
+        }
+        else if (player_.inputs.isRewindNeeded())
+        {
+            map.goBack();
+        }
+        else if (player_.inputs.isPossibleDestinationsNeeded()){
             std::cout << "possibleDestinationsNeeded\n";
             if (isStartValid(player_)){
                 std::cout << "startValid\n" ;
@@ -116,6 +128,7 @@ public:
                     std::cout << (map.getInsectAt(player_.inputs.getStart()) == nullptr);
                     std::cout << (map.getInsectAt(player_.inputs.getStart())->getCoordinates());
                     std::cout << "ici ?";
+                    //Decalage
                     map.getInsectAt(player_.inputs.getStart())->getPossibleMovements(map);
                     std::cout << "et Ici ?";
                     player_.inputs.setPossibleDestinations(map.getInsectAt(player_.inputs.getStart())->getPossibleMovements(map));

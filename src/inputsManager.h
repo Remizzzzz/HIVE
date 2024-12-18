@@ -34,7 +34,8 @@ private:
             case 1:
                 if ((inputs.getStart().getI() + i_ >= 0 && inputs.getStart().getI() + i_ < renderedMapSideSize &&
                         inputs.getStart().getJ() + j_ >= 0 && inputs.getStart().getJ() + j_ < renderedMapSideSize)
-                        || ((inputs.getStart().getI() + i_ == -1 || inputs.getStart().getI() + i_ == renderedMapSideSize) && inputs.getStart().getJ() + j_ < player.getDeck().getInsectNb()))
+                        || ((inputs.getStart().getI() + i_ == -1 || inputs.getStart().getI() + i_ == renderedMapSideSize)
+                            && (inputs.getStart().getJ() + j_ >= 0 && inputs.getStart().getJ() + j_ < player.getDeck().getInsectNb())))
                     {
                     std::cout << "----------\n ";
                     std::cout << inputs.getStart() << ',' << vec2i{i_,j_} << '\n';
@@ -134,6 +135,9 @@ public:
                     moveCursor(player_,cursorId,0,-1); std::cout << "Flèche Gauche\n"; break;
                 case 77:
                     moveCursor(player_,cursorId,0,1); std::cout << "Flèche Droite\n"; break;
+                case 83:
+                    inputs.needLeave(); std::cout << "Leaves\n"; break;
+
                 default: std::cout << "Autre touche spéciale: Code " << key << "\n"; break;
             }
         }
@@ -151,7 +155,7 @@ public:
                     std::cout << "Enter.\n";
                     break;
                 case 27:
-                    inputs.reset();
+                    inputs.needLeave();
                     std::cout << "Sortie.\n";
                     break;
                 default: break;
