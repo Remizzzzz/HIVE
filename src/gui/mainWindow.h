@@ -29,7 +29,7 @@ private slots:
     void quitMenu();
 
 private:
-    Mode hiveMode;
+    Mode hiveMode=PvP;
     int hiveNbRewind;
     bool hasLadybug;
     bool hasMosquito;

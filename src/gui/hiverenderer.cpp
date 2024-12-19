@@ -246,7 +246,7 @@ void hiveRenderer::handleButtonClick() {
                             if (opponent->getInputs().getStart().getI()==-1) {
                                 startButton=buttons[30][sizeDeck+opponent->getInputs().getStart().getJ()];
                             } else {
-                                startButton=buttons[sizeDeck+opponent->getInputs().getStart().getI()][sizeDeck+opponent->getInputs().getStart().getJ()];
+                                startButton=buttons[opponent->getInputs().getStart().getI()][opponent->getInputs().getStart().getJ()];
                             }
                             vec2i v=opponent->getInputs().getPossibleDestinations()[opponent->getInputs().getDestinationIndex()];
                             *buttons[v.getI()][v.getJ()]=*startButton;
