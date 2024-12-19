@@ -18,12 +18,13 @@ class Solver{
 private:
     Map & map;
     const int & renderedMapSideSize;
+    const int offset;
+    int turn=1; //Sert pour compter les tours
 
     //0 -> map, 1 -> deck 1, -> 1 deck 2
     int getStartLocation(Player & player_) const{
         return 1 * (player_.inputs.getStart().getI() == -1) + 2 * (player_.inputs.getStart().getI() == renderedMapSideSize);
     }
-    int turn=1; //Sert pour compter les tours
     bool isStartValid(Player & player_) const{
 
         if (player_.inputs.getStart().getI() >= 0 && player_.inputs.getStart().getI() < renderedMapSideSize &&
@@ -59,8 +60,8 @@ public:
         }
         return result;
     }
-    Solver(Map & map_, const int & renderedMapSideSize_) :
-    map(map_), renderedMapSideSize(renderedMapSideSize_){}
+    Solver(Map & map_, const int & renderedMapSideSize_, const int offset_) :
+    map(map_), renderedMapSideSize(renderedMapSideSize_), offset(offset_){}
 
     void deckToMapMovement(Player & player_) {
         const vec2i & start = player_.inputs.getStart();
@@ -82,8 +83,8 @@ public:
     }
 
     void mapToMapMovement(Player & player_){
-        const vec2i & start = player_.inputs.getStart();
-        const vec2i & destination = player_.inputs.getDestination();
+        const vec2i & start = player_.inputs.getStart() + vec2i{offset,offset};
+        const vec2i & destination = player_.inputs.getDestination() + vec2i{offset,offset};
 
         if (!map.isSlotFree(start)){
             map.moveInsect(start,destination);
@@ -106,6 +107,7 @@ public:
     void decrTurn(){turn--;}
     int update(Player & player_){
 
+
         if (player_.inputs.isLeaveNeeded())
         {
             return 2;
@@ -123,21 +125,27 @@ public:
                 std::cout << "loc : " << loc << "\n";
 
                 if (loc == 0){
+
+                    //Decalage pour que l'on travail pas sur les bords de la map
+                    vec2i start = player_.inputs.getStart() + vec2i{offset,offset};
+
                     std::cout << "loc0";
                     std::cout << "ici ?.";
-                    std::cout << (map.getInsectAt(player_.inputs.getStart()) == nullptr);
-                    std::cout << (map.getInsectAt(player_.inputs.getStart())->getCoordinates());
+                    std::cout << (map.getInsectAt(start) == nullptr);
+                    std::cout << (map.getInsectAt(start)->getCoordinates());
                     std::cout << "ici ?";
                     //Decalage
-                    map.getInsectAt(player_.inputs.getStart())->getPossibleMovements(map);
+                    map.getInsectAt(start)->getPossibleMovements(map);
                     std::cout << "et Ici ?";
-                    player_.inputs.setPossibleDestinations(map.getInsectAt(player_.inputs.getStart())->getPossibleMovements(map));
+                    player_.inputs.setPossibleDestinations(map.getInsectAt(start)->getPossibleMovements(map));
                     player_.inputs.noNeedForPossibleDestinationsUpdate();
                     return 0;
                 }
                 else if (loc == player_.getId()){
                     std::cout << "loc1 ou deux";
                     //player_.inputs.setPossibleDestinations(map.getInsectAt(player_.inputs.getStart())->setRule(map));
+                    auto possiblesDestinations = map.setRule(player_.getId());
+
                     player_.inputs.setPossibleDestinations(map.setRule(player_.getId()));
                     //player_.inputs.setPossibleDestinations(std::vector<vec2i>{{15,15},{16,16},{14,14}});
 

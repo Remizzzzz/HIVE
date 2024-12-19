@@ -67,12 +67,14 @@ private:
 
 public:
 
-    explicit Map(const int & sideSize_,int &n) : sideSize(sideSize_),rewind(n){
+    Map(const int & sideSize_, const int &rewindNumber_) :
+        sideSize(sideSize_), rewind(rewindNumber_){
         for(int i = 0; i < sideSize * sideSize; i++){
             slot.push_back(nullptr);
         }
     }
-    Map (int &sSize, int &n, vec2i rPos, std::list<movement> h):sideSize(sSize),rewind(n),relativePos(rPos),historic(h) {
+    Map (const int sSize, const int rewindNumber_, const vec2i rPos, const std::list<movement> h):
+        sideSize(sSize),rewind(rewindNumber_), relativePos(rPos),historic(h) {
         for(int i = 0; i < sideSize * sideSize; i++){
             slot.push_back(nullptr);
         }
@@ -124,57 +126,57 @@ public:
      * @brief \n check if the slop in position pos_ is free
      * @param pos_ : position of the slot to check
      */
-    bool isSlotFree( const vec2i & pos_) const{
+    bool isSlotFree(const vec2i & pos_) const{
         return slot[posToIndex(pos_)] == nullptr;
     }
 
     /**@brief move the insect on pos1_ to the pos2_.*/
     void moveInsect(const vec2i & pos1_, const vec2i & pos2_){
 
-            // Récupérer les insectes aux positions de départ et d'arrivée
-            Insect* movingInsect = getInsectAt(pos1_);
-            Insect* targetInsect = getInsectAt(pos2_);
+        // Récupérer les insectes aux positions de départ et d'arrivée
+        Insect* movingInsect = getInsectAt(pos1_);
+        Insect* targetInsect = getInsectAt(pos2_);
 
-            // Vérification qu'il y a un insecte à déplacer
-            if (movingInsect == nullptr) {
-                throw HiveException("Map::moveInsect", "Aucun insecte à déplacer à la position donnée.");
+        // Vérification qu'il y a un insecte à déplacer
+        if (movingInsect == nullptr) {
+            throw HiveException("Map::moveInsect", "Aucun insecte à déplacer à la position donnée.");
+        }
+
+        // Si l'insecte est un scarabée
+        if (movingInsect->getIT() == beetle) {
+            // Cast dynamique pour obtenir un pointeur de type Beetle
+            Beetle* beetlePointer = dynamic_cast<Beetle*>(movingInsect);
+            if (beetlePointer == nullptr) {
+                throw HiveException("Map::moveInsect", "Erreur du dynamic_cast pour le scarabée.");
             }
 
-            // Si l'insecte est un scarabée
-            if (movingInsect->getIT() == beetle) {
-                // Cast dynamique pour obtenir un pointeur de type Beetle
-                Beetle* beetlePointer = dynamic_cast<Beetle*>(movingInsect);
-                if (beetlePointer == nullptr) {
-                    throw HiveException("Map::moveInsect", "Erreur du dynamic_cast pour le scarabée.");
-                }
-
-                // Si le scarabée a un insecte en dessous
-                if (beetlePointer->getInsectUnder() != nullptr) {
-                    // Remettre l'insecte en dessous à la position actuelle
-                    putInsectTo(beetlePointer->getInsectUnder(), pos1_);
-                } else {
-                    // Pas d'insecte en dessous, retirer l'insecte de la position initiale
-                    removeInsectAt(pos1_);
-                }
-
-
-
-                // Si un insecte est présent à la position cible, positionner le scarabée au-dessus
-                if (targetInsect != nullptr) {
-                    beetlePointer->setAboveOf(targetInsect);
-                }else {
-                    beetlePointer->setAboveOf(nullptr);
-                }
-
-                // Déplacer le scarabée à la position cible
-                putInsectTo(movingInsect, pos2_);
-
+            // Si le scarabée a un insecte en dessous
+            if (beetlePointer->getInsectUnder() != nullptr) {
+                // Remettre l'insecte en dessous à la position actuelle
+                putInsectTo(beetlePointer->getInsectUnder(), pos1_);
             } else {
-                // Cas général pour les autres types d'insectes
-                putInsectTo(movingInsect, pos2_);
-                movingInsect->setCoordinates(pos2_);
+                // Pas d'insecte en dessous, retirer l'insecte de la position initiale
                 removeInsectAt(pos1_);
             }
+
+
+
+            // Si un insecte est présent à la position cible, positionner le scarabée au-dessus
+            if (targetInsect != nullptr) {
+                beetlePointer->setAboveOf(targetInsect);
+            }else {
+                beetlePointer->setAboveOf(nullptr);
+            }
+
+            // Déplacer le scarabée à la position cible
+            putInsectTo(movingInsect, pos2_);
+
+        } else {
+            // Cas général pour les autres types d'insectes
+            putInsectTo(movingInsect, pos2_);
+            movingInsect->setCoordinates(pos2_);
+            removeInsectAt(pos1_);
+        }
     }
 
     //return positions of the filled slots around pos_

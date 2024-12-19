@@ -10,21 +10,24 @@
 
 int main() {
 
-    try
+    bool play = true;
+
+    Hive hive;
+
+    while(play){
+        try
         {
-        bool play = true;
-
-        Hive hive;
-
-        while(play){
             play = hive.run();
+
+        }
+        catch (const HiveException & HE_)
+        {
+            std::cout << HE_.getInfos() << '\n';
         }
 
     }
-    catch (const HiveException & HE_)
-    {
-        std::cout << HE_.getInfos() << '\n';
-    }
+
+
 
 
     return 0;

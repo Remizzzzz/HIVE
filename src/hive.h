@@ -189,12 +189,13 @@ private:
 public:
     Hive() : mode(PvP), version(console),
              insects(),
-             rewindNb(5),rewindUsed(rewindNb), map(trueMapSideSize,rewindNb),
+             rewindNb(5),rewindUsed(rewindNb),
+            offset((trueMapSideSize - renderedMapSideSize) / 2.f),
+            map(trueMapSideSize,rewindNb),
              player1(1), player2(2), currentPlayer(&player1),
              inputsManager(mode, renderedMapSideSize, map),
-             solver(map, renderedMapSideSize),renderer( nullptr)
+             solver(map, renderedMapSideSize, offset),renderer( nullptr)
     {
-        offset = ((trueMapSideSize - renderedMapSideSize) / 2.f);
     }
 
 
@@ -236,7 +237,7 @@ public:
 
     void initIfNeeded(){
         if (!isInit){
-            renderer = new ConsoleRenderer(map, &player1, &player2, 30);
+            renderer = new ConsoleRenderer(map, &player1, &player2, renderedMapSideSize, offset);
             generateAllInsects();
             isInit = true;
         }
