@@ -63,7 +63,6 @@ int main() {
     while(play){
 
         try{
-            std::cout << "std::boolalpha"<< std::endl;
             play = hive.run();
             std::cout << "std::boolalpha"<< std::endl;
         }

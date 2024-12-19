@@ -237,7 +237,9 @@ public:
                 if (mode == PvAI){
                     player2.setHumanity(false);
                 }
-                generateAllInsects();
+                if (!isInit) {
+                    generateAllInsects();
+                }
                 std::cout << insects.size();
                 renderer->displayMap(*currentPlayer);
                 isInit = true;
@@ -254,7 +256,6 @@ public:
         std::cout << "Dans run va peut etre init";
         if (initIfNeeded() == 0){
             std::cout << "insects.size()";
-            sleep(5);
             return 1;
         }
         std::cout<< "Dans run pas besoin d'init";

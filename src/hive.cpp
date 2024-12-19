@@ -474,8 +474,8 @@ void Hive::loadGame(const std::string& filename) {
             std::cout << "Joueur1:\n" ;
             int id = 0;
             bool isHuman = false;
+            Deck deck1 = Deck();
             std::string name;
-            Deck deck;  // Vous devrez charger le deck à partir du fichier
             std::vector<Insect*> activeInsects1;  // Liste des insectes actifs à charger
 
             while (std::getline(file, line) && line != "Fin_Joueur1:") {
@@ -491,7 +491,6 @@ void Hive::loadGame(const std::string& filename) {
                 else if (line.find("Deck Size:") != std::string::npos) {
                     int deckSize;
                     file >> deckSize;
-                    deck = Deck();
                 }
                 else if(line.find("Active Insects Count: ") != std::string::npos) {
                     while (std::getline(file, line) && line != "Fin_Active_Insect:") {
@@ -504,7 +503,7 @@ void Hive::loadGame(const std::string& filename) {
                 }
             }
 
-            Player joueur1 = Player(id, isHuman,name, Deck(),activeInsects1);
+            Player joueur1 = Player(id, isHuman,name, deck1,activeInsects1);
             player1 = joueur1;
             renderer->setPlayer1(&joueur1);
         }
@@ -514,9 +513,9 @@ void Hive::loadGame(const std::string& filename) {
             counter++;joueur2_done= true;
             std::cout << "Joueur2:\n" ;
             int id = 0;
+            Deck deck2 = Deck();
             bool isHuman = false;
             std::string name;
-            Deck deck;  // Vous devrez charger le deck à partir du fichier
             std::vector<Insect*> activeInsects2;  // Liste des insectes actifs à charger
 
             while (std::getline(file, line) && line != "Fin_Joueur2:") {
@@ -532,7 +531,6 @@ void Hive::loadGame(const std::string& filename) {
                 else if (line.find("Deck Size:") != std::string::npos) {
                     int deckSize;
                     file >> deckSize;
-                    deck = Deck();
                 }
                 else if(line.find("Active Insects Count: ") != std::string::npos){
                     while (std::getline(file, line) && line != "Fin_Active_Insect:") {
@@ -544,7 +542,7 @@ void Hive::loadGame(const std::string& filename) {
                     }
                 }
             }
-            Player joueur2 = Player(id, isHuman, name, Deck(), activeInsects2);
+            Player joueur2 = Player(id, isHuman, name, deck2, activeInsects2);
             renderer->setPlayer2(&joueur2);
             player2 = joueur2;
         }
@@ -633,11 +631,13 @@ Insect* Hive::generateSingleInsect(int type, bool color, vec2i vec) {
         if(vec.getI() == -1)player1.deck.addInsect(insect);
         else {
             map.putInsectTo(insect,vec);
+            player1.addActiveInsect(insect);
         }
     } else {
         if(vec.getI() == 30)player2.deck.addInsect(insect);
         else {
             map.putInsectTo(insect,vec);
+            player2.addActiveInsect(insect);
         }
     }
 
