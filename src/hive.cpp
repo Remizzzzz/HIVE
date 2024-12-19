@@ -221,6 +221,7 @@ void Hive::saveGame(const std::string& filename) const{
 
     // Sauvegarder les informations de base (exemple : mode, version)
     file << "Mode:"<< std::endl << static_cast<int>(mode) << std::endl;
+    file << "Turn:"<< std::endl << static_cast<int>(solver.getTurn()) << std::endl;
     file << "isInit:" << std::endl<< static_cast<bool>(isInit) << std::endl;
     file << "trueMapSideSize:"<< std::endl << trueMapSideSize << std::endl;
     file << "currentPlayer:"<< std::endl << (currentPlayer == &player1 ? 1:2 )<< std::endl;
@@ -371,6 +372,14 @@ void Hive::loadGame(const std::string& filename) {
             mode = static_cast<Mode>(modeValue);
         }
 
+        if (line.find("Turn:") != std::string::npos && !mode_done) {
+            counter++;mode_done = true;
+            int Turnvalue;
+            file >> Turnvalue;
+            std::cout << "Turn:" ;
+            solver.setTurn(Turnvalue) ;
+        }
+
         if (line.find("RewindNb:") == 0  && !rewind_done )  {  // Vérifie si la ligne commence par "RewindNb:"
             counter++;rewind_done= true;
             std::cout << "Rewind:" ;
@@ -390,7 +399,7 @@ void Hive::loadGame(const std::string& filename) {
             file >> trueMapSideSize;
 
         }
-        else if (line.find("currentPlayer:") != std::string::npos  && !trueMapSideSize_done) {
+        else if (line.find("currentPlayer:") != std::string::npos  && !currentPlayer_done) {
             counter++;currentPlayer_done= true;
             std::cout << "currentplayer\n";
             file >> currentPlayeR;

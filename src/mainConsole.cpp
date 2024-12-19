@@ -60,6 +60,8 @@ int main() {
     }*/
     //hive.getRenderer()->displayMap(*hive.getPlayer1());
     //throw HiveException("lala","lala");
+
+    hive.generateAllInsects();
     while(play){
 
         try{
