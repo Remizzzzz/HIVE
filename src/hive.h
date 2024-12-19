@@ -302,9 +302,9 @@ public:
         else return 0;
 
     }
-
+    int getOffset() {return offset;}
     void runQt(bool Ladybug, bool Mosquitoe) {
-        //generateAllInsects(Ladybug, Mosquitoe);
+        generateAllInsects(Ladybug, Mosquitoe);
     }
     Player* getPlayer1() {return &player1;}
     Player* getPlayer2() {return &player2;}

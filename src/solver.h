@@ -12,7 +12,7 @@
 #include "features/player.h"
 #include "utils/utils.h"
 #include "utils/hiveException.h"
-
+#include "QDebug"
 class Solver{
 
 private:
@@ -65,21 +65,25 @@ public:
 
     void deckToMapMovement(Player & player_) {
         const vec2i & start = player_.inputs.getStart();
-        const vec2i & destination = player_.inputs.getDestination();
-
+        qDebug()<<"\n INDEX"<<start.getJ();
+        const vec2i & destination = player_.inputs.getDestination();//+vec2i{offset,offset};
+        qDebug()<<"\n DESTINATION ("<<destination.getI()<<","<<destination.getJ()<<")";
         if (player_.getDeck().isIndexValid(start.getJ())){
             if (map.isSlotFree(destination)) {
                 map.putInsectTo(player_.getDeck().getInsectAt(start.getJ()), destination);
+
                 map.getInsectAt(destination)->setCoordinates(destination);
                 map.addToHistoric(start,destination);//If the movement is a rewind, goBack will manage the historic
                 player_.addActiveInsectsFromDeck(start.getJ());
                 player_.deck.removeAt(start.getJ());
                 turn++;
-            } else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {
             } else {
                 player_.inputs.setMessage("Can't put your insect here");
             }
-        } else throw HiveException("solver.h:Solver:deckToMapGestion", "cursor1 is invalid for deck1");
+        } else {
+            qDebug()<<"\nOK";
+            throw HiveException("solver.h:Solver:deckToMapGestion", "cursor1 is invalid for deck1");
+        }
     }
 
     void mapToMapMovement(Player & player_){

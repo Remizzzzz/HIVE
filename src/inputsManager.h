@@ -173,8 +173,6 @@ public:
                 inputs.setPossibleDestinations(map.getInsectAt(clickedPos)->getPossibleMovements(map));
             } else {
                 //Si la position est dans le deck
-                //inputs.setPossibleDestinations(test);inputs.getStart()
-                //inputs.setPossibleDestinations(map.setRule(map.getInsectAt(inputs.getStart())->getColor()));
                 inputs.setPossibleDestinations(map.setRule(!turnP));
             }
         } else {//Si c'est la deuxième sélection
@@ -188,7 +186,25 @@ public:
     void resetPlayerInputs(Player* player_) {
         player_->inputs.resetQt();
     }
+    void convertQtToSolver(Player* player_) {
+        Inputs & inputs = player_->inputs;
+        inputs.setStart(inputs.getStart()-vec2i{1,1});
+        std::vector<vec2i> newPossibleMovements;
+        for (auto destination : inputs.getPossibleDestinations()) {
+            newPossibleMovements.push_back(destination-vec2i{1,1});
+        }
+        inputs.setPossibleDestinations(newPossibleMovements);
+    }
 
+    void convertSolverToQt(Player* player_) {
+        Inputs & inputs = player_->inputs;
+        inputs.setStart(inputs.getStart()+vec2i{1,1});
+        std::vector<vec2i> newPossibleMovements;
+        for (auto destination : inputs.getPossibleDestinations()) {
+            newPossibleMovements.push_back(destination+vec2i{1,1});
+        }
+        inputs.setPossibleDestinations(newPossibleMovements);
+    }
 
 };
 
