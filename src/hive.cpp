@@ -503,9 +503,9 @@ void Hive::loadGame(const std::string& filename) {
                 }
             }
 
-            Player joueur1 = Player(id, isHuman,name, deck1,activeInsects1);
-            player1 = joueur1;
-            renderer->setPlayer1(&joueur1);
+            player1 = Player(id, isHuman, name, deck1, activeInsects1);
+            renderer->setPlayer1(&player1);
+
         }
         // Charger les informations de Joueur2 de manière similaire à Joueur1
         // Charger les informations des joueurs
@@ -542,9 +542,9 @@ void Hive::loadGame(const std::string& filename) {
                     }
                 }
             }
-            Player joueur2 = Player(id, isHuman, name, deck2, activeInsects2);
-            renderer->setPlayer2(&joueur2);
-            player2 = joueur2;
+            player2 = Player(id, isHuman, name, deck2, activeInsects2);
+            renderer->setPlayer2(&player2);
+
         }
         else if (line.find("Insects_Hive:") != std::string::npos  && !insects_done) {
             for(int i = 0; i < trueMapSideSize * trueMapSideSize; i++){
