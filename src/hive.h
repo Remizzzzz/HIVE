@@ -28,6 +28,9 @@ enum Version{console, graphic};
 class Hive{
 
     bool isInit = false;
+    bool menuPart = true;
+    bool gamePart = false;
+
     std::set<insectType> extensions;
     Mode mode;
     Version version;
@@ -36,6 +39,7 @@ class Hive{
 
     int trueMapSideSize{32};
     int renderedMapSideSize{30};
+    int offset;
     int rewindNb;
     int rewindUsed;
     Map map;
@@ -43,7 +47,7 @@ class Hive{
     Player player1;
     Player player2;
 
-    Player * currentPlayer=&player1;
+    Player * currentPlayer;
 
     InputsManager inputsManager;
 
@@ -206,10 +210,14 @@ public:
     int displayMenu();
     Hive() : mode(PvP), version(console),
              insects(),
-             rewindNb(5),rewindUsed(rewindNb), map(trueMapSideSize,rewindNb),
+             rewindNb(5),rewindUsed(rewindNb),
+            offset((trueMapSideSize - renderedMapSideSize) / 2.f),
+            map(trueMapSideSize,rewindNb),
              player1(1), player2(2), currentPlayer(&player1),
              inputsManager(mode, renderedMapSideSize, map),
-             solver(map, renderedMapSideSize),renderer( nullptr){}
+             solver(map, renderedMapSideSize, offset),renderer( nullptr)
+    {
+    }
 
 
 
@@ -227,78 +235,95 @@ public:
         rewindNb = newRewindNumber;
         rewindUsed= rewindNb;
     }
-    int launchGame();
+    //int launchGame();
     void static displayRules() ;
     void changeSettings();
     void saveGame(const std::string& filename) const;
     void loadGame(const std::string& filename);
-    int initIfNeeded(){
+
+    void resetInputs()
+    {
+        player1.inputs.reset();
+        player1.inputs.setStart({-1,0});
+
+        player2.inputs.reset();
+        player2.inputs.setStart({renderedMapSideSize,0});
+    }
+
+    void resetPlayerInputs(Player & player_){
+        player_.inputs.reset();
+        if (player_.getId() == 1) player_.inputs.setStart({-1,0});
+        else player_.inputs.setStart({renderedMapSideSize,0});
+    }
+
+    void initIfNeeded(){
         if (!isInit){
-
-            if (displayMenu() == 1){
-                if (mode == PvAI){
-                    player2.setHumanity(false);
-                }
-                if (!isInit) {
-                    generateAllInsects();
-                }
-                std::cout << insects.size();
-                renderer->displayMap(*currentPlayer);
-                isInit = true;
-                return 1;
-            }else{
-                return 0;
-            }
-
+            renderer = new ConsoleRenderer(map, &player1, &player2, renderedMapSideSize, offset);
+            generateAllInsects();
+            isInit = true;
         }
-        return 2;
+
+        if (mode == PvAI) player2.setHumanity(false);
+        else player2.setHumanity(true);
+
+        resetInputs();
+
     }
     int getRenderedMapSideSize() const {return renderedMapSideSize;}
+
     int run(){
-        std::cout << "Dans run va peut etre init";
-        if (initIfNeeded() == 0){
-            std::cout << "insects.size()";
+
+        if (menuPart)
+        {
+            displayMenu();
             return 1;
         }
-        std::cout<< "Dans run pas besoin d'init";
+        else if (gamePart)
+        {
 
-        if (currentPlayer->isHuman){
-            std::cout <<"Dans ishuman ";
-            inputsManager.updatePlayerInputs(*currentPlayer);
-            std::cout <<"hors de ishuman ";
-        }
-        else{
-            std::cout<< "Dans isai ";
-            inputsManager.updateAIInputs(*currentPlayer);
-        }
+            renderer->render(*currentPlayer);
 
-        std::cout << "\n:" <<currentPlayer->inputs;
+            if (currentPlayer->isHuman){
+                inputsManager.updatePlayerInputs(*currentPlayer);
+            }
+            else{
+                inputsManager.updateAIInputs(*currentPlayer);
+            }
 
-        switch (solver.update(*currentPlayer)) {
+            std::cout << "\n:" <<currentPlayer->inputs;
+
+            switch (solver.update(*currentPlayer)) {
             case -1:
                 std::cout << "\n---Reset---\n";
                 //le mouvement est pas bon
-                resetInputs(*currentPlayer);
+                resetPlayerInputs(*currentPlayer);
                 break;
             case 0:
                 //Le travail est en cours
-                break;
+                    break;
             case 1:
                 //mouvement fait
                 std::cout << "\n---Deplacement---\n";
-                resetInputs(*currentPlayer);
+                resetPlayerInputs(*currentPlayer);
                 switchPlayer();
                 break;
+            case 2:
+                menuPart = true;
+                gamePart = false;
+                break;
+                //Fin
+
             default:
                 throw HiveException("hive.h:Hive", "retour de run mauvais");
+            }
+            std::cout << "\n:" <<currentPlayer->inputs.getStart();
+
+            return 1;
         }
-        std::cout << "\n:" <<currentPlayer->inputs.getStart();
+        else return 0;
 
-        renderer->render(*currentPlayer);
-
-        return 1;
     }
-
+    int getOffset() {return offset;}
     void runQt(bool Ladybug, bool Mosquitoe) {
         generateAllInsects(Ladybug, Mosquitoe);
     }

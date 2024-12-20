@@ -1,6 +1,6 @@
 #include "hiverenderer.h"
 #include "hexagonalbutton.h"
-#include "./ui_hiverenderer.h"
+#include "ui_hiverenderer.h"
 #include <QPixmap>
 #include <QIcon>
 #include <QDebug>
@@ -209,8 +209,11 @@ void hiveRenderer::handleButtonClick() {
         if (!getInputT()){//Si c'est la deuxième selection
             if (lastClicked!=nullptr){
                 if (button->getState()==3) { //Si la case sélectionnée est bien dans les mouvements possibles
+                    qDebug()<<"Wait again : "<<lastClicked->getInsectType();
+
                     if (lastClicked->getInsectType()!=none){
-                        hive.getInputsManager()->updatePlayerInputsQt(actualP,button->getCoordinates(),inputT, playerTurn);
+                        vec2i coordinates=reconvertCoordinates(button->getCoordinates());
+                        hive.getInputsManager()->updatePlayerInputsQt(actualP,coordinates,inputT, playerTurn);
 
                         button->setInsectType(lastClicked->getInsectType());
 
@@ -233,12 +236,15 @@ void hiveRenderer::handleButtonClick() {
                             lastClicked->setInsectType(none);
                             lastClicked->updateState(2);//La case devient vide
                         }
-
                         if (actualP->getInputs().getStart().getI()==-1) {//Si c'est deckToMap movement
+
                             hive.getSolver()->deckToMapMovement(*actualP);
                             hive.decrRewindUsed();
                         } else { //Si c'est mapToMapMovement
+                            hive.getInputsManager()->convertQtToSolver(actualP);
+                            qDebug()<<"Wait ? : "<<actualP->getInputs().getStart().getI();
                             hive.getSolver()->mapToMapMovement(*actualP);
+                            hive.getInputsManager()->convertSolverToQt(actualP);
                             hive.decrRewindUsed();
                         }
 
@@ -288,6 +294,7 @@ void hiveRenderer::handleButtonClick() {
                     lastClicked->updateState(0);
                 }
                 for (auto b : actualP->getInputs().getPossibleDestinations()) {
+                    b=convertCoordinates(b);
                     HexagonalButton * selec=buttons[b.getI()][b.getJ()];
                     if (selec->getInsectType()!=none) {
                         selec->updateState(0);
@@ -312,11 +319,14 @@ void hiveRenderer::handleButtonClick() {
                             vec2i i(-1,actualP->getDeck().returnIndex(button->getInsectType()));
                             index=i;
                         } else {
-                            index=button->getCoordinates();
+                            index=reconvertCoordinates(button->getCoordinates());
                         }
 
                         hive.getInputsManager()->updatePlayerInputsQt(actualP,index,inputT,playerTurn);
                         for (auto b : actualP->getInputs().getPossibleDestinations()) {//On itère dans la liste des destionations possibles
+                            qDebug()<<"b =("<<b.getI()<<","<<b.getJ()<<")";
+                            b=convertCoordinates(b);
+                            qDebug()<<"b =("<<b.getI()<<","<<b.getJ()<<")";
                             buttons[b.getI()][b.getJ()]->updateState(3);
                         }
                         updateInputT();
@@ -329,8 +339,11 @@ void hiveRenderer::handleButtonClick() {
                             //Pour toujours avoir un index valide
                             vec2i i(-1,actualP->getDeck().returnIndex(button->getInsectType()));
                             index=i;
+                            qDebug()<<"\nIndex = "<<i.getJ();
                             hive.getInputsManager()->updatePlayerInputsQt(actualP,index,inputT,playerTurn);
                             for (auto b : actualP->getInputs().getPossibleDestinations()) {//On itère dans la liste des destionations possibles
+                                b=convertCoordinates(b);
+                                qDebug()<<"b =("<<b.getI()<<","<<b.getJ()<<")";
                                 buttons[b.getI()][b.getJ()]->updateState(3);
                             }
                             updateInputT();
@@ -347,6 +360,7 @@ void hiveRenderer::handleButtonClick() {
                         index=i;
                         hive.getInputsManager()->updatePlayerInputsQt(actualP,index,inputT,playerTurn);
                         for (auto b : actualP->getInputs().getPossibleDestinations()) {//On itère dans la liste des destionations possibles
+                            b=convertCoordinates(b);
                             buttons[b.getI()][b.getJ()]->updateState(3);
                         }
                         updateInputT();
@@ -388,10 +402,11 @@ void hiveRenderer::handleParamButtonClick() {
     if (button->getType()==Rewind) {
         if (hive.getRewindUsed()<hive.getRewindMax()) {
             vec2i from =hive.getMap().getHistoric().front().from;
-            vec2i to = hive.getMap().getHistoric().front().to;
+            vec2i to = convertCoordinates(hive.getMap().getHistoric().front().to);
             qDebug()<<"\nfrom I : "<<from.getI();
             if(from.getI()>=0) {
                 //c'etait un map to map movement
+                from=convertCoordinates(from);
                 *buttons[from.getI()][from.getJ()]=*buttons[to.getI()][to.getJ()];
                 buttons[to.getI()][to.getJ()]->updateState(2);
                 buttons[to.getI()][to.getJ()]->setInsectType(none);
@@ -409,11 +424,10 @@ void hiveRenderer::handleParamButtonClick() {
                 while (buttons[30][from.getJ()+index+(turn)*sizeDeck]->getState()!=2) {
                     index++;
                 }
-                qDebug()<<"\n"<<buttons[30][from.getJ()+(turn)*sizeDeck]->getState();
                 *buttons[30][from.getJ()+index+(turn)*sizeDeck]=*buttons[to.getI()][to.getJ()];
                 buttons[to.getI()][to.getJ()]->updateState(2);
                 buttons[to.getI()][to.getJ()]->setInsectType(none);
-                hive.getSolver()->goBackDeck(*actualP, from, to);
+                hive.getSolver()->goBackDeck(*actualP, from, reconvertCoordinates(to));
             }
             updatePlayerTurn();
             hive.getSolver()->decrTurn();

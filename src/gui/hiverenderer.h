@@ -35,7 +35,16 @@ public:
         }
     }
     void showWinner(Player* winner);
-
+    vec2i convertCoordinates(vec2i coordinates) {
+        coordinates.setJ(coordinates.getJ()-2);
+        coordinates.setI(coordinates.getI()-2);
+        return coordinates;
+    }
+    vec2i reconvertCoordinates(vec2i coordinates) {
+        coordinates.setJ(coordinates.getJ()+2);
+        coordinates.setI(coordinates.getI()+2);
+        return coordinates;
+    }
 
 
 private:
@@ -51,7 +60,7 @@ private:
     bool ladExten;
     bool inputT=true;
     bool playerTurn=false;
-    HexagonalButton* buttons[31][30]; //Le 31 est pour les decks
+    HexagonalButton* buttons[31][30]; //A changer pour un changement dynamique, j'ai pas réussi avec un vecteur de vecteur
     Ui::hiveRenderer *ui;
     QWidget *centralWidget;      // Conteneur principal
     QLabel *infoLabel;           // Label pour afficher les infos

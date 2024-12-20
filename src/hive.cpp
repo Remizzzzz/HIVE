@@ -30,50 +30,53 @@ int Hive::displayMenu() {
     version = console;
 
     int choice = 0;
-    do {
-        std::cout << "\n=== Menu Hive ===\n";
-        std::cout << "1. Start a game\n";
-        std::cout << "2. Tutorial\n";
-        std::cout << "3. Resume last game\n";
-        std::cout << "4. Change parameters\n";
-        std::cout << "5. Save current game\n";
-        std::cout << "6. Leave\n";
-        std::cout << "Choose an option : ";
-        std::cin >> choice;
+    std::cout << "\n=== Menu Hive ===\n";
+    std::cout << "1. Start a game\n";
+    std::cout << "2. Tutorial\n";
+    std::cout << "3. Resume last game\n";
+    std::cout << "4. Change parameters\n";
+    std::cout << "5. Save current game\n";
+    std::cout << "6. Leave\n";
+    std::cout << "Choose an option : ";
+    std::cin >> choice;
 
-        switch (choice) {
-            case 1:  // Start a game
-                std::cout << "Starting a new game...\n";
-                return 1;
-
-            case 2:  // Tutorial
-                std::cout << "Launching tutorial...\n";
-                displayRules();
-                break;
-
-            case 3:  // Resume game
-                std::cout << "Resuming the last game...\n";
-                loadGame("../hive_parameters.txt");
-                isInit = true;
-                break;
-
-            case 4:  // Change parameters
-                std::cout << "Changing parameters...\n";
-                changeSettings();
-                break;
-
-            case 5:  // Save game
-                std::cout << "Saving...\n";
-                saveGame("../hive_parameters.txt");
-                break;
-            case 6:  // Leave
-                std::cout << "Au revoir !\n";
+    switch (choice) {
+        case 1:  // Start a game
+            std::cout << "Starting a new game...\n";
+            menuPart = false;
+            gamePart = true;
+            initIfNeeded();
             break;
-            default:
-                std::cout << "Option invalide, veuillez réessayer.\n";
-                break;
-        }
-        std::cout << std::endl;
+        case 2:  // Tutorial
+            std::cout << "Launching tutorial...\n";
+            displayRules();
+            break;
+
+        case 3:  // Resume game
+            std::cout << "Resuming the last game...\n";
+            loadGame("../hive_parameters.txt");
+            isInit = true;
+            break;
+
+        case 4:  // Change parameters
+            std::cout << "Changing parameters...\n";
+            changeSettings();
+            break;
+
+        case 5:  // Save game
+            std::cout << "Saving...\n";
+            saveGame("../hive_parameters.txt");
+            break;
+        case 6:  // Leave
+            menuPart = false;
+            gamePart = false;
+            std::cout << "Au revoir !\n";
+        break;
+        default:
+            std::cout << "Option invalide, veuillez réessayer.\n";
+            break;
+    }
+    std::cout << std::endl;
 
     } while (choice != 6);
 
