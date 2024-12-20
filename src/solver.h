@@ -49,6 +49,11 @@ public:
         if (turn%2) return turn/2+1;
         return turn/2;
     }
+
+    void setTurn(int val) {
+        turn = val;
+    }
+
     static bool queenInDeck(Player & player_) {
         bool result = true;
         std::vector<Insect*> activeList =player_.getActiveInsects();

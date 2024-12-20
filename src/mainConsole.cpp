@@ -7,6 +7,7 @@
 
 #include <conio.h>  // Pour _kbhit() et _getch()
 #include <fstream>
+#include <unistd.h>
 
 int mainConsole() {
     bool play = true;

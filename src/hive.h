@@ -5,6 +5,7 @@
 #ifndef HIVE_HIVE_H
 #define HIVE_HIVE_H
 
+#include <unistd.h>
 #include <vector>
 #include <set>
 #include "utils/hiveException.h"
@@ -15,6 +16,11 @@
 #include "inputsManager.h"
 #include "solver.h"
 #include "renderer.h"
+#include <iostream>
+#include <sstream>
+#include <vector>
+#include <string>
+
 
 //enum Mode{PvP,PvAI};
 enum Version{console, graphic};
@@ -45,8 +51,11 @@ class Hive{
 
     Renderer * renderer;
 
-private:
 
+    std::vector<Insect *>& getInsects() {
+        return insects;
+    }
+    Insect* generateSingleInsect(int type, bool color, vec2i vec);
     void generateAllInsects(bool Lad=false, bool Mos=false){
 
         int cpt1 = 0;
@@ -188,9 +197,13 @@ private:
 
 
 
-    int displayMenu();
+
 
 public:
+    Renderer* getRenderer() const{
+        return renderer;
+    }
+    int displayMenu();
     Hive() : mode(PvP), version(console),
              insects(),
              rewindNb(5),rewindUsed(rewindNb), map(trueMapSideSize,rewindNb),
@@ -221,11 +234,14 @@ public:
     void loadGame(const std::string& filename);
     int initIfNeeded(){
         if (!isInit){
+
             if (displayMenu() == 1){
                 if (mode == PvAI){
                     player2.setHumanity(false);
                 }
-                generateAllInsects();
+                if (!isInit) {
+                    generateAllInsects();
+                }
                 std::cout << insects.size();
                 renderer->displayMap(*currentPlayer);
                 isInit = true;
@@ -239,13 +255,20 @@ public:
     }
     int getRenderedMapSideSize() const {return renderedMapSideSize;}
     int run(){
+        std::cout << "Dans run va peut etre init";
         if (initIfNeeded() == 0){
-            return 0;
+            std::cout << "insects.size()";
+            return 1;
         }
+        std::cout<< "Dans run pas besoin d'init";
+
         if (currentPlayer->isHuman){
+            std::cout <<"Dans ishuman ";
             inputsManager.updatePlayerInputs(*currentPlayer);
+            std::cout <<"hors de ishuman ";
         }
         else{
+            std::cout<< "Dans isai ";
             inputsManager.updateAIInputs(*currentPlayer);
         }
 
