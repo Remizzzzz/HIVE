@@ -17,14 +17,13 @@ public:
      * @brief Constructeur de la classe Renderer.
      * @param map_ Référence constante à la carte à afficher.
      */
-    explicit Renderer(const Map &map_,Player* P1_, Player* P2_, int rendered_s_i, const int offset_) :
+    explicit Renderer(Map &map_,Player* P1_, Player* P2_, int rendered_s_i, const int offset_) :
         map(map_), P1(P1_), P2(P2_), renderedSideSize(rendered_s_i), offset(offset_) {} // A voir comment initialiser l'output
 
     /**
      * @brief Affiche la carte sur la sortie standard.
      */
     virtual ~Renderer() = default; // Rendre Renderer polymorphe avec un destructeur virtuel
-    virtual void displayMap(const Player & currentPlayer_) const=0;
     virtual void render(const Player & currentPlayer_) const = 0;
 
 protected:
@@ -32,7 +31,7 @@ protected:
     Player *P2;
     int renderedSideSize;
     const int offset;
-    const Map &map;
+    Map &map;
 
 public:
     void setPlayer1(Player *player) {
@@ -57,7 +56,7 @@ public:
      * @brief Constructeur de la classe ConsoleRenderer.
      * @param map_ Référence constante à la carte à afficher.
      */
-    explicit ConsoleRenderer(const Map &map_,Player* P1_, Player* P2_, int rendered_s_i, const int offset_) : Renderer(map_,P1_,P2_, rendered_s_i, offset_) {}
+    explicit ConsoleRenderer(Map &map_,Player* P1_, Player* P2_, int rendered_s_i, const int offset_) : Renderer(map_,P1_,P2_, rendered_s_i, offset_) {}
 
 
     void renderDeck1(const Player & currentPlayer_) const{

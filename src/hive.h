@@ -235,7 +235,6 @@ public:
         rewindNb = newRewindNumber;
         rewindUsed= rewindNb;
     }
-    //int launchGame();
     void static displayRules() ;
     void changeSettings();
     void saveGame(const std::string& filename) const;

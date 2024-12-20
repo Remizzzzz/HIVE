@@ -267,9 +267,11 @@ void hiveRenderer::handleButtonClick() {
                             if (opponent->getInputs().getStart().getI()==-1) {
                                 startButton=buttons[30][sizeDeck+opponent->getInputs().getStart().getJ()];
                             } else {
-                                startButton=buttons[opponent->getInputs().getStart().getI()][opponent->getInputs().getStart().getJ()];
+                                vec2i coor(opponent->getInputs().getStart().getI(),opponent->getInputs().getStart().getJ());
+                                coor=convertCoordinates(coor);
+                                startButton=buttons[coor.getI()][coor.getJ()];
                             }
-                            vec2i v=opponent->getInputs().getPossibleDestinations()[opponent->getInputs().getDestinationIndex()];
+                            vec2i v=convertCoordinates(opponent->getInputs().getPossibleDestinations()[opponent->getInputs().getDestinationIndex()]);
                             qDebug()<<"IA vec2i"<<v;
                             *buttons[v.getI()][v.getJ()]=*startButton;
                             buttons[v.getI()][v.getJ()]->updateState(0);

@@ -26,7 +26,7 @@
  * @brief Affiche un menu interactif pour l'utilisateur.
  */
 int Hive::displayMenu() {
-    renderer = new ConsoleRenderer(map, &player1, &player2, 30);
+    renderer = new ConsoleRenderer(map, &player1, &player2, renderedMapSideSize, offset);
     version = console;
 
     int choice = 0;
@@ -77,8 +77,6 @@ int Hive::displayMenu() {
             break;
     }
     std::cout << std::endl;
-
-    } while (choice != 6);
 
     return 0;
 }
@@ -601,24 +599,6 @@ void Hive::loadGame(const std::string& filename) {
     std::cout << "Partie chargée avec succès depuis " << filename << std::endl;
 }
 
-
-int Hive::launchGame() {
-    if (initIfNeeded() == 0){
-        return 0;
-    }
-    int play = displayMenu();
-    if (play == 1) {
-        while(play){
-            try{
-                play = run();
-            }
-            catch (const HiveException & HE_){
-                std::cout << HE_.getInfos() << '\n';
-            }
-        }
-    }
-    return 1;
-}
 
 
 Insect* Hive::generateSingleInsect(int type, bool color, vec2i vec) {

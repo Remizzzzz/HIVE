@@ -5,12 +5,6 @@
 #include <algorithm>
 #include "map.h"
 #include <QDebug>
-
-QDebug operator<<(QDebug debug, const vec2i &v) {
-    QDebugStateSaver saver(debug); // Sauvegarde l'état de qDebug pour éviter de modifier son format global
-    debug.nospace() << "vec2i(" << v.getI() << ", " << v.getJ() << ")";
-    return debug;
-}
 /*
 void Map::updateBeetlePosition(Beetle *beetle, const vec2i &newPos) {
     if (beetle == nullptr) return;
@@ -37,7 +31,6 @@ std::vector<vec2i> Map::setRule(bool color_insect) {
             for (int j = 0; j < getSideSize(); ++j) {
                 if (!isSlotFree(vec2i{i, j})) {
                     foundInsect = vec2i{i, j};
-                    qDebug()<<foundInsect;
                     break;
                 }
             }
