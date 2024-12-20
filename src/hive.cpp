@@ -399,8 +399,10 @@ void Hive::loadGame(const std::string& filename) {
             map.getHistoric().clear();
             int startI,startj,endI,endJ;
             while (std::getline(file, line) && line != "Fin_Historic:" && !line.empty()){
-                extension = std::stoi(line);
-                extensions.insert(static_cast<insectType> (extension));  // Ajouter l'extension au set
+                int num = std::stoi(line);
+                std::istringstream iss(line);
+                iss >> startI>>startj>>endI>>endJ;
+                //map.getHistoric().insert(Map::movement(vec2i(startI,startj),vec2i(endI,endJ)));  // Ajouter l'extension au set
             }
         }
 /*
