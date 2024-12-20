@@ -26,7 +26,6 @@ file(GLOB SOURCES
         src/solver.h
         src/mainQt.cpp  # Le point d'entrée de votre application Qt
         src/gui/*.cpp     # Tout code supplémentaire pour l'interface graphique Qt
-        src/mainConsole.cpp
 )
 
 # Créer l'exécutable pour l'interface Qt
