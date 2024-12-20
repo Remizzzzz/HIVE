@@ -91,8 +91,13 @@ public:
                     selectedInsect = player_.getDeck().getInsectAt(index);
                 } else if (randomValue == 0 && !player_.getDeck().isEmpty()){
                     selectedInsect = player_.deck.getInsectAt(random.getRandomInt(0,int(player_.getDeck().getInsectNb())));
-                } else{
+                } else {
                     selectedInsect = player_.getActiveInsects()[random.getRandomInt(0,int(player_.getActiveInsects().size()))];
+                    inputs.setStart(selectedInsect->getCoordinates());
+                    vec2i startPos = selectedInsect->getCoordinates();
+                    inputs.setStart(startPos);
+                    inputs.needPossibleDestinationsUpdate();
+                    break;
                 }
                 if (!Qt) {//Si on est pas dans Qt
                     inputs.setStart(selectedInsect->getCoordinates());
@@ -107,11 +112,8 @@ public:
                 break;
             case 2:
                 if (!Qt) {
-                    if (!inputs.isPossibleDestinationsEmpty()){
+                    if (!inputs.isPossibleDestinationsEmpty()) {
                         inputs.setDestinationIndex(random.getRandomInt(0,int (inputs.getPossibleDestinationsNumber())));
-                    }
-                    else{
-                        //lancer exception
                     }
                 } else {
                     if (inputs.getStart().getI()==-1) {

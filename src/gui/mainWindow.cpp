@@ -14,7 +14,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include "hive.h"
-
+//#include "../mainConsole.cpp"
 
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {

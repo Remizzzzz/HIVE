@@ -62,7 +62,6 @@ private:
 private slots : //Private slots, c'est pour détecter les signaux des boutons
     void handleButtonClick(); // Slot pour gérer les clics de bouton
     void handleParamButtonClick();
-    void handleSaveButtonClick();
 };
 
 #endif // HIVERENDERER_H

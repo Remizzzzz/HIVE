@@ -6,7 +6,15 @@
 #include <QDebug>
 #include "MainWindow.h"
 #include "ParamButton.h"
-//#include "hive.h" -> Déclenche ENORMEMENT d'erreur
+
+
+QDebug operator<<(QDebug debug, const vec2i &v) {
+    QDebugStateSaver saver(debug); // Sauvegarde l'état de qDebug pour éviter de modifier son format global
+    debug.nospace() << "vec2i(" << v.getI() << ", " << v.getJ() << ")";
+    return debug;
+}
+
+
 hiveRenderer::hiveRenderer(QWidget *parent, int rewind, Mode mod, bool ladybug, bool mosquitoe, bool load)
     : QMainWindow(parent),
     centralWidget(new QWidget(this)),
@@ -87,9 +95,16 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
     saveButton->setType(Save);
     saveButton->setParent(centralWidget);
     saveButton->move(15, 60);
-    connect(saveButton, &ParamButton::clicked, this, &hiveRenderer::handleSaveButtonClick);
+    connect(saveButton, &ParamButton::clicked, this, &hiveRenderer::handleParamButtonClick);
     saveButton->setStyleSheet("background : grey;");
 
+    auto menu=QString("Menu");
+    auto *menuButton = new ParamButton(this,menu);
+    menuButton->setType(Menu);
+    menuButton->setParent(centralWidget);
+    menuButton->move(30*25+100, 30);
+    connect(menuButton, &ParamButton::clicked, this, &hiveRenderer::handleParamButtonClick);
+    menuButton->setStyleSheet("background: grey;");
 }
 
 void hiveRenderer::setupDeck(int buttonSize){
@@ -249,9 +264,11 @@ void hiveRenderer::handleButtonClick() {
                                 startButton=buttons[opponent->getInputs().getStart().getI()][opponent->getInputs().getStart().getJ()];
                             }
                             vec2i v=opponent->getInputs().getPossibleDestinations()[opponent->getInputs().getDestinationIndex()];
+                            qDebug()<<"IA vec2i"<<v;
                             *buttons[v.getI()][v.getJ()]=*startButton;
                             buttons[v.getI()][v.getJ()]->updateState(0);
                             startButton->updateState(2);
+                            startButton->setInsectType(none);
                             qDebug()<< "\nAI("<<opponent->getInputs().getStart().getI()<<","<<opponent->getInputs().getStart().getJ()<<")";
                             if (opponent->getInputs().getStart().getI()==-1) {//Si c'est deckToMap movement
                                 hive.getSolver()->deckToMapMovement(*opponent);
@@ -407,9 +424,11 @@ void hiveRenderer::handleParamButtonClick() {
             qDebug()<<"\n("<<move.from.getI()<<","<<move.from.getJ()<<")";
             qDebug()<<"-> ("<<move.to.getI()<<","<<move.to.getJ()<<")";
         }
+    } else if (button->getType()==Menu) {
+        MainWindow *w=new MainWindow(nullptr);
+        w->show();
+        this->close();
+    } else if (button->getType()==Save) {
+        hive.saveGame("../hive_parameters.txt");
     }
-}
-
-void hiveRenderer::handleSaveButtonClick() {
-    hive.saveGame("../hive_parameters.txt");
 }
