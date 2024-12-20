@@ -53,7 +53,6 @@ void Hive::displayMenu() {
             case 3:  // Resume game
                 std::cout << "Resuming the last game...\n";
                 loadGame("../hive_parameters.txt");
-                isInit = true;
                 break;
 
         case 4:  // Change parameters
@@ -332,7 +331,7 @@ void Hive::saveGame(const std::string& filename) const{
 void Hive::loadGame(const std::string& filename) {
     std::ifstream file(filename);
     int counter = 0;
-
+    initIfNeeded();
     if (!file.is_open()) {
         throw HiveException("loadGame", "Impossible d'ouvrir le fichier de sauvegarde.");
     }
