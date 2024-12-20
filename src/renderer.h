@@ -350,12 +350,4 @@ public:
 
 };
 
-
-class GraphicRenderer : public Renderer {
-public:
-    explicit GraphicRenderer(const Map &map_, Player* P1_, Player* P2_, int rendered_s_i) : Renderer(map_,P1_,P2_,rendered_s_i) {}
-    void displayMap(const Player & currentPlayer_) const override{}
-    void render(const Player & currentPlayer_) const override{}
-};
-
 #endif // HIVE_RENDERER_H

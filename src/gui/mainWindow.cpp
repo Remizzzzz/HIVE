@@ -9,13 +9,25 @@
 #include <QStackedWidget>
 #include <QProcess>
 #include <windows.h>
-
+#include <QThread>
 #include <QSpinBox>
 #include <QCheckBox>
 #include <QComboBox>
 #include "hive.h"
-//#include "../mainConsole.cpp"
+#include "../mainConsole.cpp"
+#include <iostream>
 
+//Fonction pour le lancement console
+void enableVirtualTerminalProcessing() {
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD dwMode = 0;
+    if (hOut == INVALID_HANDLE_VALUE) return;
+
+    if (!GetConsoleMode(hOut, &dwMode)) return;
+
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    SetConsoleMode(hOut, dwMode);
+}
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     /* Titre et taille de la fenêtre */
@@ -197,14 +209,22 @@ void MainWindow::launchConsoleApp() {
     // Lance une fenêtre de console vide
     AllocConsole();
     freopen("CONOUT$", "w", stdout);
+    freopen("CONIN$", "r", stdin);  // Redirige l'entrée standard vers la console
+    freopen("CONOUT$", "w", stderr);  // Redirige la sortie d'erreur standard vers la console
+    enableVirtualTerminalProcessing();
     std::cout << "Console ouverte... Lancement de l'application console..." << std::endl;
-
+    this->close();
     // Lancer l'application console avec QProcess
-    QProcess::startDetached("../cmake-build-debug/HiveConsole.exe");
+    //QProcess::startDetached("../cmake-build-debug/HiveConsole.exe");
+    // QThread *consoleThread = QThread::create([]() {
+    //     mainConsole();
+    // });
+    //
+    // consoleThread->start();
+    mainConsole();
+    FreeConsole();
 
     // Ferme la fenêtre de la console une fois l'application console lancée
-    FreeConsole();
-    this->close();
 }
 
 // Jsp comment appeler loadGame ...

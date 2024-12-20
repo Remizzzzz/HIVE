@@ -8,11 +8,10 @@
 #include <conio.h>  // Pour _kbhit() et _getch()
 #include <fstream>
 
-int main() {
+int mainConsole() {
     bool play = true;
 
     Hive hive;
-
 
     while(play){
 
