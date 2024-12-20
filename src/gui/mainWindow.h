@@ -33,7 +33,7 @@ private:
     int hiveNbRewind;
     bool hasLadybug;
     bool hasMosquito;
-
+    bool load=false;
     // Boutons du menu
     QPushButton *startButton;
     QPushButton *tutorialButton;

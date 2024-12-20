@@ -34,7 +34,8 @@ private:
             case 1:
                 if ((inputs.getStart().getI() + i_ >= 0 && inputs.getStart().getI() + i_ < renderedMapSideSize &&
                         inputs.getStart().getJ() + j_ >= 0 && inputs.getStart().getJ() + j_ < renderedMapSideSize)
-                        || ((inputs.getStart().getI() + i_ == -1 || inputs.getStart().getI() + i_ == renderedMapSideSize) && inputs.getStart().getJ() + j_ < player.getDeck().getInsectNb()))
+                        || ((inputs.getStart().getI() + i_ == -1 || inputs.getStart().getI() + i_ == renderedMapSideSize)
+                            && (inputs.getStart().getJ() + j_ >= 0 && inputs.getStart().getJ() + j_ < player.getDeck().getInsectNb())))
                     {
                     std::cout << "----------\n ";
                     std::cout << inputs.getStart() << ',' << vec2i{i_,j_} << '\n';
@@ -72,17 +73,21 @@ public:
     explicit InputsManager(Mode mode_, const int renderedMapSideSize_, Map & map_):
     renderedMapSideSize(renderedMapSideSize_), map(map_), random(){}
 
-    void updateAIInputs(Player & player_){
+    void updateAIInputs(Player & player_, bool Qt=false, bool inputT=false){
         Inputs & inputs = player_.inputs;
-
-        int cursorId = inputs.isStartSelected() + 1;
+        int cursorId=0;
+        if (!Qt) cursorId = inputs.isStartSelected() + 1;
+        else {
+            if (inputT) cursorId=1; //Si c'est la première sélection
+            else cursorId = 2; //Si c'est la deuxième sélection
+        }
 
         int randomValue = random.getRandomInt(0,4);
         const Insect * selectedInsect;
 
         switch (cursorId){
             case 1:
-                if ((player_.deck.isEmpty() && player_.activeInsects.empty())){
+                if (player_.deck.isEmpty() && player_.activeInsects.empty()){
                     throw HiveException("inputsManager.h:InputsManager:updateAIInputs","deck and activeInsects are empty");
                     return;
                 }
@@ -136,6 +141,9 @@ public:
                     moveCursor(player_,cursorId,0,-1); std::cout << "Flèche Gauche\n"; break;
                 case 77:
                     moveCursor(player_,cursorId,0,1); std::cout << "Flèche Droite\n"; break;
+                case 83:
+                    inputs.needLeave(); std::cout << "Leaves\n"; break;
+
                 default: std::cout << "Autre touche spéciale: Code " << key << "\n"; break;
             }
         }
@@ -153,7 +161,7 @@ public:
                     std::cout << "Enter.\n";
                     break;
                 case 27:
-                    inputs.reset();
+                    inputs.needLeave();
                     std::cout << "Sortie.\n";
                     break;
                 default: break;

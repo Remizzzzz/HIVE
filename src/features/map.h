@@ -5,7 +5,7 @@
 #ifndef HIVE_MAP_H
 #define HIVE_MAP_H
 
-
+//#include <QDebug>
 #include <iostream>
 #include <vector>
 #include <list>
@@ -179,6 +179,7 @@ public:
             } else {
                 // Cas général pour les autres types d'insectes
                 putInsectTo(movingInsect, pos2_);
+                movingInsect->setCoordinates(pos2_);
                 removeInsectAt(pos1_);
             }
     }

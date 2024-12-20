@@ -1,30 +1,37 @@
 #include "hiverenderer.h"
 #include "hexagonalbutton.h"
-#include "./ui_hiverenderer.h"
+#include "ui_hiverenderer.h"
 #include <QPixmap>
 #include <QIcon>
 #include <QDebug>
 #include "MainWindow.h"
 #include "ParamButton.h"
 //#include "hive.h" -> Déclenche ENORMEMENT d'erreur
-hiveRenderer::hiveRenderer(QWidget *parent, int rewind)
+hiveRenderer::hiveRenderer(QWidget *parent, int rewind, Mode mod, bool ladybug, bool mosquitoe, bool load)
     : QMainWindow(parent),
     centralWidget(new QWidget(this)),
     infoLabel(new QLabel("Cliquez sur un bouton", this)),
-    ui(new Ui::hiveRenderer)
+    ui(new Ui::hiveRenderer),
+    ladExten(ladybug),
+    mosExten(mosquitoe),
+    mode(mod)
 {ui->setupUi(this);
     infoLabel->setAlignment(Qt::AlignCenter);
     infoLabel->setGeometry(0, 0, width(), 30);  // Placer le label en haut
     centralWidget->setGeometry(0, 50, width(), height() - 50);  // Ajuster la taille du widget central
-    hive.runQt();
+    hive.runQt(ladybug, mosquitoe);
     hive.setRewindNumber(rewind);
+    if (ladExten) sizeDeck+=2;
+
+    if (mosExten) sizeDeck+=2;
+
     // Créer la grille hexagonale de boutons
     setupHexagonalGrid(rows, cols, buttonSize);  // 30x30 boutons, taille de 25 pixels max, à cause du displacement, le rapport entre la hauteur et la largeur est de 1*4 pour une map 2x2
     setupDeck(buttonSize);
     // Configurez la fenêtre
-    setWindowTitle("Test Hive");
+    setWindowTitle("Hive !");
     resize(1000,600);
-
+    loadGame(load);
     // Ajoutez le widget central sans layout
     setCentralWidget(centralWidget);
 }
@@ -74,16 +81,18 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
     button->setParent(centralWidget);
     button->move(15, 30);
     connect(button, &ParamButton::clicked, this, &hiveRenderer::handleParamButtonClick);
+    button->setStyleSheet("background: grey;");
 
     auto *saveButton = new ParamButton(this, QString("Save game"));
     saveButton->setType(Save);
     saveButton->setParent(centralWidget);
     saveButton->move(15, 60);
     connect(saveButton, &ParamButton::clicked, this, &hiveRenderer::handleSaveButtonClick);
+    saveButton->setStyleSheet("background : grey;");
+
 }
 
 void hiveRenderer::setupDeck(int buttonSize){
-    int sizeDeck=15;
     vec2i deck(-1,-1);
     for (int num=0;num<2;num++){
         if (num==0) {
@@ -127,17 +136,43 @@ void hiveRenderer::setupDeck(int buttonSize){
 
         buttons[30][9+num*sizeDeck]->setInsectType(spider);
         buttons[30][10+num*sizeDeck]->setInsectType(spider);
-
-        buttons[30][11+num*sizeDeck]->setInsectType(mosquitoe);
-        buttons[30][12+num*sizeDeck]->setInsectType(mosquitoe);
-
-        buttons[30][13+num*sizeDeck]->setInsectType(ladybug);
-        buttons[30][14+num*sizeDeck]->setInsectType(ladybug);
+        if (mosExten) {
+            buttons[30][11+num*sizeDeck]->setInsectType(mosquitoe);
+            buttons[30][12+num*sizeDeck]->setInsectType(mosquitoe);
+        }
+        if (ladExten){
+            int mos=0;
+            if (mosExten) mos=1;
+            buttons[30][11+2*mos+num*sizeDeck]->setInsectType(ladybug);
+            buttons[30][12+2*mos+num*sizeDeck]->setInsectType(ladybug);
+        }
     }
 }
-
-hiveRenderer::~hiveRenderer()
-{
+void hiveRenderer::loadGame(bool load) {
+    if (load) {
+        hive.loadGame("../hive_parameters.txt");
+        int renderedSize=hive.getRenderedMapSideSize();
+        for (int i=0;i<renderedSize;i++) {
+            for (int j=0;j<renderedSize;j++) {
+                vec2i pos(i,j);
+                Insect* in=hive.getMap().getInsectAt(pos);
+                if (in!=nullptr) {
+                    //Actu de la map
+                    buttons[i][j]->setInsectType(in->getIT());
+                    buttons[i][j]->setPlayer(!in->getColor());
+                    buttons[i][j]->updateState(0);
+                    //Actu des decks
+                    int index=0;
+                    while (in->getIT()!=buttons[30][index+!in->getColor()*sizeDeck]->getInsectType()) {
+                        index++;
+                    }
+                    buttons[30][index+!in->getColor()*sizeDeck]->updateState(2);
+                }
+            }
+        }
+    }
+}
+hiveRenderer::~hiveRenderer() {
     delete ui;
 }
 
@@ -187,6 +222,9 @@ void hiveRenderer::handleButtonClick() {
                         if (actualP->getInputs().getStart().getI()==-1) {//Si c'est deckToMap movement
                             hive.getSolver()->deckToMapMovement(*actualP);
                             hive.decrRewindUsed();
+                            if (mode==PvAI) {
+                                //lauchAiMove()
+                            }
                         } else { //Si c'est mapToMapMovement
                             hive.getSolver()->mapToMapMovement(*actualP);
                             hive.decrRewindUsed();
@@ -322,16 +360,18 @@ void hiveRenderer::handleParamButtonClick() {
             } else {
                 int sizeDeck=15;
                 int index=0;
+                int turn=1;
                 Player * actualP=hive.getPlayer2();
                 if (playerTurn) {
                     actualP=hive.getPlayer1();//Si c'est au tour du joueur 1, on change le joueur actuel
+                    turn=0;
                 }
 
-                while (buttons[30][from.getJ()+index+(!playerTurn)*sizeDeck]->getState()!=2) {
+                while (buttons[30][from.getJ()+index+(turn)*sizeDeck]->getState()!=2) {
                     index++;
                 }
-                qDebug()<<"\n"<<buttons[30][from.getJ()+(!playerTurn)*sizeDeck]->getState();
-                *buttons[30][from.getJ()+index+(!playerTurn)*sizeDeck]=*buttons[to.getI()][to.getJ()];
+                qDebug()<<"\n"<<buttons[30][from.getJ()+(turn)*sizeDeck]->getState();
+                *buttons[30][from.getJ()+index+(turn)*sizeDeck]=*buttons[to.getI()][to.getJ()];
                 buttons[to.getI()][to.getJ()]->updateState(2);
                 buttons[to.getI()][to.getJ()]->setInsectType(none);
                 hive.getSolver()->goBackDeck(*actualP, from, to);
@@ -349,6 +389,5 @@ void hiveRenderer::handleParamButtonClick() {
 }
 
 void hiveRenderer::handleSaveButtonClick() {
-    /* Jsp ce qu'il faut mettre dans le nom du fichier donc g mis ça pour l'instant */
-    hive.saveGame("backup.txt");
+    hive.saveGame("../hive_parameters.txt");
 }

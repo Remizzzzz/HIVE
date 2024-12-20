@@ -25,31 +25,30 @@
 /**
  * @brief Affiche un menu interactif pour l'utilisateur.
  */
-int Hive::displayMenu() {
-    renderer = new ConsoleRenderer(map, &player1, &player2, 30);
-    version = console;
+void Hive::displayMenu() {
 
     int choice = 0;
-    do {
-        std::cout << "\n=== Menu Hive ===\n";
-        std::cout << "1. Start a game\n";
-        std::cout << "2. Tutorial\n";
-        std::cout << "3. Resume last game\n";
-        std::cout << "4. Change parameters\n";
-        std::cout << "5. Save current game\n";
-        std::cout << "6. Leave\n";
-        std::cout << "Choose an option : ";
-        std::cin >> choice;
+    std::cout << "\n=== Menu Hive ===\n";
+    std::cout << "1. Start a game\n";
+    std::cout << "2. Tutorial\n";
+    std::cout << "3. Resume last game\n";
+    std::cout << "4. Change parameters\n";
+    std::cout << "5. Save current game\n";
+    std::cout << "6. Leave\n";
+    std::cout << "Choose an option : ";
+    std::cin >> choice;
 
-        switch (choice) {
-            case 1:  // Start a game
-                std::cout << "Starting a new game...\n";
-                return 1;
-
-            case 2:  // Tutorial
-                std::cout << "Launching tutorial...\n";
-                displayRules();
-                break;
+    switch (choice) {
+        case 1:  // Start a game
+            std::cout << "Starting a new game...\n";
+            menuPart = false;
+            gamePart = true;
+            initIfNeeded();
+            break;
+        case 2:  // Tutorial
+            std::cout << "Launching tutorial...\n";
+            displayRules();
+            break;
 
             case 3:  // Resume game
                 std::cout << "Resuming the last game...\n";
@@ -57,27 +56,26 @@ int Hive::displayMenu() {
                 isInit = true;
                 break;
 
-            case 4:  // Change parameters
-                std::cout << "Changing parameters...\n";
-                changeSettings();
-                break;
-
-            case 5:  // Save game
-                std::cout << "Saving...\n";
-                saveGame("../hive_parameters.txt");
-                break;
-            case 6:  // Leave
-                std::cout << "Au revoir !\n";
+        case 4:  // Change parameters
+            std::cout << "Changing parameters...\n";
+            changeSettings();
             break;
-            default:
-                std::cout << "Option invalide, veuillez réessayer.\n";
-                break;
-        }
-        std::cout << std::endl;
 
-    } while (choice != 6);
+        case 5:  // Save game
+            std::cout << "Saving...\n";
+            saveGame("../hive_parameters.txt");
+            break;
+        case 6:  // Leave
+            menuPart = false;
+            gamePart = false;
+            std::cout << "Au revoir !\n";
+        break;
+        default:
+            std::cout << "Option invalide, veuillez réessayer.\n";
+            break;
+    }
+    std::cout << std::endl;
 
-    return 0;
 }
 
 void Hive::displayRules() {
@@ -457,7 +455,7 @@ void Hive::loadGame(const std::string& filename) {
             std::cout << "finmap";
         }
 
-*/
+        */
 
         // Charger les Extensions
         else if (line.find("Extensions:") != std::string::npos  && !extensions_done ) {
@@ -483,7 +481,6 @@ void Hive::loadGame(const std::string& filename) {
             std::cout << "Joueur1:\n" ;
             int id = 0;
             bool isHuman = false;
-            Deck deck1 = Deck();
             std::string name;
             std::vector<Insect*> activeInsects1;  // Liste des insectes actifs à charger
 
@@ -598,62 +595,8 @@ void Hive::loadGame(const std::string& filename) {
 }
 
 
-int Hive::launchGame() {
-    if (initIfNeeded() == 0){
-        return 0;
-    }
-    int play = displayMenu();
-    if (play == 1) {
-        while(play){
-            try{
-                play = run();
-            }
-            catch (const HiveException & HE_){
-                std::cout << HE_.getInfos() << '\n';
-            }
-        }
-    }
-    return 1;
-}
 
 
-Insect* Hive::generateSingleInsect(int type, bool color, vec2i vec) {
-    Insect* insect = nullptr;
-    // Création de l'insecte en fonction du type
-    switch (type) {
-
-        case 0: insect = new Ant(color);break;
-        case 1: insect = new Beetle(color);break;
-        case 2: insect = new Grasshopper(color);break;
-        case 3: insect = new Bee(color);break;
-        case 4: insect = new Spider(color);break;
-        case 5: insect = new Mosquitoe(color);break;
-        case 6: insect = new Ladybug(color);break;
-        default:
-            throw HiveException("Hive::generateSingleInsect", "Insecte de type inconnu");
-        return nullptr;
-    }
-    insect->setCoordinates(vec);
-    // Définition des coordonnées et ajout dans le deck
-    if (color) {
-        if(vec.getI() == -1)player1.deck.addInsect(insect);
-        else {
-            map.putInsectTo(insect,vec);
-            player1.addActiveInsect(insect);
-        }
-    } else {
-        if(vec.getI() == 30)player2.deck.addInsect(insect);
-        else {
-            map.putInsectTo(insect,vec);
-            player2.addActiveInsect(insect);
-        }
-    }
-
-    // Ajout à la liste globale
-    insects.push_back(insect);
-
-    return insect;
-}
 
 
 

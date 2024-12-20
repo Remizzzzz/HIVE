@@ -27,11 +27,11 @@ class Insect{
     std::string PV;
 
 
-
 public:
     Insect( bool col, insectType type, std::string PV_) : id(counter++), iT(type), color(col),coordinates({-1,-1}), PV(PV_) {};//Ici -1 c'est pour NULL, mais la valeur doit être int
-    //Insect( bool col, insectType type, std::string PV_, vec2i vec) : id(counter++), iT(type), color(col),coordinates(vec), PV(PV_) {};//Ici -1 c'est pour NULL, mais la valeur doit être int
+
     virtual ~Insect() = default;
+
     int  getID() const { return id; }
     insectType  getIT() const { return iT; }
     bool  getColor() const { return color; }
@@ -78,7 +78,6 @@ public:
         }
 
     }
-
     int getFormerNeighbour(vec2i oldPosition, vec2i newPosition, Map &m) const; //Fonctions pour detecter les anciens voisins à la nouvelle position
     virtual std::vector<vec2i> getPossibleMovements(Map &m) const = 0;
     std::vector<vec2i> setRule(Map &m, bool color) const;

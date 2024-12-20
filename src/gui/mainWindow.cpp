@@ -186,8 +186,9 @@ void MainWindow::changeSettings() {
 
 void MainWindow::startNewGame() {
     // Créer et afficher la fenêtre secondaire
-    //auto *hive = new hiveRenderer(nullptr, hiveNbRewind, hiveMode, hasLadybug, hasMosquito);
-    auto *hive = new hiveRenderer(nullptr, hiveNbRewind);
+    //auto *hive = new hiveRenderer(nullptr, hiveNbRewind, hiveMode, hasLadybug, hasMosquito, load);
+    auto *hive = new hiveRenderer(nullptr, hiveNbRewind, hiveMode, hasLadybug, hasMosquito, load);
+    hive->setStyleSheet("background-color: black;");
     hive->show();
     this->close();
 }
@@ -207,6 +208,9 @@ void MainWindow::launchConsoleApp() {
 }
 
 // Jsp comment appeler loadGame ...
-void MainWindow::resumeGame() { /* hive.loadGame("backup.tkt"); */ }
+void MainWindow::resumeGame() {
+    load=true;
+    startNewGame();
+}
 
 void MainWindow::quitMenu() { this->close(); }
