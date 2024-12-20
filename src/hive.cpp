@@ -226,8 +226,8 @@ void Hive::saveGame(const std::string& filename) const{
     // Sauvegarder l'état de la carte (Map)
     file << "Map:" << std::endl;
     for (auto& movement : map.getHistoric()) {
-        file << movement.getFrom().getI() << "," <<movement.getFrom().getJ() << " "  <<
-            movement.getTo().getI() << "," <<movement.getTo().getJ() << std::endl;
+        file << movement.getFrom().getI() << " " <<movement.getFrom().getJ() << " "  <<
+            movement.getTo().getI() << " " <<movement.getTo().getJ() << std::endl;
     }
     file << "Fin_Historic:" << std::endl;
     file << map.getRelativePos().getI() << std::endl <<map.getRelativePos().getJ() << std::endl;
@@ -442,10 +442,10 @@ void Hive::loadGame(const std::string& filename) {
             counter++;extensions_done= true; //Extension probleme
             std::cout << "extensions:\n" ;
             extensions.clear();
-            while (std::getline(file, line) && line != "Fin_Extensions:") {
-                std::istringstream stream(line);
-                insectType extension;
-                extensions.insert(extension);  // Ajouter l'extension au set
+            int extension;
+            while (std::getline(file, line) && line != "Fin_Extensions:" && !line.empty()){
+                extension = std::stoi(line);
+                extensions.insert(static_cast<insectType> (extension));  // Ajouter l'extension au set
             }
         }
 
