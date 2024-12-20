@@ -49,12 +49,11 @@ void Hive::displayMenu() {
             std::cout << "Launching tutorial...\n";
             displayRules();
             break;
-
             case 3:  // Resume game
                 std::cout << "Resuming the last game...\n";
+                initIfNeeded();
                 loadGame("../hive_parameters.txt");
                 break;
-
         case 4:  // Change parameters
             std::cout << "Changing parameters...\n";
             changeSettings();
@@ -219,7 +218,6 @@ void Hive::saveGame(const std::string& filename) const{
     // Sauvegarder les informations de base (exemple : mode, version)
     file << "Mode:"<< std::endl << static_cast<int>(mode) << std::endl;
     file << "Turn:"<< std::endl << static_cast<int>(solver.getTurn()) << std::endl;
-    file << "isInit:" << std::endl<< static_cast<bool>(isInit) << std::endl;
     file << "trueMapSideSize:"<< std::endl << trueMapSideSize << std::endl;
     file << "currentPlayer:"<< std::endl << (currentPlayer == &player1 ? 1:2 )<< std::endl;
     file << "renderedMapSideSize:"<< std::endl << renderedMapSideSize << std::endl;
@@ -331,13 +329,12 @@ void Hive::saveGame(const std::string& filename) const{
 void Hive::loadGame(const std::string& filename) {
     std::ifstream file(filename);
     int counter = 0;
-    initIfNeeded();
+
     if (!file.is_open()) {
         throw HiveException("loadGame", "Impossible d'ouvrir le fichier de sauvegarde.");
     }
     bool mode_done = false;
     bool rewind_done = false;
-    bool isInit_done = false;
     bool trueMapSideSize_done = false;
     bool renderedMapSideSize_done = false;
     bool Turn_done = false;
@@ -382,13 +379,6 @@ void Hive::loadGame(const std::string& filename) {
             std::cout << "Rewind:" ;
             file >> rewindNb;  // Lire la valeur entière dans rewindNb
             std::cout << "Voila le nb de rewind après chargement: " << rewindNb << std::endl;
-        }
-        else if (line.find("isInit:") != std::string::npos && !isInit_done) {
-            counter++;isInit_done= true;
-            std::cout << "isInit:\n" ;
-            bool isInitValue;
-            file >> isInitValue;
-            isInit = isInitValue;
         }
         else if (line.find("trueMapSideSize:") != std::string::npos  && !trueMapSideSize_done) {
             counter++;trueMapSideSize_done= true;
@@ -608,7 +598,6 @@ Insect* Hive::generateSingleInsect(int type, bool color, vec2i vec) {
         case 6: insect = new Ladybug(color);break;
         default:
             throw HiveException("Hive::generateSingleInsect", "Insecte de type inconnu");
-        return nullptr;
     }
     insect->setCoordinates(vec);
     // Définition des coordonnées et ajout dans le deck

@@ -122,11 +122,9 @@ public:
 
 
     void updatePlayerInputs(Player & player_){
-        std::cout << "bien dans update playerinput"<< std::endl;
         Inputs & inputs = player_.inputs;
 
         int key = _getch();
-        std::cout << "appel de inputqlqchose"<< std::endl;
         int cursorId = inputs.isStartSelected() + 1;
 
         if (key == 0 || key == 224) {
