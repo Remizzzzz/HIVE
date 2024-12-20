@@ -283,18 +283,14 @@ public:
         }
         else if (gamePart)
         {
-
             renderer->render(*currentPlayer);
-
             if (currentPlayer->isHuman){
                 inputsManager.updatePlayerInputs(*currentPlayer);
             }
             else{
                 inputsManager.updateAIInputs(*currentPlayer);
             }
-
             std::cout << "\n:" <<currentPlayer->inputs;
-
             switch (solver.update(*currentPlayer)) {
             case -1:
                 std::cout << "\n---Reset---\n";

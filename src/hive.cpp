@@ -225,6 +225,7 @@ void Hive::saveGame(const std::string& filename) const{
 
     // Sauvegarder l'état de la carte (Map)
     file << "Map:" << std::endl;
+    file << "Debut_Historic:" << std::endl;
     for (auto& movement : map.getHistoric()) {
         file << movement.getFrom().getI() << " " <<movement.getFrom().getJ() << " "  <<
             movement.getTo().getI() << " " <<movement.getTo().getJ() << std::endl;
@@ -325,6 +326,7 @@ void Hive::loadGame(const std::string& filename) {
         throw HiveException("loadGame", "Impossible d'ouvrir le fichier de sauvegarde.");
     }
     bool mode_done = false;
+    bool historic_done = false;
     bool rewind_done = false;
     bool trueMapSideSize_done = false;
     bool renderedMapSideSize_done = false;
@@ -389,6 +391,17 @@ void Hive::loadGame(const std::string& filename) {
             file >> renderedMapSideSize;
 
 
+        }
+
+        else if (line.find("Debut_Historic:") != std::string::npos  && !historic_done ) {
+            counter++;historic_done= true; //Extension probleme
+            std::cout << "extensions:\n" ;
+            map.getHistoric().clear();
+            int startI,startj,endI,endJ;
+            while (std::getline(file, line) && line != "Fin_Historic:" && !line.empty()){
+                extension = std::stoi(line);
+                extensions.insert(static_cast<insectType> (extension));  // Ajouter l'extension au set
+            }
         }
 /*
         // Charger l'état de la carte (Map)
