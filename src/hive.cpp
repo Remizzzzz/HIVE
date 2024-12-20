@@ -235,13 +235,7 @@ void Hive::saveGame(const std::string& filename) const{
     file << map.getRewind() << std::endl;
     file << "Fin_Map:"<< std::endl;
 
-    // Sauvegarder insects
-    file << "Insects_Hive:" << std::endl;
-    for (const auto& insect : insects) {
-        file << insect->getID() << " " << insect->getIT() << " " << insect->getCoordinates().getI()
-        << " "<< insect->getCoordinates().getJ()<< " "<< insect->getColor()<< std::endl;
-    }
-    file << "Fin_Insects_Hive:"<< std::endl;
+
     file << "counter:"<< std::endl<< Insect::get_counter() << std::endl;
 
     file << "Extensions:" << std::endl;
@@ -261,12 +255,6 @@ void Hive::saveGame(const std::string& filename) const{
     // Sauvegarder les éléments du Deck du Player
     file << "Deck Size:"<< std::endl << player1.deck.getInsects()->size() << std::endl;
 
-    // Sauvegarder les id des Insects actifs du Player
-    file << "Active Insects Count:"<< std::endl << player1.getActiveInsects().size() << std::endl;
-    for (Insect* insect : player1.getActiveInsects()) {
-        file << "Insect ID:"<< std::endl<< insect->getID() << std::endl;
-    }
-    file << "Fin_Active_Insect:" << std::endl;
 
     // Sauvegarder de Input
     const Inputs input = player1.getInputs();
@@ -291,12 +279,7 @@ void Hive::saveGame(const std::string& filename) const{
     // Sauvegarder les éléments du Deck du Player
     file << "Deck Size:" << std::endl << player2.getDeck().getInsects()->size() << std::endl;
 
-    // Sauvegarder les id des Insects actifs du Player
-    file << "Active Insects Count:" << std::endl << player2.getActiveInsects().size() << std::endl;
-    for (Insect* insect : player2.getActiveInsects()) {
-        file << "Insect ID:" << std::endl << insect->getID() << std::endl;
-    }
-    file << "Fin_Active_Insect:" << std::endl;
+
 
     // Sauvegarder de Input
     const Inputs input2 = player2.getInputs();
@@ -316,6 +299,14 @@ void Hive::saveGame(const std::string& filename) const{
     file << "Fin_Current_Player:"<< std::endl << std::endl;
     file << "InputManager:"<< std::endl << std::endl;
     file << "InputManager_Fin:"<< std::endl << std::endl;
+
+    // Sauvegarder insects
+    file << "Insects_Hive:" << std::endl;
+    for (const auto& insect : insects) {
+        file << insect->getID() << " " << insect->getIT() << " " << insect->getCoordinates().getI()
+        << " "<< insect->getCoordinates().getJ()<< " "<< insect->getColor()<< std::endl;
+    }
+    file << "Fin_Insects_Hive:"<< std::endl;
 
     file << "FinFichier" << std::endl;
     file.close();
