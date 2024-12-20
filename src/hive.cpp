@@ -595,6 +595,43 @@ void Hive::loadGame(const std::string& filename) {
 }
 
 
+Insect* Hive::generateSingleInsect(int type, bool color, vec2i vec) {
+    Insect* insect = nullptr;
+    // Création de l'insecte en fonction du type
+    switch (type) {
+
+        case 0: insect = new Ant(color);break;
+        case 1: insect = new Beetle(color);break;
+        case 2: insect = new Grasshopper(color);break;
+        case 3: insect = new Bee(color);break;
+        case 4: insect = new Spider(color);break;
+        case 5: insect = new Mosquitoe(color);break;
+        case 6: insect = new Ladybug(color);break;
+        default:
+            throw HiveException("Hive::generateSingleInsect", "Insecte de type inconnu");
+        return nullptr;
+    }
+    insect->setCoordinates(vec);
+    // Définition des coordonnées et ajout dans le deck
+    if (color) {
+        if(vec.getI() == -1)player1.deck.addInsect(insect);
+        else {
+            map.putInsectTo(insect,vec);
+            player1.addActiveInsect(insect);
+        }
+    } else {
+        if(vec.getI() == 30)player2.deck.addInsect(insect);
+        else {
+            map.putInsectTo(insect,vec);
+            player2.addActiveInsect(insect);
+        }
+    }
+
+    // Ajout à la liste globale
+    insects.push_back(insect);
+
+    return insect;
+}
 
 
 
