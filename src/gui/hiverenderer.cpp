@@ -232,7 +232,22 @@ void hiveRenderer::handleButtonClick() {
                                 lastClicked->setInsectType(none);
                                 lastClicked->updateState(2);//La case devient vide
                             }
-                        }else {
+                        } else if(lastClicked->getInsectType()==mosquitoe && lastClicked->getCoordinates().getI()>-1){
+                            Mosquitoe* b = dynamic_cast<Mosquitoe*>(hive.getMap().getInsectAt(actualP->getInputs().getStart()));
+
+                            if (b->getInsectUnder()!=nullptr) {
+
+                                insectType mosquitoeInsectType=b->getInsectUnder()->getIT();
+                                bool  mosquitoeInsectPlayer=b->getInsectUnder()->getColor();
+                                lastClicked->setInsectType(mosquitoeInsectType);
+                                lastClicked->setPlayer(!mosquitoeInsectPlayer);
+                                lastClicked->updateState(0);
+                            } else {
+                                lastClicked->setInsectType(none);
+                                lastClicked->updateState(2);//La case devient vide
+                            }
+
+                        } else {
                             lastClicked->setInsectType(none);
                             lastClicked->updateState(2);//La case devient vide
                         }
@@ -242,7 +257,6 @@ void hiveRenderer::handleButtonClick() {
                             hive.decrRewindUsed();
                         } else { //Si c'est mapToMapMovement
                             hive.getInputsManager()->convertQtToSolver(actualP);
-                            qDebug()<<"Wait ? : "<<actualP->getInputs().getStart().getI();
                             hive.getSolver()->mapToMapMovement(*actualP);
                             hive.getInputsManager()->convertSolverToQt(actualP);
                             hive.decrRewindUsed();
