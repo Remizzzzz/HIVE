@@ -402,7 +402,8 @@ void Hive::loadGame(const std::string& filename) {
                 int num = std::stoi(line);
                 std::istringstream iss(line);
                 iss >> startI>>startj>>endI>>endJ;
-                //map.getHistoric().insert(Map::movement(vec2i(startI,startj),vec2i(endI,endJ)));  // Ajouter l'extension au set
+                map.getHistoric().emplace_front(vec2i(startI,startj),vec2i(endI,endJ));
+                //insert(Map::movement(vec2i(startI,startj),vec2i(endI,endJ)));
             }
         }
 /*
