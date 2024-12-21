@@ -204,6 +204,7 @@ void hiveRenderer::handleButtonClick() {
         opponent=hive.getPlayer1();
     }
     if (button) {
+        infoLabel->setText(QString("bouton cliqué : %1, %2").arg(button->getCoordinates().getI()).arg(button->getCoordinates().getJ()));
         if (!getInputT()){//Si c'est la deuxième selection
             if (lastClicked!=nullptr){
                 if (button->getState()==3) { //Si la case sélectionnée est bien dans les mouvements possibles
