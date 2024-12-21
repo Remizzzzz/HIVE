@@ -204,8 +204,6 @@ void hiveRenderer::handleButtonClick() {
         opponent=hive.getPlayer1();
     }
     if (button) {
-        //Affichez le texte du bouton dans le label
-        infoLabel->setText(QString("Bouton cliqué : %1, selection : %2, tour %3").arg(button->text()).arg(inputT).arg(hive.getSolver()->getTurn()));
         if (!getInputT()){//Si c'est la deuxième selection
             if (lastClicked!=nullptr){
                 if (button->getState()==3) { //Si la case sélectionnée est bien dans les mouvements possibles
@@ -348,6 +346,7 @@ void hiveRenderer::handleButtonClick() {
                         updateInputT();
                     } else {
                         if (button->getCoordinates()!=deck) {
+                            infoLabel->setText(QString("Vous devez poser la reine pour bouger un insecte"));
                             lastClicked=nullptr;
                         }else {
                             button->updateState(1); //Insect a été sélectionné
@@ -368,7 +367,9 @@ void hiveRenderer::handleButtonClick() {
                 } else {
                     if (button->getInsectType()!=bee) {
                         lastClicked=nullptr;
+                        infoLabel->setText(QString("Vous devez poser la reine"));
                     } else {
+                        infoLabel->setText(QString(""));
                         button->updateState(1); //Insect a été sélectionné
                         lastClicked=button;
                         //Pour toujours avoir un index valide
@@ -406,6 +407,14 @@ void hiveRenderer::showWinner(Player* winner) {
     winLabel->setFont(winFont);
     layout->addWidget(winLabel);
     winWindow->setLayout(layout);
+
+    auto menu=QString("Menu");
+    auto *menuButton = new ParamButton(winWindow,menu);
+    menuButton->setType(Menu);
+    menuButton->setParent(winWindow);
+    menuButton->move(30*25+100, 30);
+    connect(menuButton, &ParamButton::clicked, this, &hiveRenderer::handleParamButtonClick);
+    menuButton->setStyleSheet("background: grey;");
     winWindow->show();
 
     // Cache temporairement la fenêtre principale
@@ -428,7 +437,6 @@ void hiveRenderer::handleParamButtonClick() {
                 buttons[to.getI()][to.getJ()]->setInsectType(none);
                 hive.getMap().goBack();
             } else {
-                int sizeDeck=15;
                 int index=0;
                 int turn=1;
                 Player * actualP=hive.getPlayer2();
