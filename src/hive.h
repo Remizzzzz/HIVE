@@ -265,7 +265,7 @@ public:
     void initIfNeeded(){
         if (!isInit){
 
-            renderer = new ConsoleRenderer(map, &player1, &player2, 30);
+            renderer = new ConsoleRenderer(map, &player1, &player2, 30, offset);
             generateAllInsects();
             isInit = true;
         }
