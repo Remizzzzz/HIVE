@@ -28,7 +28,7 @@ hiveRenderer::hiveRenderer(QWidget *parent, int rewind, Mode mod, bool ladybug, 
     infoLabel->setGeometry(0, 0, width(), 30);  // Placer le label en haut
     centralWidget->setGeometry(0, 50, width(), height() - 50);  // Ajuster la taille du widget central
     hive.runQt(ladybug, mosquitoe);
-    hive.setRewindNumber(rewind);
+    hive.setRewindNumber(2*rewind);
     if (ladExten) sizeDeck+=2;
 
     if (mosExten) sizeDeck+=2;
@@ -204,8 +204,6 @@ void hiveRenderer::handleButtonClick() {
         opponent=hive.getPlayer1();
     }
     if (button) {
-        //Affichez le texte du bouton dans le label
-        infoLabel->setText(QString("Bouton cliqué : %1, selection : %2, tour %3").arg(button->text()).arg(inputT).arg(hive.getSolver()->getTurn()));
         if (!getInputT()){//Si c'est la deuxième selection
             if (lastClicked!=nullptr){
                 if (button->getState()==3) { //Si la case sélectionnée est bien dans les mouvements possibles
@@ -232,7 +230,22 @@ void hiveRenderer::handleButtonClick() {
                                 lastClicked->setInsectType(none);
                                 lastClicked->updateState(2);//La case devient vide
                             }
-                        }else {
+                        } else if(lastClicked->getInsectType()==mosquitoe && lastClicked->getCoordinates().getI()>-1){
+                            Mosquitoe* b = dynamic_cast<Mosquitoe*>(hive.getMap().getInsectAt(actualP->getInputs().getStart()));
+
+                            if (b->getInsectUnder()!=nullptr) {
+
+                                insectType mosquitoeInsectType=b->getInsectUnder()->getIT();
+                                bool  mosquitoeInsectPlayer=b->getInsectUnder()->getColor();
+                                lastClicked->setInsectType(mosquitoeInsectType);
+                                lastClicked->setPlayer(!mosquitoeInsectPlayer);
+                                lastClicked->updateState(0);
+                            } else {
+                                lastClicked->setInsectType(none);
+                                lastClicked->updateState(2);//La case devient vide
+                            }
+
+                        } else {
                             lastClicked->setInsectType(none);
                             lastClicked->updateState(2);//La case devient vide
                         }
@@ -242,7 +255,6 @@ void hiveRenderer::handleButtonClick() {
                             hive.decrRewindUsed();
                         } else { //Si c'est mapToMapMovement
                             hive.getInputsManager()->convertQtToSolver(actualP);
-                            qDebug()<<"Wait ? : "<<actualP->getInputs().getStart().getI();
                             hive.getSolver()->mapToMapMovement(*actualP);
                             hive.getInputsManager()->convertSolverToQt(actualP);
                             hive.decrRewindUsed();
@@ -334,6 +346,7 @@ void hiveRenderer::handleButtonClick() {
                         updateInputT();
                     } else {
                         if (button->getCoordinates()!=deck) {
+                            infoLabel->setText(QString("Vous devez poser la reine pour bouger un insecte"));
                             lastClicked=nullptr;
                         }else {
                             button->updateState(1); //Insect a été sélectionné
@@ -354,7 +367,9 @@ void hiveRenderer::handleButtonClick() {
                 } else {
                     if (button->getInsectType()!=bee) {
                         lastClicked=nullptr;
+                        infoLabel->setText(QString("Vous devez poser la reine"));
                     } else {
+                        infoLabel->setText(QString(""));
                         button->updateState(1); //Insect a été sélectionné
                         lastClicked=button;
                         //Pour toujours avoir un index valide
@@ -392,6 +407,14 @@ void hiveRenderer::showWinner(Player* winner) {
     winLabel->setFont(winFont);
     layout->addWidget(winLabel);
     winWindow->setLayout(layout);
+
+    auto menu=QString("Menu");
+    auto *menuButton = new ParamButton(winWindow,menu);
+    menuButton->setType(Menu);
+    menuButton->setParent(winWindow);
+    menuButton->move(30*25+100, 30);
+    connect(menuButton, &ParamButton::clicked, this, &hiveRenderer::handleParamButtonClick);
+    menuButton->setStyleSheet("background: grey;");
     winWindow->show();
 
     // Cache temporairement la fenêtre principale
@@ -402,43 +425,44 @@ void hiveRenderer::handleParamButtonClick() {
     auto *button = qobject_cast<ParamButton *>(sender());
     qDebug()<<"\n nombre Rewind : "<<hive.getRewindMax()-hive.getRewindUsed();
     if (button->getType()==Rewind) {
-        if (hive.getRewindUsed()<hive.getRewindMax()) {
-            vec2i from =hive.getMap().getHistoric().front().from;
-            vec2i to = convertCoordinates(hive.getMap().getHistoric().front().to);
-            qDebug()<<"\nfrom I : "<<from.getI();
-            if(from.getI()>=0) {
-                //c'etait un map to map movement
-                from=convertCoordinates(from);
-                *buttons[from.getI()][from.getJ()]=*buttons[to.getI()][to.getJ()];
-                buttons[to.getI()][to.getJ()]->updateState(2);
-                buttons[to.getI()][to.getJ()]->setInsectType(none);
-                hive.getMap().goBack();
-            } else {
-                int sizeDeck=15;
-                int index=0;
-                int turn=1;
-                Player * actualP=hive.getPlayer2();
-                if (playerTurn) {
-                    actualP=hive.getPlayer1();//Si c'est au tour du joueur 1, on change le joueur actuel
-                    turn=0;
-                }
+        for (int i=0; i<2;i++) {
+            if (hive.getRewindUsed()<hive.getRewindMax()) {
+                vec2i from =hive.getMap().getHistoric().front().from;
+                vec2i to = convertCoordinates(hive.getMap().getHistoric().front().to);
+                qDebug()<<"\nfrom I : "<<from.getI();
+                if(from.getI()>=0) {
+                    //c'etait un map to map movement
+                    from=convertCoordinates(from);
+                    *buttons[from.getI()][from.getJ()]=*buttons[to.getI()][to.getJ()];
+                    buttons[to.getI()][to.getJ()]->updateState(2);
+                    buttons[to.getI()][to.getJ()]->setInsectType(none);
+                    hive.getMap().goBack();
+                } else {
+                    int index=0;
+                    int turn=1;
+                    Player * actualP=hive.getPlayer2();
+                    if (playerTurn) {
+                        actualP=hive.getPlayer1();//Si c'est au tour du joueur 1, on change le joueur actuel
+                        turn=0;
+                    }
 
-                while (buttons[30][from.getJ()+index+(turn)*sizeDeck]->getState()!=2) {
-                    index++;
+                    while (buttons[30][from.getJ()+index+(turn)*(sizeDeck-1)]->getState()!=2) {
+                        index++;
+                    }
+                    *buttons[30][from.getJ()+index+(turn)*sizeDeck]=*buttons[to.getI()][to.getJ()];
+                    buttons[to.getI()][to.getJ()]->updateState(2);
+                    buttons[to.getI()][to.getJ()]->setInsectType(none);
+                    hive.getSolver()->goBackDeck(*actualP, from, reconvertCoordinates(to));
                 }
-                *buttons[30][from.getJ()+index+(turn)*sizeDeck]=*buttons[to.getI()][to.getJ()];
-                buttons[to.getI()][to.getJ()]->updateState(2);
-                buttons[to.getI()][to.getJ()]->setInsectType(none);
-                hive.getSolver()->goBackDeck(*actualP, from, reconvertCoordinates(to));
+                updatePlayerTurn();
+                hive.getSolver()->decrTurn();
+                hive.incrRewindUsed();
             }
-            updatePlayerTurn();
-            hive.getSolver()->decrTurn();
-            hive.incrRewindUsed();
-        }
-        qDebug()<<"\nHistorique : ";
-        for (auto move : hive.getMap().getHistoric()) {
-            qDebug()<<"\n("<<move.from.getI()<<","<<move.from.getJ()<<")";
-            qDebug()<<"-> ("<<move.to.getI()<<","<<move.to.getJ()<<")";
+            qDebug()<<"\nHistorique : ";
+            for (auto move : hive.getMap().getHistoric()) {
+                qDebug()<<"\n("<<move.from.getI()<<","<<move.from.getJ()<<")";
+                qDebug()<<"-> ("<<move.to.getI()<<","<<move.to.getJ()<<")";
+            }
         }
     } else if (button->getType()==Menu) {
         MainWindow *w=new MainWindow(nullptr);
