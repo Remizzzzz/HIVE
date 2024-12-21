@@ -1,0 +1,362 @@
+                 @startuml
+                 class Hive {
+                     - bool isInit
+                     - std::set<insectType> extensions
+                     - Mode mode
+                     - Version version
+                     - std::vector<Insect *> insects
+                     - const int trueMapSideSize {32}
+                     - const int renderedMapSideSize {30}
+                     - int rewindNb
+                     - Map map
+                     - Player player1
+                     - Player player2
+                     - Player * currentPlayer
+                     - InputsManager inputsManager
+                     - Solver solver
+                     - Renderer * renderer
+
+                     + Hive()
+                     + ~Hive()
+                     + static void displayRules()
+                     + void changeSettings()
+                     + void saveGame(const std::string& filename) const
+                     + void loadGame(const std::string& filename)
+                     + int initIfNeeded()
+                     + int run()
+
+                     - void generateAllInsects()
+                     - void switchPlayer()
+                     - static void resetInputs(Player & player_)
+                     - int displayMenu()
+                 }
+
+                 class Player {
+                     -id: int
+                     -isHuman: bool
+                     -name: string
+                     -deck: Deck
+                     -activeInsects: List<Insect>
+                     -inputs: Inputs
+                     +getId(): int
+                     +getInputs(): Inputs
+                     +getDeck(): Deck
+                     +getActiveInsects(): List<Insect>
+                     +addActiveInsectsFromDeck(deckIndex: int): void
+                     +setHumanity(isHuman: bool): void
+                 }
+
+                 Player *-- Deck
+                 Player *-- Inputs
+                 Player o-- Insect
+
+                 class Random {
+                     +getRandomInt(a_: int, b_: int): int
+                     +getRandomFloat(a_: float, b_: float): float
+                     +getRandomDouble(a_: double, b_: double): double
+                 }
+
+
+                 enum Mode {
+                   PvP
+                   PvAI
+                 }
+
+                 class InputsManager {
+                     -renderedMapSideSize: int
+                     -map: &Map
+                     -random: lv::Random
+                     +updateAIInputs(player_: Player): void
+                     +updatePlayerInputs(player_: Player): void
+                     +moveCursor(player: Player, cursorId_: int, i_: int, j_: int): void
+                 }
+                 note top of InputsManager
+                   S'occupe de générer/les inputs des joueurs
+                 end note
+
+                 InputsManager o-- Map
+                 InputsManager *-- Random
+
+                 class Inputs {
+                     - startSelected: bool
+                     - start: vec2i
+                     - destinationSelected: bool
+                     - destinationIndex: int
+                     - needPossibleDestinations: bool
+                     - possibleDestinations: std::vector<vec2i>
+                     - message: std::string
+                     + Inputs()
+                     + movementNeeded(): bool
+                     + getStart(): const vec2i&
+                     + getDestinationIndex(): const int&
+                     + getDestination(): const vec2i&
+                     + getPossibleDestinations(): const std::vector<vec2i>&
+                     + getPossibleDestinationsNumber(): const int
+                     + setStart(start_: vec2i): void
+                     + setDestionationIndex(destinationIndex_: int): void
+                     + setPossibleDestinations(possibleDestinations_: const std::vector<vec2i>&): void
+                     + isPossibleDestinationsEmpty(): bool
+                     + isStartSelected(): bool
+                     + isDestinationSelected(): bool
+                     + selectStart(): void
+                     + selectDestination(): void
+                     + needPossibleDestinationsUpdate(): void
+                     + noNeedForPossibleDestinationsUpdate(): void
+                     + isPossibleDestinationsNeeded(): bool
+                     + setMessage(message_: const std::string&): void
+                     + getMessage(): const std::string&
+                     + reset(): void
+                 }
+
+                 Inputs --"*" vec2i
+
+                 note top of Inputs
+                   Représente les entrées d'un joueur pour un mouvement
+                 end note
+
+                 class Solver {
+                     -map: &Map
+                     -trueMapSideSize: int
+                     -getStartLocation(player_: Player): int
+                     -isStartValid(player_: Player): bool
+                     -isDestinationValid(player_: Player): bool
+                     -deckToMapMovement(player_: Player): void
+                     -mapToMapMovement(player_: Player): void
+                     +update(player_: Player): int
+                 }
+
+                 Solver o-- Map
+
+                 enum Version {
+                   console
+                   graphic
+                 }
+
+                 class Renderer {
+                     + displayMap(currentPlayer_: Player) : void
+                     # Player* P1
+                     # Player* P2
+                     # int renderedSideSize
+                     # Map& map
+                 }
+
+                 class ConsoleRenderer {
+                     + displayIndentation(rowIndex: size_t) : void
+                     + displayRow(rowIndex: size_t, start: vec2i) : void
+                     + getSlotContent(slot: Insect*, idColor: int) : string
+                     + displayDeck(P: Player, indexPlayer: int) : void
+                 }
+
+                 class GraphicRenderer {
+                     + displayMap(currentPlayer_: Player) : void
+                 }
+
+                 ConsoleRenderer o-- Map : "utilise"
+                 ConsoleRenderer o-- Player : "interagit avec"
+                 GraphicRenderer o-- Map : "utilise"
+                 GraphicRenderer o-- Player : "interagit avec"
+
+
+                 Renderer <|-- ConsoleRenderer
+                 Renderer <|-- GraphicRenderer
+                 note top of Renderer
+                   S'occupe de l'affichage
+                 end note
+
+                 class Insect {
+                     - int id
+                     - insectType iT
+                     - vec2i coordinates
+                     - bool color
+                     - static int counter
+                     + Insect(bool col, insectType type)
+                     + int getID() const
+                     + int getIT() const
+                     + bool getColor() const
+                     + vec2i getCoordinates() const
+                     + void setCoordinates(const vec2i & coordinates_)
+                     + virtual std::vector<vec2i> getPossibleMovements(Map &m) const
+                     + virtual std::string getPrintableValue(int idColor) const
+                     + bool isLinkingHive(Map &m) const
+                 }
+
+                 enum insectType {
+                     ant, beetle, grasshopper, bee, spider, mosquitoe, ladybug, none
+                 }
+
+                 class Bee {
+                     + Bee(bool col)
+                     + std::vector<vec2i> getPossibleMovements(Map &m) const
+                     + bool isCircled(Map &m)
+                 }
+
+                 class Beetle {
+                     - const Insect* isAboveOf
+                     + Beetle(bool col)
+                     + const Insect* getInsectUnder() const
+                     + void setAboveOf(const Insect *insect)
+                     + std::vector<vec2i> getPossibleMovements(Map &m) const
+                 }
+
+                 class Grasshopper {
+                     + Grasshopper(bool col)
+                     + std::vector<vec2i> getPossibleMovements(Map &m) const
+                 }
+
+                 class Spider {
+                     + Spider(bool col)
+                     + std::vector<vec2i> getPossibleMovements(Map &m) const
+                 }
+
+                 class Ant {
+                     + Ant(bool col)
+                     + std::vector<vec2i> getPossibleMovements(Map &m) const
+                 }
+
+                 class Mosquitoe{
+                     + Mosquitoe(bool col)
+                     + std::vector<vec2i> getPossibleMovements(Map &m) const
+                 }
+
+                 class Ladybug {
+                     + Ladybug(bool col)
+                     + std::vector<vec2i> getPossibleMovements(Map &m) const
+                 }
+                 class Map {
+                     - std::vector<const Insect *> slots
+                     - std::list<movement> historic
+                     - vec2i relativePos
+                     - const int sideSize
+                     - int rewind
+
+                     + Map(const int &sideSize_, int &n)
+                     + void putInsectTo(const Insect *insect_, const vec2i &pos_)
+                     + const Insect *getInsectAt(const vec2i &pos_) const
+                     + const int &getSideSize() const
+                     + vec2i getRelativePos() const
+                     + std::vector<const Insect *> getSlots() const
+                     + void removeInsectAt(const vec2i &pos_)
+                     + bool isSlotFree(const vec2i &pos_)
+                     + void moveInsect(const vec2i &pos1_, const vec2i &pos2_)
+                     + std::list<vec2i> getNeighbours(const vec2i &pos_) const
+                     + void addToHistoric(const vec2i &from, const vec2i &to)
+                     + void goBack()
+                     + void updateBeetlePosition(Beetle *beetle, const vec2i &newPos)
+                     + void keepInsectsInMap()
+                     --
+                     - bool isLeftBorderTouched()
+                     - bool isRightBorderTouched()
+                     - bool isTopBorderTouched()
+                     - bool isBottomBorderTouched()
+                     - void translateMap(const vec2i &tVec)
+                     - void translateHistory(const vec2i &tVec)
+                     - int posToIndex(const vec2i &pos_) const
+                     - void getMap() const
+                 }
+
+                 Map "1" o-- "*" Insect
+                 Map "1" *-- "*" vec2i
+
+                 Map *-- movement
+
+                 class movement {
+                     - vec2i from
+                     - vec2i to
+                     + movement(const vec2i &from_, const vec2i &to_)
+                     + movement()
+                 }
+                 movement "1" *-- "2" vec2i
+
+                 class vec2i {
+                   - i : int
+                   - j : int
+                   + vec2i(i : int, j : int)
+                   + operator=(vec2i const & v) : vec2i &
+                   + operator==(vec2i const & v) : bool
+                   + get() : const int &
+                   + set(i : const int &)
+                   + isNull() : bool
+                 }
+                 note top of vec2i
+                   Représente les cases en deux dimensions
+                 end note
+
+
+
+
+
+                 class Deck {
+                     - std::vector<Insect *> insects
+                     - int insectNb = 0
+                     --
+                     + Deck()
+                     + const std::vector<Insect *>* getInsects() const
+                     + Iterator begin()
+                     + Iterator end()
+                     + const int & getInsectNb() const
+                     + void addInsect(Insect *insect_)
+                     + const Insect * getInsectAt(const int &index_) const
+                     + void setInsectAtNewPosition(const int &index_, const vec2i &position_)
+                     + bool isSlotFree(const int &index_) const
+                     + bool isIndexValid(const int &index_) const
+                     + void removeAt(const int &index_)
+                     + bool isEmpty() const
+                 }
+                 note top of Deck
+                   Endroit où mettre les insects avant qu'ils ne soient placés sur la map
+                 end note
+
+                 Deck o-- "*" Insect
+
+                 class Deck::Iterator {
+                     - std::vector<Insect *>::iterator current
+                     --
+                     + Iterator(std::vector<Insect *>::iterator it)
+                     + Insect *& operator*()
+                     + Iterator& operator++()
+                     + bool operator==(const Iterator& other) const
+                     + bool operator!=(const Iterator& other) const
+                 }
+
+                 Deck::Iterator o-- "*" Insect
+
+                 class HiveException {
+                   - location : std::string
+                   - content : std::string
+                   + HiveException(location_ : std::string, content_ : std::string)
+                   + getLocation() : const std::string&
+                   + getContent() : const std::string&
+                   + getInfos() : std::string
+                 }
+                 note top of HiveException
+                   Permet une gestion des erreurs
+                 end note
+
+
+                 Hive *-- "1" Renderer
+                 Hive *-- "1" Map
+                 Hive *-- "1" Solver
+                 Hive *-- "2" Player
+                 Hive *-- "*" Insect
+                 Hive *-- "1" InputsManager
+
+
+                 Deck *-- Deck::Iterator
+
+                 Insect <|-- Spider
+                 Insect <|-- Grasshopper
+                 Insect <|-- Bee
+                 Insect <|-- Beetle
+                 Insect <|-- Ant
+                 Insect <|-- Mosquitoe
+                 Spider <|-- Mosquitoe
+                 Grasshopper <|-- Mosquitoe
+                 Bee <|-- Mosquitoe
+                 Beetle <|-- Mosquitoe
+                 Ant <|-- Mosquitoe
+                 Insect <|-- Ladybug
+                 Insect "0..1"-- "0..1"vec2i
+
+
+
+                 @enduml
