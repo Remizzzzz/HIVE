@@ -251,7 +251,7 @@ public:
         }
     }
 
-    [[nodiscard]] bool isSlotUsable(const vec2i & pos_) const
+    [[nodiscard]] bool isSlotUsable(const vec2i & pos_, const vec2i & posToIgnore) const
     {
         if(pos_.getI() > 0 && pos_.getI() < getSideSize() && pos_.getJ() > 0 && pos_.getJ() < getSideSize())
         {
@@ -259,7 +259,8 @@ public:
             std::list<vec2i> neighbours = getNeighbours(pos_);
             for(auto & neighbour : neighbours)
             {
-                if(!isSlotFree(neighbour)) compteur++;
+                if(!isSlotFree(neighbour)&&neighbour!=posToIgnore) compteur++;
+
             }
             return compteur < 5;
         }

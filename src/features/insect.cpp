@@ -220,7 +220,7 @@ std::vector<vec2i> Bee::getPossibleMovements(Map &m) const {
     try{
     std::vector<vec2i> possibleMovements;
     // Vérifie que l'abeille puisse bouger sans casser la ruche en deux
-    if(!this->isLinkingHive(m) && m.isSlotUsable(getCoordinates())) {
+    if(!this->isLinkingHive(m) && m.isSlotUsable(getCoordinates(), vec2i(-1,-1))) {
         std::list<vec2i> neighbors = m.getNeighbours(getCoordinates()); // Récupère les voisins de la case
         // Parcourt chaque voisin
         for (auto neighbor : neighbors) {
@@ -326,7 +326,7 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const {
     try {
 
         std::vector<vec2i> possiblePlace;
-        if(!isLinkingHive(m) && m.isSlotUsable(getCoordinates())) {
+        if(!isLinkingHive(m) && m.isSlotUsable(getCoordinates(), vec2i(-1,-1))) {
             // Découvrir tous les insectes connectés
             std::vector<vec2i> insectSet = {this->getCoordinates()}; // Liste des insectes connectés
             std::set<vec2i> visited;                      // Ensemble pour éviter les doublons
@@ -371,7 +371,7 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const {
                 toCheck.erase(slot);
             }*/
             for (const auto& slot : toCheck) {
-                if(!m.isSlotUsable(slot)) toCheck.erase(slot);
+                if(!m.isSlotUsable(slot, getCoordinates())) toCheck.erase(slot);
             }
             // Convertir l'ensemble des positions valides en vecteur
             possiblePlace.assign(toCheck.begin(), toCheck.end());
@@ -396,7 +396,7 @@ std::vector<vec2i> Spider::getPossibleMovements(Map &m) const {
         std::vector<vec2i> possibleMovements;
 
         // Vérifie que l'insecte puisse bouger
-        if (!this->isLinkingHive(m) && m.isSlotUsable(getCoordinates())) {
+        if (!this->isLinkingHive(m) && m.isSlotUsable(getCoordinates(), vec2i(-1,-1))) {
             // 1er niveau de voisins
             std::list<vec2i> firstLevel = m.getNeighbours(getCoordinates());
 
@@ -499,7 +499,7 @@ std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) const{
                         // method getPossibleMovement où on ajoute les cases dans l'ensemble
                         switch(m.getInsectAt(neighbour)->getIT()) {
                             case bee:
-                                if( m.isSlotUsable(getCoordinates())){
+                                if( m.isSlotUsable(getCoordinates(), vec2i(-1,-1))){
                                 for (const auto& movement : Bee::getPossibleMovements(m)) {
                                     possibleMovements.insert(movement);
                                 }
@@ -507,7 +507,7 @@ std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) const{
                                 }
                             break;
                             case ant:
-                                if( m.isSlotUsable(getCoordinates())) {
+                                if( m.isSlotUsable(getCoordinates(), vec2i(-1,-1))) {
                                     for (const auto& movement : Ant::getPossibleMovements(m)) {
                                         possibleMovements.insert(movement);
                                     }
@@ -520,7 +520,7 @@ std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) const{
 
                             break;
                             case spider:
-                                if( m.isSlotUsable(getCoordinates())) {
+                                if( m.isSlotUsable(getCoordinates(), vec2i(-1,-1))) {
                                     for (const auto& movement : Spider::getPossibleMovements(m)) {
                                         possibleMovements.insert(movement);
                                     }
