@@ -489,58 +489,67 @@ std::vector<vec2i> Ladybug::getPossibleMovements(Map &m) const {
 std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) const{
     try{
         if (!this->isLinkingHive(m)) {
-            std::list<vec2i> neighbours = m.getNeighbours(getCoordinates()); // On récupère la liste des cases voisines
-            std::set<vec2i> possibleMovements;
-            for (auto it = neighbours.begin(); it != neighbours.end(); ++it) {
-                //On itère dans chaque case voisine
-                if(!m.isSlotFree(*it)){ // Si la case est occupé on détermine le type d'insecte et on applique sa
-                    // method getPossibleMovement où on ajoute les cases dans l'ensemble
-                    switch(m.getInsectAt(*it)->getIT()) {
-                        case bee:
-                            if( m.isSlotUsable(getCoordinates())){
-                            for (const auto& movement : Bee::getPossibleMovements(m)) {
-                                possibleMovements.insert(movement);
-                            }
-
-                            }
-                        break;
-                        case ant:
-                            if( m.isSlotUsable(getCoordinates())) {
-                                for (const auto& movement : Ant::getPossibleMovements(m)) {
+            if(getInsectUnder()==nullptr)
+            {
+                std::list<vec2i> neighbours = m.getNeighbours(getCoordinates()); // On récupère la liste des cases voisines
+                std::set<vec2i> possibleMovements;
+                for (auto & neighbour : neighbours) {
+                    //On itère dans chaque case voisine
+                    if(!m.isSlotFree(neighbour)){ // Si la case est occupé on détermine le type d'insecte et on applique sa
+                        // method getPossibleMovement où on ajoute les cases dans l'ensemble
+                        switch(m.getInsectAt(neighbour)->getIT()) {
+                            case bee:
+                                if( m.isSlotUsable(getCoordinates())){
+                                for (const auto& movement : Bee::getPossibleMovements(m)) {
                                     possibleMovements.insert(movement);
                                 }
-                            }
-                        break;
-                        case grasshopper:
-                            for (const auto& movement : Grasshopper::getPossibleMovements(m)) {
-                                possibleMovements.insert(movement);
-                            }
 
-                        break;
-                        case spider:
-                            if( m.isSlotUsable(getCoordinates())) {
-                                for (const auto& movement : Spider::getPossibleMovements(m)) {
+                                }
+                            break;
+                            case ant:
+                                if( m.isSlotUsable(getCoordinates())) {
+                                    for (const auto& movement : Ant::getPossibleMovements(m)) {
+                                        possibleMovements.insert(movement);
+                                    }
+                                }
+                            break;
+                            case grasshopper:
+                                for (const auto& movement : Grasshopper::getPossibleMovements(m)) {
                                     possibleMovements.insert(movement);
                                 }
-                            }
 
-                        break;
-                        case beetle:
-                            for (const auto& movement : Beetle::getPossibleMovements(m)) {
-                                possibleMovements.insert(movement);
-                            }
-                        break;
-                        case ladybug:
-                            for (const auto& movement : Ladybug::getPossibleMovements(m)) {
-                                possibleMovements.insert(movement);
-                            }
-                        break;
-                    }}
-            }
+                            break;
+                            case spider:
+                                if( m.isSlotUsable(getCoordinates())) {
+                                    for (const auto& movement : Spider::getPossibleMovements(m)) {
+                                        possibleMovements.insert(movement);
+                                    }
+                                }
+
+                            break;
+                            case beetle:
+                                for (const auto& movement : Beetle::getPossibleMovements(m)) {
+                                    possibleMovements.insert(movement);
+                                }
+                            break;
+                            case ladybug:
+                                for (const auto& movement : Ladybug::getPossibleMovements(m)) {
+                                    possibleMovements.insert(movement);
+                                }
+                            break;
+                        }
+                    }
+                }
 
             // Converti l'ensemble en vector
             std::vector<vec2i> possibleMovementsVector(possibleMovements.begin(), possibleMovements.end());
             return possibleMovementsVector;
+            }
+            else
+            {
+                return Beetle::getPossibleMovements(m);
+            }
+
         }
     } catch (const std::string& e) {
         throw HiveException("Mosquitoe::getPossibleMovements", e);
