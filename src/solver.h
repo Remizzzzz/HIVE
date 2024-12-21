@@ -70,9 +70,7 @@ public:
 
     void deckToMapMovement(Player & player_) {
         const vec2i & start = player_.inputs.getStart();
-        qDebug()<<"\n INDEX"<<start.getJ();
         const vec2i & destination = player_.inputs.getDestination();//+vec2i{offset,offset};
-        qDebug()<<"\n DESTINATION ("<<destination.getI()<<","<<destination.getJ()<<")";
         if (player_.getDeck().isIndexValid(start.getJ())){
             if (map.isSlotFree(destination)) {
                 map.putInsectTo(player_.getDeck().getInsectAt(start.getJ()), destination);
@@ -86,7 +84,6 @@ public:
                 player_.inputs.setMessage("Can't put your insect here");
             }
         } else {
-            qDebug()<<"\nOK";
             throw HiveException("solver.h:Solver:deckToMapGestion", "cursor1 is invalid for deck1");
         }
     }

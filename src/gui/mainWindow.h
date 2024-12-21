@@ -30,7 +30,7 @@ private slots:
 
 private:
     Mode hiveMode=PvP;
-    int hiveNbRewind=0;
+    int hiveNbRewind=5;
     bool hasLadybug=false;
     bool hasMosquito=false;
     bool load=false;

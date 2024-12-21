@@ -132,7 +132,6 @@ public:
     int returnIndex(insectType type_) const {
         int index=0;
         for (auto it : insects) {
-            qDebug()<<it->getIT();
             if (it->getIT() == type_) {
                 return index;
             }
