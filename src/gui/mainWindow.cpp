@@ -10,6 +10,7 @@
 #include <QStackedWidget>
 #include <QProcess>
 #include <windows.h>
+#include <QLineEdit>
 #include <QThread>
 #include <QSpinBox>
 #include <QCheckBox>
@@ -131,7 +132,7 @@ void MainWindow::initializeTutorialWidget() {
 
 void MainWindow::initializeSettingsWidget() {
     auto *settingsWidget = new QWidget(this);
-    auto *layout = new QVBoxLayout(settingsWidget);
+    auto *settingsLayout = new QVBoxLayout(settingsWidget);
     settingsWidget->setFixedWidth(450);
 
     // Titre
@@ -141,7 +142,19 @@ void MainWindow::initializeSettingsWidget() {
     titleFont.setPointSize(16);
     titleFont.setBold(true);
     titleLabel->setFont(titleFont);
-    layout->addWidget(titleLabel);
+    settingsLayout->addWidget(titleLabel);
+
+    // Nom des joueurs
+    QLabel *player1Label = new QLabel("Nom du joueur 1:", this);
+    QLineEdit *player1NameEdit = new QLineEdit(this);
+    player1NameEdit->setPlaceholderText("Entrez le nom du joueur 1");
+    QLabel *player2Label = new QLabel("Nom du joueur 2:", this);
+    QLineEdit *player2NameEdit = new QLineEdit(this);
+    player2NameEdit->setPlaceholderText("Entrez le nom du joueur 2 (IA par défaut si PvAI)");
+    settingsLayout->addWidget(player1Label);
+    settingsLayout->addWidget(player1NameEdit);
+    settingsLayout->addWidget(player2Label);
+    settingsLayout->addWidget(player2NameEdit);
 
     // Mode de jeu
     auto *modeLabel = new QLabel("Choisir le mode de jeu", settingsWidget);
@@ -149,8 +162,8 @@ void MainWindow::initializeSettingsWidget() {
     modeComboBox->addItem("Joueur vs Joueur (PvP)", 0);
     modeComboBox->addItem("Joueur vs IA (PvAI)", 1);
     modeComboBox->setCurrentIndex(modeComboBox->findData(mode));
-    layout->addWidget(modeLabel);
-    layout->addWidget(modeComboBox);
+    settingsLayout->addWidget(modeLabel);
+    settingsLayout->addWidget(modeComboBox);
 
     // Niveau de l'IA
     auto *levelLabel = new QLabel("Choisir le niveau de l'IA (PvAI uniquement)", settingsWidget);
@@ -160,8 +173,8 @@ void MainWindow::initializeSettingsWidget() {
     levelComboBox->addItem("Niveau moyen", 0);
     levelComboBox->addItem("Niveau difficile", 0);
     levelComboBox->setCurrentIndex(levelComboBox->findData(levelIA));
-    layout->addWidget(levelLabel);
-    layout->addWidget(levelComboBox);
+    settingsLayout->addWidget(levelLabel);
+    settingsLayout->addWidget(levelComboBox);
 
     // Extensions
     auto *extensionsLabel = new QLabel("Activer/Désactiver les extensions", settingsWidget);
@@ -169,30 +182,43 @@ void MainWindow::initializeSettingsWidget() {
     auto *mosquitoCheckBox = new QCheckBox("Activer l'extension Mosquito", settingsWidget);
     ladybugCheckBox->setCheckState(hasLadybug ? Qt::Checked : Qt::Unchecked);
     mosquitoCheckBox->setCheckState(hasMosquito ? Qt::Checked : Qt::Unchecked);
-    layout->addWidget(extensionsLabel);
-    layout->addWidget(ladybugCheckBox);
-    layout->addWidget(mosquitoCheckBox);
+    settingsLayout->addWidget(extensionsLabel);
+    settingsLayout->addWidget(ladybugCheckBox);
+    settingsLayout->addWidget(mosquitoCheckBox);
 
     // Nb rewinds
     auto *rewindLabel = new QLabel("Modifier le nombre de rewinds (0 à 10)", settingsWidget);
     auto *rewindSpinBox = new QSpinBox(settingsWidget);
     rewindSpinBox->setRange(0, 10);
     rewindSpinBox->setValue(hiveNbRewind);
-    layout->addWidget(rewindLabel);
-    layout->addWidget(rewindSpinBox);
+    settingsLayout->addWidget(rewindLabel);
+    settingsLayout->addWidget(rewindSpinBox);
 
     // Bouton de confirmation (pour mettre à jour les paramètres)
     auto *applyButton = new QPushButton("Appliquer", settingsWidget);
-    layout->addWidget(applyButton);
+    settingsLayout->addWidget(applyButton);
 
     // Mettre à jour les paramètres
-    connect(applyButton, &QPushButton::clicked, [this, modeComboBox, ladybugCheckBox, mosquitoCheckBox, rewindSpinBox]() {
-        hiveMode = modeComboBox->currentIndex() == 0 ? PvP : PvAI;
+    connect(applyButton, &QPushButton::clicked, [this, modeComboBox, ladybugCheckBox, mosquitoCheckBox,
+        rewindSpinBox, player1NameEdit, player2NameEdit]() {
+
+        hiveNbRewind = rewindSpinBox->value();
+        nomJ1 = player1NameEdit->text();
+
+        if (modeComboBox->currentIndex() == 0) {
+            hiveNbRewind = PvP;
+            nomJ2 = player2NameEdit->text();
+        }
+        else {
+            hiveNbRewind = PvAI;
+        }
+
         if (ladybugCheckBox->isChecked()) hasLadybug = true;
         else hasLadybug = false;
         if (mosquitoCheckBox->isChecked()) hasMosquito = true;
         else hasMosquito = false;
-        hiveNbRewind = rewindSpinBox->value();
+
+
 
         stackedWidget->setCurrentIndex(0);
     });
@@ -214,8 +240,7 @@ void MainWindow::changeSettings() {
 }
 
 void MainWindow::startNewGame() {
-    // Créer et afficher la fenêtre secondaire
-    //auto *hive = new hiveRenderer(nullptr, hiveNbRewind, hiveMode, hasLadybug, hasMosquito, load);
+    // Ajouter ", nomJ1, nomJ2" quand le constructeur sera prêts ce sont des QString
     auto *hive = new hiveRenderer(nullptr, hiveNbRewind, hiveMode, hasLadybug, hasMosquito, load);
     hive->setStyleSheet("background-color: black;");
     hive->show();

@@ -8,6 +8,7 @@
 #include <QStackedWidget>
 #include "hive.h"
 
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -35,6 +36,8 @@ private:
     bool hasLadybug = false;
     bool hasMosquito = false;
     bool load = false;
+    QString nomJ1;
+    QString nomJ2 = "IA";
 
     // Boutons du menu
     QPushButton *startButton;
