@@ -204,11 +204,11 @@ void MainWindow::initializeSettingsWidget() {
         nomJ1 = player1NameEdit->text();
 
         if (modeComboBox->currentIndex() == 0) {
-            hiveMode = PvP;
+            hiveNbRewind = PvP;
             nomJ2 = player2NameEdit->text();
         }
         else {
-            hiveMode = PvAI;
+            hiveNbRewind = PvAI;
         }
 
         if (ladybugCheckBox->isChecked()) hasLadybug = true;
