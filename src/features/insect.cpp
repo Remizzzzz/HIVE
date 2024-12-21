@@ -325,47 +325,56 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const {
     std::vector<vec2i> possibleMovements;
     try {
 
-        std::vector<vec2i> possiblePlace;
         if(!isLinkingHive(m) && m.isSlotUsable(getCoordinates())) {
             // Découvrir tous les insectes connectés
-            std::vector<vec2i> insectSet = {this->getCoordinates()}; // Liste des insectes connectés
-            std::set<vec2i> visited;                      // Ensemble pour éviter les doublons
-            std::set<vec2i> toCheck;                      // Cases vides adjacentes à vérifier
-
-            // Parcours dynamique avec `while`
-            size_t index = 0; // Indice pour parcourir `insectSet`
-            while (index < insectSet.size()) {
-                vec2i current = insectSet[index];
-                visited.insert(current);
-
-                // Récupérer les voisins de l'insecte courant
-                for (const auto& neighbor : m.getNeighbours(current)) {
-                    if (!m.isSlotFree(neighbor)) {
-                        // Si un insecte voisin est trouvé, l'ajouter à `insectSet` s'il n'a pas encore été visité
-                        if (visited.find(neighbor) == visited.end() &&
-                            std::find(insectSet.begin(), insectSet.end(), neighbor) == insectSet.end()) {
-                            insectSet.push_back(neighbor);
-                            }
+            std::set<vec2i> visited   ;                  // Ensemble pour éviter les doublons
+            std::set<vec2i> toCheck;
+            bool attach;
+            std::list<vec2i> neigh = m.getNeighbours(this->getCoordinates()) ; // Liste des insectes connectés
+            for (auto neighbor : neigh) {
+                if(m.isSlotFree(neighbor)) {
+                    attach = false;
+                    for (const auto& neighborcheck : m.getNeighbours(neighbor)) {
+                        if (!m.isSlotFree(neighborcheck) && neighborcheck != this->getCoordinates()) {
+                            attach = true;
+                        }
+                    }
+                    if(attach) {
+                        toCheck.emplace(neighbor);
                     }
                 }
-                ++index; // Avancer l'indice pour explorer le prochain insecte
             }
-            //const vec2i& current = this->getCoordinates();
-            visited.erase(getCoordinates());
-            // Convertir l'ensemble des positions valides en vecteur
+            ////possibleMovements.assign(toCheck.begin(), toCheck.end());
+            //return possibleMovements;
+                                  // Cases vides adjacentes à vérifier
+            auto it = toCheck.begin();
 
-
-
-            // Itérer sur tous les insectes dans l'ensemble
-            for (const auto& insect : visited) {
-                for (const auto& neighbor : m.getNeighbours(insect)) {
-
+            while (it != toCheck.end()) {
+                for (const auto& neighbor : m.getNeighbours(*it)) {
                     if (m.isSlotFree(neighbor)) {
-                        // Ajouter les cases vides à `toCheck`
-                        toCheck.insert(neighbor);
+                        attach = false;
+
+                        // Vérification des voisins
+                        for (const auto& neighborCheck : m.getNeighbours(neighbor)) {
+                            if (!m.isSlotFree(neighborCheck) && neighborCheck != this->getCoordinates()) {
+                                attach = true;
+                                break;
+                            }
+                        }
+
+                        // Si on peut attacher, ajouter `neighbor` à `toCheck`
+                        if (attach) {
+                            toCheck.insert(neighbor); // `emplace` remplacé par `insert` pour plus de clarté.
+                        }
                     }
                 }
+
+                // Incrémentation de l'itérateur après traitement
+                ++it;
             }
+
+            //const vec2i& current = this->getCoordinates();
+
 
             /*for (const auto& slot : insectSet) {
                 toCheck.erase(slot);
@@ -374,11 +383,11 @@ std::vector<vec2i> Ant:: getPossibleMovements(Map &m) const {
                 if(!m.isSlotUsable(slot)) toCheck.erase(slot);
             }
             // Convertir l'ensemble des positions valides en vecteur
-            possiblePlace.assign(toCheck.begin(), toCheck.end());
+            possibleMovements.assign(toCheck.begin(), toCheck.end());
 
 
         }
-        return possiblePlace;
+        return possibleMovements;
 
     } catch (const std::string& e) {
         throw HiveException("Map::setRule", e);
