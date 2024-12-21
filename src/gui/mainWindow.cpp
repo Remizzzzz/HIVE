@@ -169,9 +169,7 @@ void MainWindow::initializeSettingsWidget() {
     auto *levelLabel = new QLabel("Choisir le niveau de l'IA (PvAI uniquement)", settingsWidget);
     auto *levelComboBox = new QComboBox(settingsWidget);
     levelComboBox->addItem("Niveau aléatoire", 0);
-    levelComboBox->addItem("Niveau facile", 0);
-    levelComboBox->addItem("Niveau moyen", 0);
-    levelComboBox->addItem("Niveau difficile", 0);
+    /* Pour ajouter d'autres IA c'est ici */
     levelComboBox->setCurrentIndex(levelComboBox->findData(levelIA));
     settingsLayout->addWidget(levelLabel);
     settingsLayout->addWidget(levelComboBox);
