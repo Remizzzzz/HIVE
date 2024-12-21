@@ -14,7 +14,7 @@ private:
 
 public:
     /** Constructeurs */
-    vec2i(int i_, int j_) : i(i_), j(j_){}
+    vec2i(const int i_, const int j_) : i(i_), j(j_){}
     vec2i() : i(0), j(0){}
 
     /** Constructeur de copie : par défaut */

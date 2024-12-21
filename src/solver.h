@@ -12,7 +12,7 @@
 #include "features/player.h"
 #include "utils/utils.h"
 #include "utils/hiveException.h"
-#include "QDebug"
+// #include "QDebug"
 class Solver{
 
 private:
@@ -88,7 +88,7 @@ public:
         }
     }
 
-    void mapToMapMovement(Player & player_){
+    void mapToMapMovement(const Player & player_){
         const vec2i & start = player_.inputs.getStart() + vec2i{offset,offset};
         const vec2i & destination = player_.inputs.getDestination() + vec2i{offset,offset};
 

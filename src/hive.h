@@ -21,6 +21,8 @@
 #include <vector>
 #include <string>
 
+#include "features/AI.h"
+
 
 //enum Mode{PvP,PvAI};
 enum Version{console, graphic};
@@ -286,7 +288,7 @@ public:
                 inputsManager.updatePlayerInputs(*currentPlayer);
             }
             else{
-                inputsManager.updateAIInputs(*currentPlayer);
+                inputsManager.updateAIInputs2(*currentPlayer, AI());
             }
 
             std::cout << "\n:" <<currentPlayer->inputs;
