@@ -17,6 +17,8 @@
 #include "hive.h"
 #include "solver.h"
 #include "renderer.h"
+#include <sstream>
+
 
 
 
@@ -24,55 +26,57 @@
  * @brief Affiche un menu interactif pour l'utilisateur.
  */
 int Hive::displayMenu() {
-    renderer = new ConsoleRenderer(map, &player1, &player2, 30);
+    renderer = new ConsoleRenderer(map, &player1, &player2, renderedMapSideSize, offset);
     version = console;
 
     int choice = 0;
-    do {
-        std::cout << "\n=== Menu Hive ===\n";
-        std::cout << "1. Start a game\n";
-        std::cout << "2. Tutorial\n";
-        std::cout << "3. Resume last game\n";
-        std::cout << "4. Change parameters\n";
-        std::cout << "5. Save current game\n";
-        std::cout << "6. Leave\n";
-        std::cout << "Choose an option : ";
-        std::cin >> choice;
+    std::cout << "\n=== Menu Hive ===\n";
+    std::cout << "1. Start a game\n";
+    std::cout << "2. Tutorial\n";
+    std::cout << "3. Resume last game\n";
+    std::cout << "4. Change parameters\n";
+    std::cout << "5. Save current game\n";
+    std::cout << "6. Leave\n";
+    std::cout << "Choose an option : ";
+    std::cin >> choice;
 
-        switch (choice) {
-            case 1:  // Start a game
-                std::cout << "Starting a new game...\n";
-                return 1;
-
-            case 2:  // Tutorial
-                std::cout << "Launching tutorial...\n";
-                displayRules();
-                break;
-
-            case 3:  // Resume game
-                std::cout << "Resuming the last game...\n";
-                loadGame("../hive_parameters.txt");
-                break;
-
-            case 4:  // Change parameters
-                std::cout << "Changing parameters...\n";
-                changeSettings();
-                break;
-
-            case 5:  // Save game
-                std::cout << "Saving...\n";
-                saveGame("../hive_parameters.txt");
-                break;
-            case 6:  // Leave
-                std::cout << "Au revoir !\n";
+    switch (choice) {
+        case 1:  // Start a game
+            std::cout << "Starting a new game...\n";
+            menuPart = false;
+            gamePart = true;
+            initIfNeeded();
             break;
-            default:
-                std::cout << "Option invalide, veuillez réessayer.\n";
-                break;
-        }
-        std::cout << std::endl;
+        case 2:  // Tutorial
+            std::cout << "Launching tutorial...\n";
+            displayRules();
+            break;
 
-    } while (choice != 6);
+        case 3:  // Resume game
+            std::cout << "Resuming the last game...\n";
+            loadGame("../hive_parameters.txt");
+            isInit = true;
+            break;
+
+        case 4:  // Change parameters
+            std::cout << "Changing parameters...\n";
+            changeSettings();
+            break;
+
+        case 5:  // Save game
+            std::cout << "Saving...\n";
+            saveGame("../hive_parameters.txt");
+            break;
+        case 6:  // Leave
+            menuPart = false;
+            gamePart = false;
+            std::cout << "Au revoir !\n";
+        break;
+        default:
+            std::cout << "Option invalide, veuillez réessayer.\n";
+            break;
+    }
+    std::cout << std::endl;
 
     return 0;
 }
@@ -218,8 +222,10 @@ void Hive::saveGame(const std::string& filename) const{
 
     // Sauvegarder les informations de base (exemple : mode, version)
     file << "Mode:"<< std::endl << static_cast<int>(mode) << std::endl;
+    file << "Turn:"<< std::endl << static_cast<int>(solver.getTurn()) << std::endl;
     file << "isInit:" << std::endl<< static_cast<bool>(isInit) << std::endl;
     file << "trueMapSideSize:"<< std::endl << trueMapSideSize << std::endl;
+    file << "currentPlayer:"<< std::endl << (currentPlayer == &player1 ? 1:2 )<< std::endl;
     file << "renderedMapSideSize:"<< std::endl << renderedMapSideSize << std::endl;
     file << "RewindNb:"<< std::endl << rewindNb << std::endl;
 
@@ -239,7 +245,7 @@ void Hive::saveGame(const std::string& filename) const{
     file << "Insects_Hive:" << std::endl;
     for (const auto& insect : insects) {
         file << insect->getID() << " " << insect->getIT() << " " << insect->getCoordinates().getI()
-        << ","<< insect->getCoordinates().getJ()<< " "<< insect->getColor()<< std::endl;
+        << " "<< insect->getCoordinates().getJ()<< " "<< insect->getColor()<< std::endl;
     }
     file << "Fin_Insects_Hive:"<< std::endl;
     file << "counter:"<< std::endl<< Insect::get_counter() << std::endl;
@@ -317,7 +323,7 @@ void Hive::saveGame(const std::string& filename) const{
     file << "InputManager:"<< std::endl << std::endl;
     file << "InputManager_Fin:"<< std::endl << std::endl;
 
-    file << "Fin" << std::endl;
+    file << "FinFichier" << std::endl;
     file.close();
     std::cout << "Partie sauvegardée avec succès dans " << filename << std::endl;
 }
@@ -340,14 +346,16 @@ void Hive::loadGame(const std::string& filename) {
     bool renderedMapSideSize_done = false;
     bool map_done = false;
     bool insects_done = false;
+    bool currentPlayer_done = false;
     bool extensions_done = false;
     bool joueur1_done = false;
     bool joueur2_done = false;
     int count = 0;
+    int currentPlayeR;
     std::string line;
     // Charger les informations de base
     while (counter < 10) {
-        if(line.find("Fin") != std::string::npos) {
+        if(line.find("FinFichier") != std::string::npos) {
             file.clear();  // Réinitialise les indicateurs (EOF)
             file.seekg(0, std::ios::beg);
         }  // Repositionne le curseur au début
@@ -363,6 +371,14 @@ void Hive::loadGame(const std::string& filename) {
             file >> modeValue;
             std::cout << "Mode:" ;
             mode = static_cast<Mode>(modeValue);
+        }
+
+        if (line.find("Turn:") != std::string::npos && !mode_done) {
+            counter++;mode_done = true;
+            int Turnvalue;
+            file >> Turnvalue;
+            std::cout << "Turn:" ;
+            solver.setTurn(Turnvalue) ;
         }
 
         if (line.find("RewindNb:") == 0  && !rewind_done )  {  // Vérifie si la ligne commence par "RewindNb:"
@@ -384,6 +400,12 @@ void Hive::loadGame(const std::string& filename) {
             file >> trueMapSideSize;
 
         }
+        else if (line.find("currentPlayer:") != std::string::npos  && !currentPlayer_done) {
+            counter++;currentPlayer_done= true;
+            std::cout << "currentplayer\n";
+            file >> currentPlayeR;
+
+        }
         else if (line.find("renderedMapSideSize:") != std::string::npos && !renderedMapSideSize_done) {
             counter++;renderedMapSideSize_done= true;
             std::cout << "lalalalarenderermap\n";
@@ -391,9 +413,9 @@ void Hive::loadGame(const std::string& filename) {
 
 
         }
-
+/*
         // Charger l'état de la carte (Map)
-        else if (line == "Map:" &&  !map_done) {
+        else if (line.find("Map:") != std::string::npos &&  !map_done) {
             std::cout << "mapdone:"<<map_done << std::endl;
             counter++;map_done= true;
             std::cout << "Map:\n" ;
@@ -428,38 +450,21 @@ void Hive::loadGame(const std::string& filename) {
             file >> sideSize;
             file  >> rewind;
 
+
             // Créer une nouvelle instance de la carte avec les valeurs chargées
             vec2i relativePos(relativePosI, relativePosJ);
             Map newMap(sideSize, rewind, relativePos, historic);  // Créer la nouvelle carte
             map = newMap;  // Assigner la nouvelle carte à l'objet actuel
             std::cout << "finmap";
         }
-        // Charger les Insects
-        else if (line == "Insects_Hive:"&& !insects_done) {// probleme rentre pas ici
-            counter++;insects_done= true;
-            std::cout << "Insect_de hive:\n" ;
-            while (std::getline(file, line) && line != "Fin_Insects_Hive:") {
 
-                int id, it, i, j;
-                std::string color;
-                std::istringstream stream(line);
-                stream >> id >> it >> i >> j >> color;
+*/
 
-                vec2i coor ;
-                for (const auto& insect : insects) {
-                    if(insect->getID() == id) {
-                        coor = insect->getCoordinates();
-                    }
-                    //On les pose au bon endroit sur la map
-                    map.moveInsect(coor, vec2i(i, j));
-                }
-            }
-
-        }
         // Charger les Extensions
-        else if (line == "Extensions:" && !extensions_done ) {
+        else if (line.find("Extensions:") != std::string::npos  && !extensions_done ) {
             counter++;extensions_done= true; //Extension probleme
             std::cout << "extensions:\n" ;
+            extensions.clear();
             while (std::getline(file, line) && line != "Fin_Extensions:") {
                 std::istringstream stream(line);
                 insectType extension;
@@ -467,15 +472,21 @@ void Hive::loadGame(const std::string& filename) {
             }
         }
 
+        // Charger les Insects
+
+
+
+
+
         // Charger les informations des joueurs
         else if (line == "Joueur1:" && !joueur1_done ) {
             counter++;joueur1_done= true;
             std::cout << "Joueur1:\n" ;
             int id = 0;
             bool isHuman = false;
+            Deck deck1 = Deck();
             std::string name;
-            Deck deck;  // Vous devrez charger le deck à partir du fichier
-            std::vector<Insect*> activeInsects;  // Liste des insectes actifs à charger
+            std::vector<Insect*> activeInsects1;  // Liste des insectes actifs à charger
 
             while (std::getline(file, line) && line != "Fin_Joueur1:") {
                 if (line.find("ID:") != std::string::npos) {
@@ -490,19 +501,21 @@ void Hive::loadGame(const std::string& filename) {
                 else if (line.find("Deck Size:") != std::string::npos) {
                     int deckSize;
                     file >> deckSize;
-                    deck = Deck();
                 }
                 else if(line.find("Active Insects Count: ") != std::string::npos) {
                     while (std::getline(file, line) && line != "Fin_Active_Insect:") {
                         for (const auto& insect : insects) {
                             if(insect->getID() == id) {
-                                activeInsects.push_back(insect);
+                                activeInsects1.push_back(insect);
                             }
                         }
                     }
                 }
             }
-            Player joueur1 = Player(id, isHuman,name, deck,activeInsects);
+
+            player1 = Player(id, isHuman, name, deck1, activeInsects1);
+            renderer->setPlayer1(&player1);
+
         }
         // Charger les informations de Joueur2 de manière similaire à Joueur1
         // Charger les informations des joueurs
@@ -510,10 +523,10 @@ void Hive::loadGame(const std::string& filename) {
             counter++;joueur2_done= true;
             std::cout << "Joueur2:\n" ;
             int id = 0;
+            Deck deck2 = Deck();
             bool isHuman = false;
             std::string name;
-            Deck deck;  // Vous devrez charger le deck à partir du fichier
-            std::vector<Insect*> activeInsects;  // Liste des insectes actifs à charger
+            std::vector<Insect*> activeInsects2;  // Liste des insectes actifs à charger
 
             while (std::getline(file, line) && line != "Fin_Joueur2:") {
                 if (line.find("ID:") != std::string::npos) {
@@ -528,50 +541,103 @@ void Hive::loadGame(const std::string& filename) {
                 else if (line.find("Deck Size:") != std::string::npos) {
                     int deckSize;
                     file >> deckSize;
-                    deck = Deck();
                 }
                 else if(line.find("Active Insects Count: ") != std::string::npos){
                     while (std::getline(file, line) && line != "Fin_Active_Insect:") {
                         for (const auto& insect : insects) {
                             if(insect->getID() == id) {
-                                activeInsects.push_back(insect);
+                                activeInsects2.push_back(insect);
                             }
                         }
                     }
                 }
             }
-            Player joueur2 = Player(id, isHuman, name, deck, activeInsects);
+            player2 = Player(id, isHuman, name, deck2, activeInsects2);
+            renderer->setPlayer2(&player2);
+
+        }
+        else if (line.find("Insects_Hive:") != std::string::npos  && !insects_done) {
+            for(int i = 0; i < trueMapSideSize * trueMapSideSize; i++){
+                if(map.getSlot(i) != nullptr)
+                map.setSlot(i, nullptr);
+            }
+            std::cout << "les inseeeeeeeeeects Insect_de hive:\n" ;
+            for(auto& insect : insects)
+            {delete insect;insect= nullptr;}
+            insects.clear();
+            Insect::setCounter(0);
+            //generateAllInsects();
+            counter++;insects_done= true;
+            std::cout << "Insect_de hive:\n" ;
+            while (std::getline(file, line) && line != "Fin_Insects_Hive:") {
+
+                int id, it, i, j, color;
+
+                std::istringstream stream(line);
+
+                stream >> id >> it >> i >> j >> color;
+                std::cout<< "id: " << id << std::endl;
+                std::cout<< "it: " << it << std::endl;
+                std::cout<< "coor: " << i <<"," << j << std::endl;
+                std::cout<< "color: " << color << std::endl;
+                // Création des insectes
+                generateSingleInsect(it,color, {i,j});
+            }
         }
 
 
         if(counter == 6) {
-            std::cout<< "compteur avant break "<<count;
-
+            std::cout<< "ligne avant break "<<line<< std::endl;
         }
     }
+    currentPlayer =  (currentPlayeR == 2) ? &player2 : &player1;
+
     file.close();
+    //renderer->setMap(map);
+    //inputsManager.setMap(map);
+
     std::cout << "Partie chargée avec succès depuis " << filename << std::endl;
 }
 
 
-int Hive::launchGame() {
-    if (initIfNeeded() == 0){
-        return 0;
+
+Insect* Hive::generateSingleInsect(int type, bool color, vec2i vec) {
+    Insect* insect = nullptr;
+    // Création de l'insecte en fonction du type
+    switch (type) {
+
+        case 0: insect = new Ant(color);break;
+        case 1: insect = new Beetle(color);break;
+        case 2: insect = new Grasshopper(color);break;
+        case 3: insect = new Bee(color);break;
+        case 4: insect = new Spider(color);break;
+        case 5: insect = new Mosquitoe(color);break;
+        case 6: insect = new Ladybug(color);break;
+        default:
+            throw HiveException("Hive::generateSingleInsect", "Insecte de type inconnu");
+        return nullptr;
     }
-    int play = displayMenu();
-    if (play == 1) {
-        while(play){
-            try{
-                play = run();
-            }
-            catch (const HiveException & HE_){
-                std::cout << HE_.getInfos() << '\n';
-            }
+    insect->setCoordinates(vec);
+    // Définition des coordonnées et ajout dans le deck
+    if (color) {
+        if(vec.getI() == -1)player1.deck.addInsect(insect);
+        else {
+            map.putInsectTo(insect,vec);
+            player1.addActiveInsect(insect);
+        }
+    } else {
+        if(vec.getI() == 30)player2.deck.addInsect(insect);
+        else {
+            map.putInsectTo(insect,vec);
+            player2.addActiveInsect(insect);
         }
     }
-    return 1;
-}
 
+    // Ajout à la liste globale
+    insects.push_back(insect);
+
+    return insect;
+}
 
 
 

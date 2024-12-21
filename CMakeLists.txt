@@ -16,7 +16,7 @@ find_package(Qt6 COMPONENTS
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # Ajouter les fichiers source de la partie console
-file(GLOB CONSOLE_SOURCES
+file(GLOB SOURCES
         src/utils/*.cpp
         src/features/*.cpp
         src/hive.cpp
@@ -24,21 +24,17 @@ file(GLOB CONSOLE_SOURCES
         src/inputsManager.h
         src/renderer.h
         src/solver.h
-)
-
-# Ajouter les fichiers sources de la partie Qt
-file(GLOB QT_SOURCES
         src/mainQt.cpp  # Le point d'entrée de votre application Qt
         src/gui/*.cpp     # Tout code supplémentaire pour l'interface graphique Qt
 )
 
 # Créer l'exécutable pour l'interface Qt
-add_executable(HiveQt ${QT_SOURCES} ${CONSOLE_SOURCES})
-add_executable(HiveConsole ${CONSOLE_SOURCES} src/mainConsole.cpp)
+add_executable(HiveQt ${SOURCES})
+#add_executable(HiveConsole ${CONSOLE_SOURCES} src/mainConsole.cpp)
 
-#if (WIN32)#Pour empêcher l'ouverture de la console
-#    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
-#endif ()
+if (WIN32)#Pour empêcher l'ouverture de la console
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
+endif ()
 
 
 target_link_libraries(HiveQt

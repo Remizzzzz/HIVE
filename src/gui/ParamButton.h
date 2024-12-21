@@ -10,7 +10,7 @@
 #include <QPolygon>
 #include <QRegion>
 #include "../features/insect.h"
-enum buttonType {Rewind, Save, Load};
+enum buttonType {Rewind, Save, Load, Menu};
 class ParamButton : public QPushButton {
     Q_OBJECT
     public:

@@ -12,27 +12,28 @@
 #include "features/player.h"
 #include "utils/utils.h"
 #include "utils/hiveException.h"
-
+#include "QDebug"
 class Solver{
 
 private:
     Map & map;
+    const int & renderedMapSideSize;
+    const int offset;
+    int turn=1; //Sert pour compter les tours
 
-    const int & trueMapSideSize;
     //0 -> map, 1 -> deck 1, -> 1 deck 2
     int getStartLocation(Player & player_) const{
-        return 1 * (player_.inputs.getStart().getI() == -1) + 2 * (player_.inputs.getStart().getI() == trueMapSideSize);
+        return 1 * (player_.inputs.getStart().getI() == -1) + 2 * (player_.inputs.getStart().getI() == renderedMapSideSize);
     }
-    int turn=1; //Sert pour compter les tours
     bool isStartValid(Player & player_) const{
 
-        if (player_.inputs.getStart().getI() >= 0 && player_.inputs.getStart().getI() < trueMapSideSize &&
-            player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < trueMapSideSize
+        if (player_.inputs.getStart().getI() >= 0 && player_.inputs.getStart().getI() < renderedMapSideSize &&
+            player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < renderedMapSideSize
             && !map.isSlotFree(player_.inputs.getStart())){
             return true;
         }
 
-        if ((player_.inputs.getStart().getI() == -1 || player_.inputs.getStart().getI() == trueMapSideSize) &&
+        if ((player_.inputs.getStart().getI() == -1 || player_.inputs.getStart().getI() == renderedMapSideSize) &&
             (player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < player_.getDeck().getInsectNb())){
             return true;
         }
@@ -41,14 +42,19 @@ private:
     }
 
     bool isDestinationValid(Player & player_) const{
-        return player_.inputs.getDestination().getI() >= 0 && player_.inputs.getDestination().getI() < trueMapSideSize &&
-                player_.inputs.getDestination().getJ() >= 0 && player_.inputs.getDestination().getJ() < trueMapSideSize;
+        return player_.inputs.getDestination().getI() >= 0 && player_.inputs.getDestination().getI() < renderedMapSideSize &&
+                player_.inputs.getDestination().getJ() >= 0 && player_.inputs.getDestination().getJ() < renderedMapSideSize;
     }
 public:
     [[nodiscard]] int getTurn()const {
         if (turn%2) return turn/2+1;
         return turn/2;
     }
+
+    void setTurn(int val) {
+        turn = val;
+    }
+
     static bool queenInDeck(Player & player_) {
         bool result = true;
         std::vector<Insect*> activeList =player_.getActiveInsects();
@@ -59,30 +65,35 @@ public:
         }
         return result;
     }
-    Solver(Map & map_, const int & trueMapSideSize_) :
-    map(map_), trueMapSideSize(trueMapSideSize_){};
+    Solver(Map & map_, const int & renderedMapSideSize_, const int offset_) :
+    map(map_), renderedMapSideSize(renderedMapSideSize_), offset(offset_){}
+
     void deckToMapMovement(Player & player_) {
         const vec2i & start = player_.inputs.getStart();
-        const vec2i & destination = player_.inputs.getDestination();
-
+        qDebug()<<"\n INDEX"<<start.getJ();
+        const vec2i & destination = player_.inputs.getDestination();//+vec2i{offset,offset};
+        qDebug()<<"\n DESTINATION ("<<destination.getI()<<","<<destination.getJ()<<")";
         if (player_.getDeck().isIndexValid(start.getJ())){
             if (map.isSlotFree(destination)) {
                 map.putInsectTo(player_.getDeck().getInsectAt(start.getJ()), destination);
+
                 map.getInsectAt(destination)->setCoordinates(destination);
                 map.addToHistoric(start,destination);//If the movement is a rewind, goBack will manage the historic
                 player_.addActiveInsectsFromDeck(start.getJ());
                 player_.deck.removeAt(start.getJ());
                 turn++;
-            } else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {
             } else {
                 player_.inputs.setMessage("Can't put your insect here");
             }
-        } else throw HiveException("solver.h:Solver:deckToMapGestion", "cursor1 is invalid for deck1");
+        } else {
+            qDebug()<<"\nOK";
+            throw HiveException("solver.h:Solver:deckToMapGestion", "cursor1 is invalid for deck1");
+        }
     }
 
     void mapToMapMovement(Player & player_){
-        const vec2i & start = player_.inputs.getStart();
-        const vec2i & destination = player_.inputs.getDestination();
+        const vec2i & start = player_.inputs.getStart() + vec2i{offset,offset};
+        const vec2i & destination = player_.inputs.getDestination() + vec2i{offset,offset};
 
         if (!map.isSlotFree(start)){
             map.moveInsect(start,destination);
@@ -99,10 +110,22 @@ public:
         player_.removeActiveInsect(ins);
         map.getHistoric().pop_front();
     }
+
+    void fullGoBack(Player & player_, vec2i from, vec2i to) {}
+
     void decrTurn(){turn--;}
     int update(Player & player_){
 
-        if (player_.inputs.isPossibleDestinationsNeeded()){
+
+        if (player_.inputs.isLeaveNeeded())
+        {
+            return 2;
+        }
+        else if (player_.inputs.isRewindNeeded())
+        {
+            map.goBack();
+        }
+        else if (player_.inputs.isPossibleDestinationsNeeded()){
             std::cout << "possibleDestinationsNeeded\n";
             if (isStartValid(player_)){
                 std::cout << "startValid\n" ;
@@ -111,20 +134,27 @@ public:
                 std::cout << "loc : " << loc << "\n";
 
                 if (loc == 0){
+
+                    //Decalage pour que l'on travail pas sur les bords de la map
+                    vec2i start = player_.inputs.getStart() + vec2i{offset,offset};
+
                     std::cout << "loc0";
                     std::cout << "ici ?.";
-                    std::cout << (map.getInsectAt(player_.inputs.getStart()) == nullptr);
-                    std::cout << (map.getInsectAt(player_.inputs.getStart())->getCoordinates());
+                    std::cout << (map.getInsectAt(start) == nullptr);
+                    std::cout << (map.getInsectAt(start)->getCoordinates());
                     std::cout << "ici ?";
-                    map.getInsectAt(player_.inputs.getStart())->getPossibleMovements(map);
+                    //Decalage
+                    map.getInsectAt(start)->getPossibleMovements(map);
                     std::cout << "et Ici ?";
-                    player_.inputs.setPossibleDestinations(map.getInsectAt(player_.inputs.getStart())->getPossibleMovements(map));
+                    player_.inputs.setPossibleDestinations(map.getInsectAt(start)->getPossibleMovements(map));
                     player_.inputs.noNeedForPossibleDestinationsUpdate();
                     return 0;
                 }
                 else if (loc == player_.getId()){
                     std::cout << "loc1 ou deux";
                     //player_.inputs.setPossibleDestinations(map.getInsectAt(player_.inputs.getStart())->setRule(map));
+                    auto possiblesDestinations = map.setRule(player_.getId());
+
                     player_.inputs.setPossibleDestinations(map.setRule(player_.getId()));
                     //player_.inputs.setPossibleDestinations(std::vector<vec2i>{{15,15},{16,16},{14,14}});
 

@@ -7,23 +7,23 @@
 
 #include <conio.h>  // Pour _kbhit() et _getch()
 #include <fstream>
+#include <unistd.h>
 
-int main() {
+int mainConsole() {
     bool play = true;
 
     Hive hive;
 
-
     while(play){
-
-        try{
+        try
+        {
             play = hive.run();
         }
-        catch (const HiveException & HE_){
+        catch (const HiveException & HE_)
+        {
             std::cout << HE_.getInfos() << '\n';
         }
     }
-
 
 
 

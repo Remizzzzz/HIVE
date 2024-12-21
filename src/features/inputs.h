@@ -13,6 +13,8 @@
 
 class Inputs{
 private:
+    bool rewindNeeded;
+    bool leaveNeeded;
     //le joueur a validé son action
     bool startSelected{};
     //Position apres la premiere validation
@@ -30,6 +32,12 @@ private:
 public:
 
     Inputs() = default;
+
+    void needRewind(){rewindNeeded = true;}
+    void needLeave(){leaveNeeded = true;}
+
+    bool isRewindNeeded() const {return rewindNeeded;}
+    bool isLeaveNeeded() const {return leaveNeeded;}
 
     bool movementNeeded() const{
         return startSelected && destinationSelected;
@@ -119,6 +127,8 @@ public:
     }
 
     void reset(){
+        leaveNeeded = false;
+        rewindNeeded = false;
         startSelected = false;
         destinationSelected = false;
         needPossibleDestinations = false;

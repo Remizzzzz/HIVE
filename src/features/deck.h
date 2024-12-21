@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "insect.h"
-
+#include <QDebug>
 #include "../utils/hiveException.h"
 
 class Player;
@@ -26,6 +26,7 @@ private:
 
 public:
     Deck() = default;
+    ~Deck() = default;
     std::vector<Insect *>* getInsects() {return &insects;}
     // Classe interne pour l'itérateur
     class Iterator {
@@ -131,6 +132,7 @@ public:
     int returnIndex(insectType type_) const {
         int index=0;
         for (auto it : insects) {
+            qDebug()<<it->getIT();
             if (it->getIT() == type_) {
                 return index;
             }
