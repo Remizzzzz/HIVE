@@ -125,7 +125,7 @@ void hiveRenderer::setupDeck(int buttonSize){
             button->setCoordinates(deck);
             qreal x = num*35*buttonSize+60;
             qreal y = i*buttonSize+100;
-            QPixmap pixmap(":/assets/ant.png"); // Remplacez par le chemin de votre image
+            QPixmap pixmap(":/assets/ant.png");
             button->setIcon(QIcon(pixmap));
             button->setIconSize(pixmap.size());
             button->setParent(centralWidget);

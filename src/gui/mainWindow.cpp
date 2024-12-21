@@ -4,6 +4,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QPixmap>
 #include <QHBoxLayout>
 #include <QSpacerItem>
 #include <QStackedWidget>
@@ -13,7 +14,6 @@
 #include <QSpinBox>
 #include <QCheckBox>
 #include <QComboBox>
-#include "hive.h"
 #include "../mainConsole.cpp"
 #include <iostream>
 
@@ -36,6 +36,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
 
     // création d'un espace pour la mise en page
     auto *layout = new QVBoxLayout(this);
+
+    // Logo HIVE
+    auto *logoLabel = new QLabel(this);
+    logoLabel->setAlignment(Qt::AlignCenter);
+    logoLabel->setPixmap(QPixmap("../assets/hive_logo.png").scaled(200, 200, Qt::KeepAspectRatio));
+    layout->addWidget(logoLabel);
 
     /* Titre */
     auto *titleLabel = new QLabel("Bienvenue dans le jeu Hive", this);
@@ -140,11 +146,22 @@ void MainWindow::initializeSettingsWidget() {
     // Mode de jeu
     auto *modeLabel = new QLabel("Choisir le mode de jeu", settingsWidget);
     auto *modeComboBox = new QComboBox(settingsWidget);
-    modeComboBox->addItem("Joueur vs Joueur (PvP)");
-    modeComboBox->addItem("Joueur vs IA (PvAI)");
-    modeComboBox->setCurrentIndex(modeComboBox->findData(hiveMode));
+    modeComboBox->addItem("Joueur vs Joueur (PvP)", 0);
+    modeComboBox->addItem("Joueur vs IA (PvAI)", 1);
+    modeComboBox->setCurrentIndex(modeComboBox->findData(mode));
     layout->addWidget(modeLabel);
     layout->addWidget(modeComboBox);
+
+    // Niveau de l'IA
+    auto *levelLabel = new QLabel("Choisir le niveau de l'IA (PvAI uniquement)", settingsWidget);
+    auto *levelComboBox = new QComboBox(settingsWidget);
+    levelComboBox->addItem("Niveau aléatoire", 0);
+    levelComboBox->addItem("Niveau facile", 0);
+    levelComboBox->addItem("Niveau moyen", 0);
+    levelComboBox->addItem("Niveau difficile", 0);
+    levelComboBox->setCurrentIndex(levelComboBox->findData(levelIA));
+    layout->addWidget(levelLabel);
+    layout->addWidget(levelComboBox);
 
     // Extensions
     auto *extensionsLabel = new QLabel("Activer/Désactiver les extensions", settingsWidget);
@@ -227,7 +244,7 @@ void MainWindow::launchConsoleApp() {
     // Ferme la fenêtre de la console une fois l'application console lancée
 }
 
-// Jsp comment appeler loadGame ...
+
 void MainWindow::resumeGame() {
     load=true;
     startNewGame();
