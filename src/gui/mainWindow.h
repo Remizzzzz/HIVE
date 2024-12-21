@@ -29,11 +29,13 @@ private slots:
     void quitMenu();
 
 private:
-    Mode hiveMode=PvP;
-    int hiveNbRewind=5;
-    bool hasLadybug=false;
-    bool hasMosquito=false;
-    bool load=false;
+    Mode hiveMode = PvP; int mode = 0;
+    int levelIA = 0;
+    int hiveNbRewind = 5;
+    bool hasLadybug = false;
+    bool hasMosquito = false;
+    bool load = false;
+
     // Boutons du menu
     QPushButton *startButton;
     QPushButton *tutorialButton;
