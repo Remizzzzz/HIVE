@@ -17,19 +17,20 @@ public:
      * @brief Constructeur de la classe Renderer.
      * @param map_ Référence constante à la carte à afficher.
      */
-    explicit Renderer( Map &map_,Player* P1_, Player* P2_, int rendered_s_i) : map(map_), P1(P1_), P2(P2_), renderedSideSize(rendered_s_i) {} // A voir comment initialiser l'output
+    explicit Renderer(Map &map_,Player* P1_, Player* P2_, int rendered_s_i, const int offset_) :
+        map(map_), P1(P1_), P2(P2_), renderedSideSize(rendered_s_i), offset(offset_) {} // A voir comment initialiser l'output
 
     /**
      * @brief Affiche la carte sur la sortie standard.
      */
     virtual ~Renderer() = default; // Rendre Renderer polymorphe avec un destructeur virtuel
-    virtual void displayMap(const Player & currentPlayer_) const=0;
     virtual void render(const Player & currentPlayer_) const = 0;
 
 protected:
     Player *P1;
     Player *P2;
     int renderedSideSize;
+    const int offset;
     Map &map;
 
 public:
@@ -55,111 +56,8 @@ public:
      * @brief Constructeur de la classe ConsoleRenderer.
      * @param map_ Référence constante à la carte à afficher.
      */
-    explicit ConsoleRenderer(Map &map_,Player* P1_, Player* P2_, int rendered_s_i) : Renderer(map_,P1_,P2_, rendered_s_i) {}
+    explicit ConsoleRenderer(Map &map_,Player* P1_, Player* P2_, int rendered_s_i, const int offset_) : Renderer(map_,P1_,P2_, rendered_s_i, offset_) {}
 
-
-    /**
-     * @brief Affiche les indentations pour simuler les décalages de la grille hexagonale.
-     * @param rowIndex L'indice de la ligne à afficher.
-     */
-    static void displayIndentation(size_t rowIndex) {
-        // Lignes impaires (indexées 1, 3, 5...) doivent être décalées vers la droite
-        if ((rowIndex-1) % 2 == 1) {
-            std::cout << "  ";  // Ajoute des espaces pour décaler
-        }
-    }
-
-
-
-    /**
-     * @brief Affiche une ligne de cellules avec des insectes ou des cases vides.
-     * @param rowIndex L'indice de la ligne à afficher.
-     */
-    void displayRow(size_t rowIndex, vec2i start) const {
-
-        for (size_t col = 1; col < renderedSideSize+1; ++col) {
-            vec2i pos(static_cast<int>(rowIndex), static_cast<int>(col));
-            if(pos.getI()==start.getI()+1 && pos.getJ()==start.getJ()+1)
-            {
-                const Insect *slot = map.getInsectAt(pos);
-                if (getSlotContent(slot, 0)==".") {
-                    std::cout << " " << getSlotContent(slot,1) << "  ";  // Trois espaces pour espacer les cases
-                } else {
-                    std::cout << "" << getSlotContent(slot,1) << "  ";// Seulement deux espaces
-                }
-            }
-            else
-            {
-                const Insect *slot = map.getInsectAt(pos);
-
-                // Affiche le contenu de la cellule sans espace supplémentaire
-                if (getSlotContent(slot,0)==".") {
-                    std::cout << " " << getSlotContent(slot,0) << "  ";  // Trois espaces pour espacer les cases
-                } else {
-                    std::cout << "" << getSlotContent(slot,0) << "  ";// Seulement deux espaces
-                }
-            }
-        }
-
-    }
-
-    /**
-     * @brief Renvoie le contenu affichable d'une case.
-     * @param slot Pointeur vers l'insecte dans la case (ou nullptr si vide).
-     * @return Une chaîne de caractères représentant la valeur à afficher.
-     */
-    static std::string getSlotContent(const Insect *slot, int idColor) {
-        if (slot) {
-            return slot->getPrintableValue(idColor);  // Valeur de l'insecte sans espace supplémentaire
-        }
-        if(idColor==1)
-        {
-            return "\033[92m--\033[37m";
-        }
-        return "--";  // Affiche un point si la case est vide
-
-    }
-
-    static void displayDeck(Player* P, int indexPlayer) {
-
-        for(int index=0; index< P->getDeck().getInsectNb();index++)
-        {
-            // si cursor en ligne -1 donc dans le deck du joueur bleu
-            if((P->getInputs().getStart().getI()==-1 && indexPlayer==0) && P->getInputs().getStart().getJ()==index)
-            {
-                std::cout << " " << getSlotContent(P->getDeck().getInsectAt(index),1) << "  ";
-            }
-            // si cursor en ligne renderedSideSize donc dans le deck joueur rouge
-            else if((P->getInputs().getStart().getI()==-1 && indexPlayer==1)&& P->getInputs().getStart().getJ()==index)
-            {
-                std::cout << " " << getSlotContent(P->getDeck().getInsectAt(index),1) << "  ";
-            }
-            else
-            {
-                std::cout << " " << getSlotContent(P->getDeck().getInsectAt(index),0) << "  ";
-            }
-        }
-    }
-
-    void displayMap(const Player & currentPlayer_) const override{
-        //system("cls"); // clear console windows
-        std::cout << "\033[2J\033[1;1H";  // clear console linux
-        displayDeck(P1,0);
-        std::cout << "\n" << "\n";
-
-        for (size_t row = 1; row < renderedSideSize+1; ++row) {
-            // Affiche les espaces d'indentation pour simuler les décalages
-            displayIndentation(row);
-
-            // Affiche la ligne actuelle
-            displayRow(row, currentPlayer_.getInputs().getStart());         // A finir
-
-            // Affiche un saut de ligne pour séparer les lignes
-            std::cout << "\n";
-        }
-        std::cout << "\n" << "\n";
-        displayDeck(P2,1);
-    }
 
     void renderDeck1(const Player & currentPlayer_) const{
         std::cout << "\033[31m";
@@ -228,8 +126,12 @@ public:
     }
 
     void renderMap(const Player & currentPlayer_) const{
+
+        vec2i start = currentPlayer_.getInputs().getStart() + vec2i{offset,offset};
+
         std::cout << "\033[37m";
-        for (int i = 0; i < renderedSideSize; ++i){
+        for (int i = offset; i < offset + renderedSideSize ; ++i){
+            //std::cout << '[' << i << ']';
             if (i%2 == 0) {
                 std::cout << "\033[37m-";
             }
@@ -237,14 +139,15 @@ public:
                 std::cout << "\033[37m  -";
             }
 
-            for (int j = 0; j < renderedSideSize; ++j) {
+            for (int j = offset; j < offset + renderedSideSize; ++j) {
+                //std::cout << '[' << j << ']';
 
                 const vec2i insectPos{i,j};
 
                 const Insect * insect = map.getInsectAt(insectPos);
 
                 if (insect){
-                    if (currentPlayer_.getInputs().getStart() == insectPos){
+                    if (start == insectPos){
                         if (currentPlayer_.getInputs().isStartSelected()){
                             std::cout << "\033[92m-" << insect->getPV() << "-\033[37m";
                         }
@@ -270,7 +173,7 @@ public:
                     }
                 }
                 else{
-                    if (currentPlayer_.getInputs().getStart() == insectPos){
+                    if (start == insectPos){
                         if (currentPlayer_.getInputs().isStartSelected()){
                             std::cout << "\033[92m-" << "  " << "-\033[37m";
                         }
@@ -361,14 +264,6 @@ public:
         std::cout << "Bon jeu !\n";
     }
 
-};
-
-
-class GraphicRenderer : public Renderer {
-public:
-    explicit GraphicRenderer( Map &map_, Player* P1_, Player* P2_, int rendered_s_i) : Renderer(map_,P1_,P2_,rendered_s_i) {}
-    void displayMap(const Player & currentPlayer_) const override{}
-    void render(const Player & currentPlayer_) const override{}
 };
 
 #endif // HIVE_RENDERER_H

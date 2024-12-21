@@ -55,14 +55,13 @@ class Hive{
 
     Renderer * renderer;
 
-private:
 
     std::vector<Insect *>& getInsects() {
         return insects;
     }
     Insect* generateSingleInsect(int type, bool color, vec2i vec);
+    void generateAllInsects(bool Lad=false, bool Mos=false){
 
-    void generateAllInsects(bool Lad=false, bool Mos=false) {
         int cpt1 = 0;
         int cpt2 = 0;
 
@@ -191,9 +190,10 @@ private:
                 }
             }
         }
+
     }
 
-private:
+
     void static resetInputs(Player & player_){
         player_.inputs.reset();
     }
@@ -213,13 +213,17 @@ public:
     }
     Hive() : mode(PvP), version(console),
              insects(),
-             rewindNb(5),rewindUsed(rewindNb), map(trueMapSideSize,rewindNb),
+             rewindNb(5),rewindUsed(rewindNb),
+            offset((trueMapSideSize - renderedMapSideSize) / 2.f),
+            map(trueMapSideSize,rewindNb),
              player1(1), player2(2), currentPlayer(&player1),
              inputsManager(mode, renderedMapSideSize, map),
-             solver(map, renderedMapSideSize),renderer( nullptr)
+    solver(map, renderedMapSideSize, offset),renderer( nullptr)
     {
         offset = ((trueMapSideSize - renderedMapSideSize) / 2.f);
     }
+
+
 
 
 
@@ -283,14 +287,18 @@ public:
         }
         else if (gamePart)
         {
+
             renderer->render(*currentPlayer);
+
             if (currentPlayer->isHuman){
                 inputsManager.updatePlayerInputs(*currentPlayer);
             }
             else{
                 inputsManager.updateAIInputs(*currentPlayer);
             }
+
             std::cout << "\n:" <<currentPlayer->inputs;
+
             switch (solver.update(*currentPlayer)) {
             case -1:
                 std::cout << "\n---Reset---\n";
@@ -322,9 +330,9 @@ public:
         else return 0;
 
     }
-
+    int getOffset() {return offset;}
     void runQt(bool Ladybug, bool Mosquitoe) {
-        //generateAllInsects(Ladybug, Mosquitoe);
+        generateAllInsects(Ladybug, Mosquitoe);
     }
     Player* getPlayer1() {return &player1;}
     Player* getPlayer2() {return &player2;}

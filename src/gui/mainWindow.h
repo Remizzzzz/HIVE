@@ -8,6 +8,7 @@
 #include <QStackedWidget>
 #include "hive.h"
 
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -29,11 +30,15 @@ private slots:
     void quitMenu();
 
 private:
-    Mode hiveMode;
-    int hiveNbRewind;
-    bool hasLadybug;
-    bool hasMosquito;
-    bool load=false;
+    Mode hiveMode = PvP; int mode = 0;
+    int levelIA = 0;
+    int hiveNbRewind = 5;
+    bool hasLadybug = false;
+    bool hasMosquito = false;
+    bool load = false;
+    QString nomJ1;
+    QString nomJ2 = "IA";
+
     // Boutons du menu
     QPushButton *startButton;
     QPushButton *tutorialButton;

@@ -26,7 +26,6 @@
  * @brief Affiche un menu interactif pour l'utilisateur.
  */
 void Hive::displayMenu() {
-
     int choice = 0;
     std::cout << "\n=== Menu Hive ===\n";
     std::cout << "1. Start a game\n";
@@ -41,39 +40,38 @@ void Hive::displayMenu() {
     switch (choice) {
         case 1:  // Start a game
             std::cout << "Starting a new game...\n";
-            menuPart = false;
-            gamePart = true;
-            initIfNeeded();
-            break;
+        menuPart = false;
+        gamePart = true;
+        initIfNeeded();
+        break;
         case 2:  // Tutorial
             std::cout << "Launching tutorial...\n";
-            displayRules();
-            break;
-            case 3:  // Resume game
-                std::cout << "Resuming the last game...\n";
-                initIfNeeded();
-                loadGame("../hive_parameters.txt");
-                break;
+        displayRules();
+        break;
+        case 3:  // Resume game
+            std::cout << "Resuming the last game...\n";
+        initIfNeeded();
+        loadGame("../hive_parameters.txt");
+        break;
         case 4:  // Change parameters
             std::cout << "Changing parameters...\n";
-            changeSettings();
-            break;
+        changeSettings();
+        break;
 
         case 5:  // Save game
             std::cout << "Saving...\n";
-            saveGame("../hive_parameters.txt");
-            break;
+        saveGame("../hive_parameters.txt");
+        break;
         case 6:  // Leave
             menuPart = false;
-            gamePart = false;
-            std::cout << "Au revoir !\n";
+        gamePart = false;
+        std::cout << "Au revoir !\n";
         break;
         default:
             std::cout << "Option invalide, veuillez réessayer.\n";
-            break;
+        break;
     }
     std::cout << std::endl;
-
 }
 
 void Hive::displayRules() {
@@ -347,6 +345,7 @@ void Hive::loadGame(const std::string& filename) {
 
         if(count++ > 50)break;
         std::getline(file, line);
+
 
 
         if (line.find("Mode:") != std::string::npos && !mode_done) {
