@@ -210,7 +210,7 @@ public:
         return renderer;
     }
     int displayMenu();
-    Hive() : mode(PvP), version(console),
+    Hive() : mode(PvAI), version(console),
              insects(),
              rewindNb(5),rewindUsed(rewindNb),
             offset((trueMapSideSize - renderedMapSideSize) / 2.f),
@@ -289,6 +289,8 @@ public:
             }
             else{
                 inputsManager.updateAIInputs2(*currentPlayer, AI());
+                std::cout << "\n:" <<currentPlayer->inputs;
+
             }
 
             std::cout << "\n:" <<currentPlayer->inputs;

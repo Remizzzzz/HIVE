@@ -88,15 +88,22 @@ public:
         }
     }
 
-    void mapToMapMovement(const Player & player_){
-        const vec2i & start = player_.inputs.getStart() + vec2i{offset,offset};
-        const vec2i & destination = player_.inputs.getDestination() + vec2i{offset,offset};
+    void mapToMapMovement(const Player & player_, const bool applyOffset = true){
+
+        if (applyOffset) std::cout << "on aplly l'offset";
+
+        std::cout << applyOffset * vec2i{offset,offset};
+
+        const vec2i & start = player_.inputs.getStart() + applyOffset * vec2i{offset,offset};
+        const vec2i & destination = player_.inputs.getDestination() + applyOffset * vec2i{offset,offset};
 
         if (!map.isSlotFree(start)){
+            std::cout << "slot pas free binks";
             map.moveInsect(start,destination);
             map.addToHistoric(start,destination);
             map.getInsectAt(destination)->setCoordinates(destination);
             turn++;
+
         }
     }
     void goBackDeck(Player & player_, vec2i from, vec2i to) {
@@ -172,6 +179,8 @@ public:
         }
         else{
             std::cout << "possibleDestinationsIsNotNeeded\n";
+            std::cout << player_.inputs.isStartSelected();
+            std::cout << player_.inputs.isDestinationSelected();
             if(player_.inputs.movementNeeded()){
                 std::cout << "movementNeeded\n";
                 if (isStartValid(player_) && isDestinationValid(player_)){
@@ -179,11 +188,19 @@ public:
 
                     int loc = getStartLocation(player_);
 
+                    std::cout << "loc" << loc << " id :" << player_.getId() <<  "\n";
+                    std::cout << "start :" << player_.inputs.getStart();
+                    if (player_.inputs.getStart().getI() != -1 && player_.inputs.getStart().getI() != 30)
+                    {
+                        std::cout << "char : " << map.getInsectAt(player_.inputs.getStart())->getPV() << '\n';
+                    }
+                    std::cout << "dest: " << player_.inputs.getDestination() ;
+
                     if (loc == 0){
-                        if (map.getInsectAt(player_.inputs.getStart())->getColor() == player_.getId()){
+                        if (map.getInsectAt(player_.inputs.getStart())->getColor() == player_.getId()%2){
                             std::cout << "good color";
                             std::cout << "map to map";
-                            mapToMapMovement(player_);
+                            mapToMapMovement(player_, (player_.isHuman));
                             return 1;
                         }
                         else return -1;

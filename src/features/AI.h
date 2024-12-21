@@ -12,8 +12,95 @@ class AI
 {
 
 public:
-     void operator()(Map & map, Player & player_, Inputs & inputs, lv::Random & random, bool Qt=false, bool inputT=false)
+     void operator()(Map & map, Player & player_, Inputs & inputs_, lv::Random & random, bool Qt=false, bool inputT=false)
      {
+
+         std::cout << "oueeeee le sang oueeee";
+
+         if (player_.getDeck().isEmpty() && player_.getActiveInsects().empty()){
+             throw HiveException("inputsManager.h:InputsManager:updateAIInputs","deck and activeInsects are empty");
+             return;
+         }
+
+         int randomValue = std::max(0,random.getRandomInt(0,3) - 1); // 1 chance sur 4
+
+         std::cout << "randomValue: " << randomValue;
+
+         const Insect * selectedInsect;
+
+         if (randomValue == 0)
+         {
+             if (!player_.getActiveInsects().empty())
+             {
+                 std::cout << "map to map ";
+                 const int fromIndex = random.getRandomInt(0,static_cast<int>(player_.getActiveInsects().size()));
+
+                 selectedInsect = player_.getActiveInsects()[fromIndex];
+
+                 std::cout << "selectedInsect: " << selectedInsect->getPV();
+
+                 inputs_.setStart(selectedInsect->getCoordinates());
+                 inputs_.selectStart();
+
+                 inputs_.setPossibleDestinations(selectedInsect->getPossibleMovements(map));
+
+                 const int destinationsIndex = random.getRandomInt(0,static_cast<int>(inputs_.getPossibleDestinations().size()));
+                 inputs_.setDestinationIndex(destinationsIndex);
+
+                 inputs_.selectDestination();
+
+                 std::cout << "->" << inputs_;
+             }
+             else
+             {
+                randomValue++;
+             }
+
+         }
+
+         if (randomValue == 1 && player_.getDeck().getInsectNb() > 0) //Deck
+         {
+             std::cout << "deck to map ";
+
+             const int deckIndex = random.getRandomInt(0,player_.getDeck().getInsectNb());
+             selectedInsect = player_.getDeck().getInsectAt(deckIndex);
+
+             if (player_.getId() == 1)
+             {
+                 inputs_.setStart({-1,deckIndex});
+             }
+             else
+             {
+                 inputs_.setStart({30,deckIndex});
+             }
+             inputs_.selectStart();
+
+             inputs_.setPossibleDestinations(map.setRule(player_.getId() % 2));
+
+             const int destinationsIndex = random.getRandomInt(0,static_cast<int>(inputs_.getPossibleDestinations().size()));
+             inputs_.setDestinationIndex(destinationsIndex);
+
+             inputs_.selectDestination();
+         }
+
+
+         /*if (player_.getActiveInsects().empty() && !player_.getDeck().isEmpty()) {
+             int index=player_.getDeck().returnIndex(bee); //On place bee pour pas avoir de problèmes de mouvements impossibles
+             selectedInsect = player_.getDeck().getInsectAt(index);
+         } else if (randomValue == 0 && !player_.getDeck().isEmpty()){
+             selectedInsect = player_.getDeck().getInsectAt(random.getRandomInt(0,int(player_.getDeck().getInsectNb())));
+         } else {
+             selectedInsect = player_.getActiveInsects()[random.getRandomInt(0,int(player_.getActiveInsects().size()))];
+             inputs.setStart(selectedInsect->getCoordinates());
+             vec2i startPos = selectedInsect->getCoordinates();
+             inputs.setStart(startPos);
+             inputs.needPossibleDestinationsUpdate();
+             break;
+         }
+
+
+
+
         int cursorId=0;
         if (!Qt) cursorId = inputs.isStartSelected() + 1;
         else {
@@ -21,15 +108,14 @@ public:
             else cursorId = 2; //Si c'est la deuxième sélection
         }
 
+         std::cout << "----------------\n:" << cursorId << " " << Qt << std::endl;
+
         int randomValue = random.getRandomInt(0,4);
         const Insect * selectedInsect;
 
         switch (cursorId){
             case 1:
-                if (player_.getDeck().isEmpty() && player_.getActiveInsects().empty()){
-                    throw HiveException("inputsManager.h:InputsManager:updateAIInputs","deck and activeInsects are empty");
-                    return;
-                }
+
 
                 if (player_.getActiveInsects().empty() && !player_.getDeck().isEmpty()) {
                     int index=player_.getDeck().returnIndex(bee); //On place bee pour pas avoir de problèmes de mouvements impossibles
@@ -83,7 +169,7 @@ public:
             default:
                 throw HiveException("inputsManager.h:InputsManager:moveCursor", "cursorId_ invalid");
             break;
-        }
+        }*/
      }
 
 };

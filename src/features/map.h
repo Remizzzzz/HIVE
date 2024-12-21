@@ -139,6 +139,8 @@ public:
     /**@brief move the insect on pos1_ to the pos2_.*/
     void moveInsect(const vec2i & pos1_, const vec2i & pos2_){
 
+        std::cout << "from :" << pos1_ << " to:" << pos2_ << std::endl;
+
         // Récupérer les insectes aux positions de départ et d'arrivée
         Insect* movingInsect = getInsectAt(pos1_);
         Insect* targetInsect = getInsectAt(pos2_);
@@ -176,40 +178,41 @@ public:
 
                 // Déplacer le scarabée ou moustique à la position cible
                 putInsectTo(movingInsect, pos2_);
-            } else if (movingInsect->getIT() == mosquitoe) {
-                // Cast dynamique pour obtenir un pointeur de type Beetle
-                Mosquitoe* mosqPointer = dynamic_cast<Mosquitoe*>(movingInsect);
+        }
+        else if (movingInsect->getIT() == mosquitoe) {
+            // Cast dynamique pour obtenir un pointeur de type Beetle
+            Mosquitoe* mosqPointer = dynamic_cast<Mosquitoe*>(movingInsect);
 
-                if (mosqPointer == nullptr) {
-                    throw HiveException("Map::moveInsect", "Erreur du dynamic_cast pour le scarabée.");
-                }
+            if (mosqPointer == nullptr) {
+                throw HiveException("Map::moveInsect", "Erreur du dynamic_cast pour le scarabée.");
+            }
 
-                // Si le scarabée ou moustique a un insecte en dessous
-                if (mosqPointer->getInsectUnder() != nullptr) {
-                    // Remettre l'insecte en dessous à la position actuelle
-                    putInsectTo(mosqPointer->getInsectUnder(), pos1_);
-                } else {
-                    // Pas d'insecte en dessous, retirer l'insecte de la position initiale
-                    removeInsectAt(pos1_);
-                }
-
-
-
-                // Si un insecte est présent à la position cible, positionner le scarabée ou moustique au-dessus
-                if (targetInsect != nullptr) {
-                    mosqPointer->setAboveOf(targetInsect);
-                }else {
-                    mosqPointer->setAboveOf(nullptr);
-                }
-
-                // Déplacer le scarabée ou moustique à la position cible
-                putInsectTo(movingInsect, pos2_);
+            // Si le scarabée ou moustique a un insecte en dessous
+            if (mosqPointer->getInsectUnder() != nullptr) {
+                // Remettre l'insecte en dessous à la position actuelle
+                putInsectTo(mosqPointer->getInsectUnder(), pos1_);
             } else {
-                // Cas général pour les autres types d'insectes
-                putInsectTo(movingInsect, pos2_);
-                movingInsect->setCoordinates(pos2_);
+                // Pas d'insecte en dessous, retirer l'insecte de la position initiale
                 removeInsectAt(pos1_);
             }
+
+
+
+            // Si un insecte est présent à la position cible, positionner le scarabée ou moustique au-dessus
+            if (targetInsect != nullptr) {
+                mosqPointer->setAboveOf(targetInsect);
+            }else {
+                mosqPointer->setAboveOf(nullptr);
+            }
+
+            // Déplacer le scarabée ou moustique à la position cible
+            putInsectTo(movingInsect, pos2_);
+        } else {
+            // Cas général pour les autres types d'insectes
+            putInsectTo(movingInsect, pos2_);
+            movingInsect->setCoordinates(pos2_);
+            removeInsectAt(pos1_);
+        }
     }
 
     //return positions of the filled slots around pos_
