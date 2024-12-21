@@ -50,8 +50,9 @@ void Hive::displayMenu() {
         break;
         case 3:  // Resume game
             std::cout << "Resuming the last game...\n";
-        initIfNeeded();
+
         loadGame("../hive_parameters.txt");
+        initIfNeeded();
         break;
         case 4:  // Change parameters
             std::cout << "Changing parameters...\n";
@@ -437,7 +438,7 @@ void Hive::loadGame(const std::string& filename) {
             }
 
             player1 = Player(id, isHuman, name, Deck(), activeInsects1);
-            renderer->setPlayer1(&player1);
+            //renderer->setPlayer1(&player1);
 
         }
         // Charger les informations de Joueur2 de manière similaire à Joueur1
@@ -465,7 +466,7 @@ void Hive::loadGame(const std::string& filename) {
                 }
             }
             player2 = Player(id, isHuman, name, Deck(), activeInsects2);
-            renderer->setPlayer2(&player2);
+            //renderer->setPlayer2(&player2);
 
         }
         else if (line.find("Insects_Hive:") != std::string::npos  && !insects_done && joueur1_done && joueur2_done) {

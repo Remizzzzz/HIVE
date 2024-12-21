@@ -199,15 +199,17 @@ class Hive{
     }
 
 
+
     void displayMenu();
 
 public:
 
+    void setRenderer(Renderer* rend) {
+        renderer = rend;
+    }
 
 
 
-
-public:
     Renderer* getRenderer() const{
         return renderer;
     }
@@ -266,7 +268,7 @@ public:
         if (!isInit){
 
             renderer = new ConsoleRenderer(map, &player1, &player2, 30, offset);
-            generateAllInsects();
+            if (insects.empty())generateAllInsects();
             isInit = true;
         }
 

@@ -165,6 +165,7 @@ void hiveRenderer::setupDeck(int buttonSize){
 }
 void hiveRenderer::loadGame(bool load) {
     if (load) {
+        //hive.setRenderer(hiveRenderer()) ;
         hive.loadGame("../hive_parameters.txt");
         int renderedSize=hive.getRenderedMapSideSize();
         for (int i=0;i<renderedSize;i++) {
