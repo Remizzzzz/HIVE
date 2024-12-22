@@ -42,7 +42,6 @@ public:
     bool movementNeeded() const{
         return startSelected && destinationSelected;
     }
-
     const vec2i & getStart() const {
         return start;
     }

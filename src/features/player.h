@@ -28,6 +28,7 @@ private:
     friend class Hive;
     friend class InputsManager;
     friend class Solver;
+
 public:
 
     explicit Player(const int & id_) : id(id_), isHuman(true), deck(), activeInsects(), inputs()
