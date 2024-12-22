@@ -230,21 +230,11 @@ public:
     void convertQtToSolver(Player* player_) {
         Inputs & inputs = player_->inputs;
         inputs.setStart(inputs.getStart()-vec2i{1,1});
-        std::vector<vec2i> newPossibleMovements;
-        for (auto destination : inputs.getPossibleDestinations()) {
-            newPossibleMovements.push_back(destination-vec2i{1,1});
-        }
-        inputs.setPossibleDestinations(newPossibleMovements);
     }
 
     void convertSolverToQt(Player* player_) {
         Inputs & inputs = player_->inputs;
         inputs.setStart(inputs.getStart()+vec2i{1,1});
-        std::vector<vec2i> newPossibleMovements;
-        for (auto destination : inputs.getPossibleDestinations()) {
-            newPossibleMovements.push_back(destination+vec2i{1,1});
-        }
-        inputs.setPossibleDestinations(newPossibleMovements);
     }
 
 };
