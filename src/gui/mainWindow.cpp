@@ -35,14 +35,19 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     setWindowTitle(QString("Hive"));
     resize(1000, 600);
 
+    // Widget central avec tous les éléments
+    auto *centralWidget = new QWidget(this);
+    setCentralWidget(centralWidget);
+
     // création d'un espace pour la mise en page
-    auto *layout = new QVBoxLayout(this);
+    auto *mainLayout = new QVBoxLayout();
+    centralWidget->setLayout(mainLayout);
 
     // Logo HIVE
     auto *logoLabel = new QLabel(this);
     logoLabel->setAlignment(Qt::AlignCenter);
     logoLabel->setPixmap(QPixmap("../assets/hive_logo.png").scaled(200, 200, Qt::KeepAspectRatio));
-    layout->addWidget(logoLabel);
+    mainLayout->addWidget(logoLabel);
 
     /* Titre */
     auto *titleLabel = new QLabel("Bienvenue dans le jeu Hive", this);
@@ -51,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     titleFont.setPointSize(20);
     titleFont.setBold(true);
     titleLabel->setFont(titleFont);
-    layout->addWidget(titleLabel);
+    mainLayout->addWidget(titleLabel);
 
     /* Création des boutons */
     startButton = new QPushButton(QString("Démarrer une nouvelle partie"), this);
@@ -68,26 +73,23 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
     connect(launchConsoleButton, &QPushButton::clicked, this, &MainWindow::launchConsoleApp);
     connect(quitButton, &QPushButton::clicked, this, &MainWindow::quitMenu);
 
-    auto *buttonLayout = new QHBoxLayout(this);
+    auto *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(startButton);
     buttonLayout->addWidget(resumeButton);
     buttonLayout->addWidget(tutorialButton);
     buttonLayout->addWidget(settingsButton);
     buttonLayout->addWidget(launchConsoleButton);
     buttonLayout->addWidget(quitButton);
-    layout->addLayout(buttonLayout);
+    mainLayout->addLayout(buttonLayout);
 
     // Endroit pour afficher les trucs sous les boutons
-    stackedWidget = new QStackedWidget(this);
+    stackedWidget = new QStackedWidget();
     // Ajout de l'espace pour centrer les éléments
     auto *spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    layout->addSpacerItem(spacer);
+    mainLayout->addSpacerItem(spacer);
     // Ajouter le QStackedWidget après les boutons
-    layout->addWidget(stackedWidget);
-    // Widget central avec tous les éléments
-    auto *centralWidget = new QWidget(this);
-    centralWidget->setLayout(layout);
-    setCentralWidget(centralWidget);
+    mainLayout->addWidget(stackedWidget);
+
 
     // Initialisation des vues
     initializeEmptyWidget();
@@ -145,11 +147,11 @@ void MainWindow::initializeSettingsWidget() {
     settingsLayout->addWidget(titleLabel);
 
     // Nom des joueurs
-    QLabel *player1Label = new QLabel("Nom du joueur 1:", this);
-    QLineEdit *player1NameEdit = new QLineEdit(this);
+    auto *player1Label = new QLabel("Nom du joueur 1:", this);
+    auto *player1NameEdit = new QLineEdit(this);
     player1NameEdit->setPlaceholderText("Entrez le nom du joueur 1");
-    QLabel *player2Label = new QLabel("Nom du joueur 2:", this);
-    QLineEdit *player2NameEdit = new QLineEdit(this);
+    auto *player2Label = new QLabel("Nom du joueur 2:", this);
+    auto *player2NameEdit = new QLineEdit(this);
     player2NameEdit->setPlaceholderText("Entrez le nom du joueur 2 (IA par défaut si PvAI)");
     settingsLayout->addWidget(player1Label);
     settingsLayout->addWidget(player1NameEdit);
@@ -204,11 +206,11 @@ void MainWindow::initializeSettingsWidget() {
         nomJ1 = player1NameEdit->text();
 
         if (modeComboBox->currentIndex() == 0) {
-            hiveNbRewind = PvP;
+            hiveMode = PvP;
             nomJ2 = player2NameEdit->text();
         }
         else {
-            hiveNbRewind = PvAI;
+            hiveMode = PvAI;
         }
 
         if (ladybugCheckBox->isChecked()) hasLadybug = true;
