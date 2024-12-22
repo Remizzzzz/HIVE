@@ -27,9 +27,9 @@ private:
     int turn=1; //Sert pour compter les tours
     bool isStartValid(Player & player_) const{
 
+        std::cout << !map.isSlotFree(player_.inputs.getStart()) << '_';
         if (player_.inputs.getStart().getI() >= 0 && player_.inputs.getStart().getI() < renderedMapSideSize &&
-            player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < renderedMapSideSize
-            && !map.isSlotFree(player_.inputs.getStart())){
+            player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < renderedMapSideSize){
             return true;
         }
 
@@ -90,14 +90,10 @@ public:
         }
     }
 
-    void mapToMapMovement(const Player & player_, const bool applyOffset = true){
+    void mapToMapMovement(const Player & player_){
 
-        if (applyOffset) std::cout << "on aplly l'offset";
-
-        std::cout << applyOffset * vec2i{offset,offset};
-
-        const vec2i & start = player_.inputs.getStart() + applyOffset * vec2i{offset,offset};
-        const vec2i & destination = player_.inputs.getDestination() + applyOffset * vec2i{offset,offset};
+        const vec2i & start = player_.inputs.getStart() + vec2i{offset,offset};
+        const vec2i & destination = player_.inputs.getDestination();
 
         if (!map.isSlotFree(start)){
             std::cout << "slot pas free binks";
@@ -126,11 +122,17 @@ public:
         {
             return 2;
         }
-        else if (player_.inputs.isRewindNeeded())
+        if (player_.inputs.isRewindNeeded())
         {
-            map.goBack();
+            return 3;
         }
-        else if (player_.inputs.isPossibleDestinationsNeeded()){
+
+        if (!player_.isHuman && player_.inputs.getStart().getI() != -1 && player_.inputs.getStart().getI() < renderedMapSideSize)
+        {
+            player_.inputs.setStart(player_.inputs.getStart() - vec2i{offset,offset});
+        }
+
+        if (player_.inputs.isPossibleDestinationsNeeded()){
             std::cout << "possibleDestinationsNeeded\n";
             if (isStartValid(player_)){
                 std::cout << "startValid\n" ;
@@ -178,6 +180,8 @@ public:
                     return -1;
                 }
             }
+
+            std::cout << "::::" << player_.inputs.getStart();
             return -1;
         }
         else{
@@ -186,6 +190,8 @@ public:
             std::cout << player_.inputs.isDestinationSelected();
             if(player_.inputs.movementNeeded()){
                 std::cout << "movementNeeded\n";
+                std::cout << "for start : " << isStartValid(player_) << '\n';
+                std::cout << "for destination : " << isDestinationValid(player_) << '\n';
                 if (isStartValid(player_) && isDestinationValid(player_)){
                     std::cout << "Both cursor or valid\n";
 
@@ -193,17 +199,12 @@ public:
 
                     std::cout << "loc" << loc << " id :" << player_.getId() <<  "\n";
                     std::cout << "start :" << player_.inputs.getStart();
-                    if (player_.inputs.getStart().getI() != -1 && player_.inputs.getStart().getI() != 30)
-                    {
-                        std::cout << "char : " << map.getInsectAt(player_.inputs.getStart())->getPV() << '\n';
-                    }
-                    std::cout << "dest: " << player_.inputs.getDestination() ;
 
                     if (loc == 0){
-                        if (map.getInsectAt(player_.inputs.getStart())->getColor() == player_.getId()%2){
+                        if (map.getInsectAt(player_.inputs.getStart() + vec2i{offset,offset})->getColor() == player_.getId()%2){
                             std::cout << "good color";
                             std::cout << "map to map";
-                            mapToMapMovement(player_, (player_.isHuman));
+                            mapToMapMovement(player_);
                             return 1;
                         }
                         else return -1;
