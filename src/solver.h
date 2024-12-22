@@ -92,7 +92,7 @@ public:
     void mapToMapMovement(const Player & player_){
 
         const vec2i & start = player_.inputs.getStart() + vec2i{offset,offset};
-        const vec2i & destination = player_.inputs.getDestination()+ vec2i{offset,offset};
+        const vec2i & destination = player_.inputs.getDestination();
 
         if (!map.isSlotFree(start)){
             std::cout << "slot pas free binks";
