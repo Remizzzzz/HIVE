@@ -201,12 +201,6 @@ class Hive{
     }
 
 
-    void static resetInputs(Player & player_){
-        player_.inputs.reset();
-    }
-
-
-
     void displayMenu();
 
 public:
@@ -280,16 +274,17 @@ public:
     void resetInputs()
     {
         player1.inputs.reset();
-        player1.inputs.setStart({0,0});
+        player1.inputs.setStart({!player1.getDeck().isEmpty() * -1,0});
 
         player2.inputs.reset();
-        player2.inputs.setStart({renderedMapSideSize-1,0});
+        player2.inputs.setStart({player2.getDeck().isEmpty() * -1 + renderedMapSideSize,0});
+        std::cout << "odaodaoza : " << player2.getInputs().getStart();
     }
 
     void resetPlayerInputs(Player & player_){
         player_.inputs.reset();
-        if (player_.getId() == 1) player_.inputs.setStart({0,0});
-        else player_.inputs.setStart({renderedMapSideSize-1,0});
+        if (player_.getId() == 1) player_.inputs.setStart({!player1.getDeck().isEmpty() * -1,0});
+        else player_.inputs.setStart({player2.getDeck().isEmpty() * -1 + renderedMapSideSize,0});
     }
 
     void initIfNeeded(){
