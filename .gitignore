@@ -1,7 +1,6 @@
 *
 
 !src
-!CMakeLists.txt
 !src/**
 !.gitignore
 !assets
