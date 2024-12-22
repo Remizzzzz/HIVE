@@ -21,389 +21,146 @@
 
 
 class Map{
-    public:
+public:
     class movement{
     public:
         vec2i from{};
         vec2i to{};
 
-        // Getter pour 'from'
-        const vec2i& getFrom() const {
-            return from;
-        }
-
-        // Getter pour 'to'
-        const vec2i& getTo() const {
-            return to;
-        }
-
+        const vec2i& getFrom() const { return from; }
+        const vec2i& getTo() const { return to; }
 
         movement(const vec2i & from_, const vec2i & to_) : from(from_), to(to_) {};
         movement() = default;
     };
 private:
-
-
-    //friend class renderer;
-
     std::vector<Insect *> slot{};
     std::list<movement> historic{};
     vec2i relativePos{};
     const int sideSize;
     int rewind;
 
-
-    /**
-     * @brief \n convert the vec2i in an index
-     * @param pos_ position to convert
-     * @return index
-     */
+    // converti un vec2i en index
     [[nodiscard]] int posToIndex(const vec2i & pos_) const{
-
         if(pos_.getI() >= sideSize || pos_.getJ() >= sideSize) std::cerr << "map::Map::posToIndex outOfRange";
-
         return (pos_.getI() * sideSize + pos_.getJ());
     }
 
 public:
-
-    Map(const int & sideSize_, const int &rewindNumber_) :
-        sideSize(sideSize_), rewind(rewindNumber_){
+    Map(const int & sideSize_, const int &rewindNumber_) : sideSize(sideSize_), rewind(rewindNumber_) {
         for(int i = 0; i < sideSize * sideSize; i++){
             slot.push_back(nullptr);
         }
     }
     Map (const int sSize, const int rewindNumber_, const vec2i rPos, const std::list<movement> h):
-        sideSize(sSize),rewind(rewindNumber_), relativePos(rPos),historic(h) {
-        for(int i = 0; i < sideSize * sideSize; i++){
-            slot.push_back(nullptr);
-        }
+        historic(h),relativePos(rPos), sideSize(sSize),rewind(rewindNumber_) {
+        for(int i = 0; i < sideSize * sideSize; i++) slot.push_back(nullptr);
     }
 
-    Insect* getSlot(int nb) const {
-        return slot[nb];
-    }
-    void setSlot(int nb, Insect* insect) {
-        slot[nb]  = insect;
-    }
-    /**
-     * @brief \n put in the slot on position pos_ the insect insect_
-     * @param insect_ : insect to put
-     * @param pos_ : position of the slot in which the insect will be put
-     */
-    void putInsectTo(Insect * insect_, const vec2i & pos_){
-        slot[posToIndex(pos_)] = insect_;
-    }
-    [[nodiscard]] Insect * getInsectAt(const vec2i & pos_) const{
-        return slot[posToIndex(pos_)];
-    }
+    Insect* getSlot(int nb) const { return slot[nb]; }
+    void setSlot(int nb, Insect* insect) { slot[nb]  = insect; }
 
-    Map & operator=(const Map &) {
-        return *this;
-    }
-    [[nodiscard]] const int & getSideSize() const{
-        return sideSize;
-    }
-    [[nodiscard]] const int & getRewind() const{
-        return rewind;
-    }
-    [[nodiscard]] const vec2i getRelativePos() const{
-        return relativePos;
-    }
+    void putInsectTo(Insect * insect_, const vec2i & pos_) { slot[posToIndex(pos_)] = insect_; }
+    [[nodiscard]] Insect * getInsectAt(const vec2i & pos_) const { return slot[posToIndex(pos_)]; }
 
-    [[nodiscard]] std::vector<Insect *> getSlots() const{
-        return slot;
-    }
+    Map & operator=(const Map &) { return *this; }
+    [[nodiscard]] const int & getSideSize() const { return sideSize; }
+    [[nodiscard]] const int & getRewind() const { return rewind; }
+    [[nodiscard]] const vec2i getRelativePos() const { return relativePos; }
+    [[nodiscard]] std::vector<Insect *> getSlots() const { return slot; }
+    std::list<movement>& getHistoric() { return historic; }
 
     std::vector<vec2i> setRule( bool color_insect);
 
-    std::list<movement>& getHistoric() {
-        return historic;
-    }
+    void removeInsectAt(const vec2i & pos_) { slot[posToIndex(pos_)] = nullptr; }
 
-    /**
-     * @brief \n set the slot on position pos_ to nullptr
-     * @param pos_ : position of the slot to remove
-     */
-    void removeInsectAt(const vec2i & pos_){
-        slot[posToIndex(pos_)] = nullptr;
-    }
+    // vérifie que la position est libre
+    bool isSlotFree(const vec2i & pos_) const { return slot[posToIndex(pos_)] == nullptr; }
 
-    /**
-     * @brief \n check if the slop in position pos_ is free
-     * @param pos_ : position of the slot to check
-     */
-    bool isSlotFree(const vec2i & pos_) const{
-        return slot[posToIndex(pos_)] == nullptr;
-    }
+    // déplace l'insecte d'une position 1 à une position 2
+    void moveInsect(const vec2i & pos1_, const vec2i & pos2_);
 
-    /**@brief move the insect on pos1_ to the pos2_.*/
-    void moveInsect(const vec2i & pos1_, const vec2i & pos2_){
+    // retourne les voisins d'une position
+    std::list<vec2i> getNeighbours(const vec2i & pos_) const;
 
-        // Récupérer les insectes aux positions de départ et d'arrivée
-        Insect* movingInsect = getInsectAt(pos1_);
-        Insect* targetInsect = getInsectAt(pos2_);
-
-        // Vérification qu'il y a un insecte à déplacer
-        if (movingInsect == nullptr) {
-            throw HiveException("Map::moveInsect", "Aucun insecte à déplacer à la position donnée.");
-        }
-
-        // Si l'insecte est un scarabée
-        if (movingInsect->getIT() == beetle) {
-            // Cast dynamique pour obtenir un pointeur de type Beetle
-            Beetle* beetlePointer = dynamic_cast<Beetle*>(movingInsect);
-            if (beetlePointer == nullptr) {
-                throw HiveException("Map::moveInsect", "Erreur du dynamic_cast pour le scarabée.");
-            }
-
-            // Si le scarabée a un insecte en dessous
-            if (beetlePointer->getInsectUnder() != nullptr) {
-                // Remettre l'insecte en dessous à la position actuelle
-                putInsectTo(beetlePointer->getInsectUnder(), pos1_);
-            } else {
-                // Pas d'insecte en dessous, retirer l'insecte de la position initiale
-                removeInsectAt(pos1_);
-            }
-
-
-
-            // Si un insecte est présent à la position cible, positionner le scarabée au-dessus
-            if (targetInsect != nullptr) {
-                beetlePointer->setAboveOf(targetInsect);
-            }else {
-                beetlePointer->setAboveOf(nullptr);
-            }
-
-                // Déplacer le scarabée ou moustique à la position cible
-                putInsectTo(movingInsect, pos2_);
-            } else if (movingInsect->getIT() == mosquitoe) {
-                // Cast dynamique pour obtenir un pointeur de type Beetle
-                Mosquitoe* mosqPointer = dynamic_cast<Mosquitoe*>(movingInsect);
-
-                if (mosqPointer == nullptr) {
-                    throw HiveException("Map::moveInsect", "Erreur du dynamic_cast pour le scarabée.");
-                }
-
-                // Si le scarabée ou moustique a un insecte en dessous
-                if (mosqPointer->getInsectUnder() != nullptr) {
-                    // Remettre l'insecte en dessous à la position actuelle
-                    putInsectTo(mosqPointer->getInsectUnder(), pos1_);
-                } else {
-                    // Pas d'insecte en dessous, retirer l'insecte de la position initiale
-                    removeInsectAt(pos1_);
-                }
-
-
-
-                // Si un insecte est présent à la position cible, positionner le scarabée ou moustique au-dessus
-                if (targetInsect != nullptr) {
-                    mosqPointer->setAboveOf(targetInsect);
-                }else {
-                    mosqPointer->setAboveOf(nullptr);
-                }
-
-                // Déplacer le scarabée ou moustique à la position cible
-                putInsectTo(movingInsect, pos2_);
-            } else {
-                // Cas général pour les autres types d'insectes
-                putInsectTo(movingInsect, pos2_);
-                movingInsect->setCoordinates(pos2_);
-                removeInsectAt(pos1_);
-            }
-    }
-
-    //return positions of the filled slots around pos_
-    std::list<vec2i> getNeighbours(const vec2i & pos_) const{
-        std::list<vec2i> neighbours{};
-        if(pos_.getI() % 2 == 0) {
-           neighbours.push_back(pos_ - vec2i(1,1));
-           neighbours.push_back( pos_ - vec2i(1,0));
-           neighbours.push_back( pos_ - vec2i(0,1));
-           neighbours.push_back( pos_ - vec2i(0,-1));
-           neighbours.push_back( pos_ - vec2i(-1,1));
-           neighbours.push_back( pos_ - vec2i(-1,0));
-        }
-        else{
-           neighbours.push_back( pos_ - vec2i(1,0));
-           neighbours.push_back( pos_ - vec2i(1,-1));
-           neighbours.push_back( pos_ - vec2i(0,1));
-           neighbours.push_back( pos_ - vec2i(0,-1));
-           neighbours.push_back( pos_ - vec2i(-1,0));
-           neighbours.push_back( pos_ - vec2i(-1,-1));
-        }
-
-        return neighbours;
-    }
-    //Function that adds a move to historic
+    // ajoute un déplacement à l'historique
     void addToHistoric(const vec2i & from, const vec2i & to) {
         historic.emplace_front(from,to);
-        while (historic.size() > rewind){ //While just in case, but it works normally
-            historic.pop_back();
-        }
+        while (historic.size() > rewind) historic.pop_back();
     }
+
     void goBack() {
         if (!historic.empty()) {
             vec2i oldC=historic.front().from;
             vec2i curC=historic.front().to;
-            moveInsect(curC,oldC); //Rewind move
-            historic.pop_front();          // Erase the head of historic again (here, the move we just rewinded)
+            moveInsect(curC,oldC);
+            historic.pop_front();
         }
     }
 
-    [[nodiscard]] bool isSlotUsable(const vec2i & pos_, const vec2i & posToIgnore) const
-    {
-        if(pos_.getI() > 0 && pos_.getI() < getSideSize() && pos_.getJ() > 0 && pos_.getJ() < getSideSize())
-        {
+    [[nodiscard]] bool isSlotUsable(const vec2i & pos_, const vec2i & posToIgnore) const {
+        if(pos_.getI() > 0 && pos_.getI() < getSideSize() && pos_.getJ() > 0 && pos_.getJ() < getSideSize()) {
             size_t compteur =0;
             std::list<vec2i> neighbours = getNeighbours(pos_);
-            for(auto & neighbour : neighbours)
-            {
+            for(auto & neighbour : neighbours) {
                 if(!isSlotFree(neighbour)&&neighbour!=posToIgnore) compteur++;
-
             }
             return compteur < 5;
         }
         return true;
 
     }
+
+
 //------- ANTI MAP EXIT -------
 private:
-
-    /**
-     * @brief check if an instect is close to the left border
-     */
-    bool isLeftBorderTouched(){
+    // vérifie qu'un insect touche le bord gauche de la map
+    bool isLeftBorderTouched() {
         bool b = false;
-
-        for(int i = 0; i < sideSize * sideSize ; i += sideSize){
-            b = b || (slot[i] != nullptr);
-        }
+        for (int i = 0; i < sideSize * sideSize ; i += sideSize) b = b || (slot[i] != nullptr);
         return b;
     }
 
-    /**
-     * @brief check if an insect is close to the right border
-     */
+    // vérifie qu'un insect touche le bord droit de la map
     bool isRightBorderTouched(){
         bool b = false;
-
-        for(int i = sideSize - 1; i < sideSize * sideSize ; i += sideSize){
-            b = b || (slot[i] != nullptr);
-        }
+        for (int i = sideSize - 1; i < sideSize * sideSize ; i += sideSize) b = b || (slot[i] != nullptr);
         return b;
     }
 
-    /**
-     * @brief check if an instect is close to the top border
-     */
+    // vérifie qu'un insect touche le bord haut de la map
     bool isTopBorderTouched(){
         bool b = false;
-
-        for(int i = 0; i < sideSize; i++){
-            b = b || (slot[i] == nullptr);
-        }
+        for (int i = 0; i < sideSize; i++) b = b || (slot[i] == nullptr);
         return b;
     }
 
-    /**
-     * @brief check if an instect is close to the bottom border
-     */
+    // vérifie qu'un insect touche le bord bas de la map
     bool isBottomBorderTouched(){
         bool b = false;
-
-        for(int i = sideSize * (sideSize - 1); i < sideSize; i++){
-            b = b || (slot[i] == nullptr);
-        }
+        for (int i = sideSize * (sideSize - 1); i < sideSize; i++) b = b || (slot[i] == nullptr);
         return b;
     }
 
-    /**
-     * @brief move all the map's insects according to the param tVec
-     * @param tVec : direction of the translation
-     */
-    void translateMap(const vec2i & tVec){
-        //Translation vers le haut donc parcours de haut en bas
-        if(tVec.getI() <= 0){
-            //Translation vers la gauche donc parcours de gauche à droite
-            if(tVec.getJ() <= 0){
-                for(int i = 0; i < sideSize; i++){
-                    for(int j = 0; j < sideSize; j++){
-                        vec2i curr = vec2i(i,j);
-                        if(!isSlotFree(curr)){
-                            moveInsect(curr,curr + tVec);
-                        }
-                    }
-                }
-            }
-                //Translation vers la droite donc parcours de droite à gauche
-            else{
-                for(int i = 0; i < sideSize; i++){
-                    for(int j = sideSize - 1; j >= 0; j--){
-                        vec2i curr = vec2i(i,j);
-                        if(!isSlotFree(curr)){
-                            moveInsect(curr,curr + tVec);
-                        }
-                    }
-                }
-            }
-        }
-            //Translation vers le bas donc parcours de bas en haut
-        else{
-            //Translation vers la gauche donc parcours de gauche à droite
-            if(tVec.getJ() <= 0){
-                for(int i = sideSize - 1; i >= 0; i--){
-                    for(int j = 0; j < sideSize; j++){
-                        vec2i curr = vec2i(i,j);
-                        if(!isSlotFree(curr)){
-                            moveInsect(curr,curr + tVec);
-                        }
-                    }
-                }
-            }
-                //Translation vers la droite donc parcours de droite à gauche
-            else{
-                for(int i = sideSize - 1; i >= 0; i--){
-                    for(int j = sideSize - 1; j >= 0; j--){
-                        vec2i curr = vec2i(i,j);
-                        if(!isSlotFree(curr)){
-                            moveInsect(curr,curr + tVec);
-                        }
-                    }
-                }
-            }
-        }
-
-    }
+    // déplace tous les insectes dans le sens tVec
+    void translateMap(const vec2i & tVec);
 
     void translateHistory(const vec2i & tVec){
-        for(auto & move : historic){
+        for (auto & move : historic){
             move.from += tVec;
             move.to += tVec;
         }
     }
-public:
 
-    /**
-     * @brief \n keep insects in the map and update relativePos
-     */
+public:
     void keepInsectsInMap(){
         vec2i tVec{};
+        if (isTopBorderTouched()) tVec.setI(1);
+        if(isBottomBorderTouched()) tVec.setI(-1);
+        if(isLeftBorderTouched()) tVec.setJ(1);
+        if(isRightBorderTouched()) tVec.setJ(-1);
 
-        if(isTopBorderTouched()){
-            tVec.setI(1);
-        }
-        if(isBottomBorderTouched()){
-            tVec.setI(-1);
-        }
-        if(isLeftBorderTouched()){
-            tVec.setJ(1);
-        }
-        if(isRightBorderTouched()){
-            tVec.setJ(-1);
-        }
-
-        if(!tVec.isNull()){
+        if(!tVec.isNull()) {
             translateMap(tVec);
             translateHistory(tVec);
             relativePos += tVec;

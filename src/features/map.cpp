@@ -5,21 +5,9 @@
 #include <algorithm>
 #include "map.h"
 #include <QDebug>
-/*
-void Map::updateBeetlePosition(Beetle *beetle, const vec2i &newPos) {
-    if (beetle == nullptr) return;
-    Insect *insectBelow = getInsectAt(newPos);
 
-    // Si un insecte est déjà présent à la position cible
-    if (insectBelow != nullptr) {
-        beetle->setAboveOf(insectBelow); // Mise à jour de l'attribut isAboveOf
-    } else {
-        beetle->setAboveOf(nullptr); // Aucun insecte en dessous, le scarabée n'est au-dessus de rien
-    }
 
-    // Met à jour la position dans la carte
-    moveInsect(beetle->getCoordinates(), newPos); // Déplace l'insecte dans la carte
-}*/
+
 
 std::vector<vec2i> Map::setRule(bool color_insect) {
     try {
@@ -90,11 +78,8 @@ std::vector<vec2i> Map::setRule(bool color_insect) {
 
                 if (isSlotFree(neighbor)) {
                     // Vérifier la couleur de l'insecte à ce voisin
-                    if (getInsectAt(insect)->getColor() == color_insect) {
-                        sameColorSet.insert(neighbor);
-                    } else {
-                        differentColorSet.insert(neighbor);
-                    }
+                    if (getInsectAt(insect)->getColor() == color_insect) sameColorSet.insert(neighbor);
+                    else differentColorSet.insert(neighbor);
                 } else {
                     // Ajouter les cases vides à `toCheck`
                     toCheck.insert(neighbor);
@@ -124,5 +109,131 @@ std::vector<vec2i> Map::setRule(bool color_insect) {
 }
 
 
+void Map::moveInsect(const vec2i & pos1_, const vec2i & pos2_) {
 
+        // Récupérer les insectes aux positions de départ et d'arrivée
+        Insect* movingInsect = getInsectAt(pos1_);
+        Insect* targetInsect = getInsectAt(pos2_);
+
+        // Vérification qu'il y a un insecte à déplacer
+        if (movingInsect == nullptr) {
+            throw HiveException("Map::moveInsect", "Aucun insecte à déplacer à la position donnée.");
+        }
+
+        // Si l'insecte est un scarabée
+        if (movingInsect->getIT() == beetle) {
+            // Cast dynamique pour obtenir un pointeur de type Beetle
+            Beetle* beetlePointer = dynamic_cast<Beetle*>(movingInsect);
+            if (beetlePointer == nullptr) {
+                throw HiveException("Map::moveInsect", "Erreur du dynamic_cast pour le scarabée.");
+            }
+
+            // Si le scarabée a un insecte en dessous
+            if (beetlePointer->getInsectUnder() != nullptr) {
+                // Remettre l'insecte en dessous à la position actuelle
+                putInsectTo(beetlePointer->getInsectUnder(), pos1_);
+            } else {
+                // Pas d'insecte en dessous, retirer l'insecte de la position initiale
+                removeInsectAt(pos1_);
+            }
+
+            // Si un insecte est présent à la position cible, positionner le scarabée au-dessus
+            if (targetInsect != nullptr) beetlePointer->setAboveOf(targetInsect);
+            else beetlePointer->setAboveOf(nullptr);
+
+            // Déplacer le scarabée ou moustique à la position cible
+            putInsectTo(movingInsect, pos2_);
+
+        } else if (movingInsect->getIT() == mosquitoe) {
+            // Cast dynamique pour obtenir un pointeur de type Beetle
+            Mosquitoe* mosqPointer = dynamic_cast<Mosquitoe*>(movingInsect);
+
+            if (mosqPointer == nullptr) {
+                throw HiveException("Map::moveInsect", "Erreur du dynamic_cast pour le scarabée.");
+            }
+
+            // Si le scarabée ou moustique a un insecte en dessous
+            if (mosqPointer->getInsectUnder() != nullptr) {
+                // Remettre l'insecte en dessous à la position actuelle
+                putInsectTo(mosqPointer->getInsectUnder(), pos1_);
+            } else {
+                // Pas d'insecte en dessous, retirer l'insecte de la position initiale
+                removeInsectAt(pos1_);
+            }
+
+            // Si un insecte est présent à la position cible, positionner le scarabée ou moustique au-dessus
+            if (targetInsect != nullptr) mosqPointer->setAboveOf(targetInsect);
+            else mosqPointer->setAboveOf(nullptr);
+
+            // Déplacer le scarabée ou moustique à la position cible
+            putInsectTo(movingInsect, pos2_);
+        } else {
+            // Cas général pour les autres types d'insectes
+            putInsectTo(movingInsect, pos2_);
+            movingInsect->setCoordinates(pos2_);
+            removeInsectAt(pos1_);
+        }
+    }
+
+
+std::list<vec2i> Map::getNeighbours(const vec2i & pos_) const {
+    std::list<vec2i> neighbours{};
+    if (pos_.getI() % 2 == 0) {
+        neighbours.push_back(pos_ - vec2i(1,1));
+        neighbours.push_back( pos_ - vec2i(1,0));
+        neighbours.push_back( pos_ - vec2i(0,1));
+        neighbours.push_back( pos_ - vec2i(0,-1));
+        neighbours.push_back( pos_ - vec2i(-1,1));
+        neighbours.push_back( pos_ - vec2i(-1,0));
+    } else {
+        neighbours.push_back( pos_ - vec2i(1,0));
+        neighbours.push_back( pos_ - vec2i(1,-1));
+        neighbours.push_back( pos_ - vec2i(0,1));
+        neighbours.push_back( pos_ - vec2i(0,-1));
+        neighbours.push_back( pos_ - vec2i(-1,0));
+        neighbours.push_back( pos_ - vec2i(-1,-1));
+    }
+
+    return neighbours;
+}
+
+
+void Map::translateMap(const vec2i & tVec) {
+        //Translation vers le haut donc parcours de haut en bas
+        if (tVec.getI() <= 0) {
+            //Translation vers la gauche donc parcours de gauche à droite
+            if (tVec.getJ() <= 0) {
+                for (int i = 0; i < sideSize; i++) {
+                    for (int j = 0; j < sideSize; j++) {
+                        vec2i curr = vec2i(i,j);
+                        if (!isSlotFree(curr)) moveInsect(curr,curr + tVec);
+                    }
+                }
+            } else {  //Translation vers la droite donc parcours de droite à gauche
+                for (int i = 0; i < sideSize; i++) {
+                    for (int j = sideSize - 1; j >= 0; j--) {
+                        vec2i curr = vec2i(i,j);
+                        if (!isSlotFree(curr)) moveInsect(curr,curr + tVec);
+                    }
+                }
+            }
+        } else {  // Translation vers le bas donc parcours de bas en haut
+            // Translation vers la gauche donc parcours de gauche à droite
+            if (tVec.getJ() <= 0) {
+                for (int i = sideSize - 1; i >= 0; i--) {
+                    for(int j = 0; j < sideSize; j++){
+                        vec2i curr = vec2i(i,j);
+                        if (!isSlotFree(curr)) moveInsect(curr,curr + tVec);
+                    }
+                }
+            } else {  //Translation vers la droite donc parcours de droite à gauche
+                for (int i = sideSize - 1; i >= 0; i--) {
+                    for (int j = sideSize - 1; j >= 0; j--) {
+                        vec2i curr = vec2i(i,j);
+                        if(!isSlotFree(curr)) moveInsect(curr,curr + tVec);
+                    }
+                }
+            }
+        }
+    }
 

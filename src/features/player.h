@@ -14,42 +14,37 @@ class Hive;
 class InputsManager;
 class Solver;
 
-class Player{
+class Player {
 private:
     int id;
-
     bool isHuman;
     std::string name;
     Deck deck;
     std::vector<Insect *> activeInsects;
-
     Inputs inputs;
 
     friend class Hive;
     friend class InputsManager;
     friend class Solver;
 public:
+    explicit Player(const int & id_) : id(id_), isHuman(true), deck(), activeInsects(), inputs() {}
+    explicit Player(const int & id_, const std::string &newname) : id(id_), isHuman(true), name(newname), deck(), activeInsects(), inputs() {}
 
-    explicit Player(const int & id_) : id(id_), isHuman(true), deck(), activeInsects(), inputs()
-    {
-
-    };
-    explicit Player(const int & id_, const std::string &newname) : id(id_), isHuman(true), deck(), activeInsects(), inputs(), name(newname)
-    {
-
-    };
     Player(int id, bool isHuman, const std::string& name, const Deck& deck, const std::vector<Insect*>& activeInsects)
         : id(id), isHuman(isHuman), name(name), deck(deck), activeInsects(activeInsects) {}
 
+    const int & getId() const { return id; }
+    const Inputs & getInputs() const { return inputs; }7
+    Deck& getDeck () { return deck; }
+    const std::string getName() const { return name; }
+    const std::vector<Insect *> & getActiveInsects() const { return activeInsects; }
+
     void setName(const std::string& newName) { name = newName; }
-    const int & getId() const{
-        return id;
-    }
+    void setHumanity(const bool & isHuman_) { isHuman = isHuman_; }
 
     bool addActiveInsect(Insect* insect) {
         if (insect == nullptr) {
             throw  HiveException("Player::addActiveInsect" ,"Erreur : l'insecte est nul.\n");
-
         }
 
         // Vérifie si l'insecte est déjà actif
@@ -63,34 +58,19 @@ public:
         return true; // Succès de l'ajout
     }
 
-    const Inputs & getInputs() const {
-        return inputs;
-    }
-
-    Deck& getDeck () {
-        return deck;
-    }
-    const std::string getName() const{
-        return name;
-    }
-
-    const std::vector<Insect *> & getActiveInsects() const {
-        return activeInsects;
-    }
     void removeActiveInsect(Insect* i) {
         int id=0;
         for (auto it : activeInsects) {
-            if (it == i) {
-                activeInsects.erase(activeInsects.begin()+id);
-            }
+            if (it == i) activeInsects.erase(activeInsects.begin()+id);
             id++;
         }
     }
 
-    void addActiveInsectsFromDeck(const int & deckIndex_){
+    void addActiveInsectsFromDeck(const int & deckIndex_) {
         Insect * insect = deck.insects.at(deckIndex_);
         activeInsects.push_back(insect);
     }
+
     bool lostGame(Map &m) {
         for (auto it : activeInsects) {
             if (it->getIT()==bee) {
@@ -101,10 +81,6 @@ public:
         }
         return false;
     }
-    void setHumanity(const bool & isHuman_) {
-        isHuman = isHuman_;
-    }
-
 };
 
 #endif //HIVE_PLAYER_H
