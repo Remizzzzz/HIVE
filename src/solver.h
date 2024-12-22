@@ -63,7 +63,9 @@ public:
 
     Solver(Map & map_, const int & renderedMapSideSize_, const int offset_) :
     map(map_), renderedMapSideSize(renderedMapSideSize_), offset(offset_){}
+
     void deckToMapMovement(Player & player_);
+
     void mapToMapMovement(const Player & player_){
 
         const vec2i & start = player_.inputs.getStart() + vec2i{offset,offset};

@@ -25,6 +25,7 @@ void Solver::deckToMapMovement(Player & player_) {
             map.addToHistoric(start,destination);//If the movement is a rewind, goBack will manage the historic
             player_.addActiveInsectsFromDeck(start.getJ());
             player_.deck.removeAt(start.getJ());
+            map.getInsectAt(destination)->setCoordinates(destination);
             turn++;
         } else {
             player_.inputs.setMessage("Can't put your insect here");
