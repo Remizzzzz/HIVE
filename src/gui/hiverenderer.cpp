@@ -228,9 +228,9 @@ hiveRenderer::~hiveRenderer() {
 
 void hiveRenderer::AIMovement(Player* opponent) {
     updateInputT();
-    hive.getInputsManager()->updateAIInputs(*opponent,true,inputT);
+    hive.getInputsManager()->updateAIInputs2(*opponent,AI{});
     updateInputT();
-    hive.getInputsManager()->updateAIInputs(*opponent,true,inputT);
+    hive.getInputsManager()->updateAIInputs2(*opponent,AI{});
     HexagonalButton* startButton;
     if (opponent->getInputs().getStart().getI()==-1) {
         startButton=buttons[30][sizeDeck+opponent->getInputs().getStart().getJ()];
@@ -509,5 +509,12 @@ void hiveRenderer::handleParamButtonClick() {
         this->close();
     } else if (button->getType()==Save) {
         hive.saveGame("../hive_parameters.txt");
+        Player * actualP=hive.getPlayer2();
+        if (playerTurn) {
+            actualP=hive.getPlayer1();//Si c'est au tour du joueur 1, on change le joueur actuel
+        }
+        for (auto it : actualP->getDeck()) {
+            qDebug()<<QString("%1").arg(it->getIT());
+        }
     }
 }
