@@ -545,12 +545,14 @@ Insect* Hive::generateSingleInsect(int type, bool color, vec2i vec) {
         else {
             map.putInsectTo(insect,vec);
             player1.addActiveInsect(insect);
+            if(type== 3) bee1 = dynamic_cast<Bee*>(insect);
         }
     } else {
         if(vec.getI() == 30)player2.deck.addInsect(insect);
         else {
             map.putInsectTo(insect,vec);
             player2.addActiveInsect(insect);
+            if(type== 3) bee2 = dynamic_cast<Bee*>(insect);
         }
     }
 
