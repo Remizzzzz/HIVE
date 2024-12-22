@@ -266,6 +266,7 @@ public:
     void setRewindNumber(int newRewindNumber) {
         rewindNb = newRewindNumber;
         rewindUsed= rewindNb;
+        map.setRewind(rewindNb);
     }
     void setRewindUsed(int newRewindUsed) {
         rewindUsed = newRewindUsed;
