@@ -54,6 +54,8 @@ void Hive::displayMenu() {
 
         loadGame("../hive_parameters.txt");
         initIfNeeded();
+        menuPart = false;
+        gamePart = true;
         break;
         case 4:  // Change parameters
             std::cout << "Changing parameters...\n";
