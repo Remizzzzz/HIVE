@@ -21,6 +21,8 @@
 #include <vector>
 #include <string>
 
+#include "features/AI.h"
+
 
 //enum Mode{PvP,PvAI};
 enum Version{console, graphic};
@@ -213,6 +215,7 @@ public:
     Renderer* getRenderer() const{
         return renderer;
     }
+
     Hive() : mode(PvP), version(console),
              insects(),
              rewindNb(5),rewindUsed(rewindNb),
@@ -220,7 +223,7 @@ public:
             map(trueMapSideSize,rewindNb),
              player1(1), player2(2), currentPlayer(&player1),
              inputsManager(mode, renderedMapSideSize, map),
-    solver(map, renderedMapSideSize, offset),renderer( nullptr)
+             solver(map, renderedMapSideSize, offset),renderer( nullptr)
     {
         offset = ((trueMapSideSize - renderedMapSideSize) / 2.f);
     }
@@ -311,7 +314,9 @@ public:
                 inputsManager.updatePlayerInputs(*currentPlayer);
             }
             else{
-                inputsManager.updateAIInputs(*currentPlayer);
+                inputsManager.updateAIInputs2(*currentPlayer, AI());
+                std::cout << "\n:" <<currentPlayer->inputs;
+
             }
 
             std::cout << "\n:" <<currentPlayer->inputs;

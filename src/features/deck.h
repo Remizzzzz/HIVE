@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "insect.h"
-#include <QDebug>
+// #include <QDebug>
 #include "../utils/hiveException.h"
 
 class Player;

@@ -73,6 +73,13 @@ public:
     explicit InputsManager(Mode mode_, const int renderedMapSideSize_, Map & map_):
     renderedMapSideSize(renderedMapSideSize_), map(map_), random(){}
 
+
+    template <class THINKINGFONCTION>
+    void updateAIInputs2(Player & player_, THINKINGFONCTION tf, bool Qt=false, bool inputT=false)
+    {
+        tf(map,player_, player_.inputs, random, Qt, inputT);
+    }
+
     void updateAIInputs(Player & player_, bool Qt=false, bool inputT=false){
         Inputs & inputs = player_.inputs;
         int cursorId=0;

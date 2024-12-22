@@ -14,7 +14,7 @@ vec2i operator-(vec2i const & v1_, vec2i const & v2_){
 }
 
 vec2i operator*(int const & k, vec2i const & v_){
-    return {k * v_.getI(),v_.getJ()};
+    return {k * v_.getI(),k * v_.getJ()};
 }
 
 bool operator==(vec2i const & v1_, vec2i const & v2_){
