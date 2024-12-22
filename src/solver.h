@@ -81,7 +81,6 @@ public:
                 player_.addActiveInsectsFromDeck(start.getJ());
                 player_.deck.removeAt(start.getJ());
                 turn++;
-            } else if (player_.getDeck().getInsectAt(start.getJ())->getIT() == grasshopper) {
             } else {
                 player_.inputs.setMessage("Can't put your insect here");
             }

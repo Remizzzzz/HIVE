@@ -32,7 +32,7 @@ public:
              int deckIndex=player_.getDeck().returnIndex(bee); //On place bee pour pas avoir de problèmes de mouvements impossibles
              selectedInsect = player_.getDeck().getInsectAt(deckIndex);
 
-             if (player_.getId() == 1)
+             if (player_.getId() == 1 || Qt)
              {
                  inputs_.setStart({-1,deckIndex});
              }

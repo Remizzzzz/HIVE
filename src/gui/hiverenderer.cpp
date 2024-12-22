@@ -227,14 +227,11 @@ hiveRenderer::~hiveRenderer() {
 }
 
 void hiveRenderer::AIMovement(Player* opponent) {
-    // updateInputT();
-    hive.getInputsManager()->updateAIInputs2(*opponent,AI());
-    // updateInputT();
-    // hive.getInputsManager()->updateAIInputs2(*opponent,true,inputT);
-    //qDebug()<<"\nDepart  : "<<opponent->getInputs().getStart();
-    //qDebug()<<"Arrivee : "<<opponent->getInputs().getPossibleDestinations()[opponent->getInputs().getDestinationIndex()];
+    hive.getInputsManager()->updateAIInputs2(*opponent,AI{},true);
+    qDebug()<<"\nDepart  : "<<opponent->getInputs().getStart();
+    qDebug()<<"Arrivee : "<<opponent->getInputs().getPossibleDestinations()[opponent->getInputs().getDestinationIndex()];
     HexagonalButton* startButton;
-    if (opponent->getInputs().getStart().getI()==-1 || opponent->getInputs().getStart().getI() == 30) {
+    if (opponent->getInputs().getStart().getI()==-1) {
         startButton=buttons[30][sizeDeck+opponent->getInputs().getStart().getJ()];
     } else {
         vec2i coor(opponent->getInputs().getStart().getI(),opponent->getInputs().getStart().getJ());
@@ -248,13 +245,29 @@ void hiveRenderer::AIMovement(Player* opponent) {
     startButton->updateState(2);
     startButton->setInsectType(none);
     qDebug()<< "\nAI("<<opponent->getInputs().getStart().getI()<<","<<opponent->getInputs().getStart().getJ()<<")";
-    if (opponent->getInputs().getStart().getI()==-1 || opponent->getInputs().getStart().getI() == 30) {//Si c'est deckToMap movement
+    if (opponent->getInputs().getStart().getI()==-1) {//Si c'est deckToMap movement
         hive.getSolver()->deckToMapMovement(*opponent);
         hive.decrRewindUsed();
     } else { //Si c'est mapToMapMovementdebug
         hive.getSolver()->mapToMapMovement(*opponent);
         hive.decrRewindUsed();
     }
+
+
+/* //Actualisation forcée de toute la map
+    for (int i=0;i<hive.getRenderedMapSideSize();i++) {
+        for (int j=0;j<hive.getRenderedMapSideSize();j++) {
+            vec2i pos(i,j);
+            pos=reconvertCoordinates(pos);
+            Insect* in=hive.getMap().getInsectAt(pos);
+            if (in!=nullptr) {
+                //Actu de la map
+                buttons[i][j]->setInsectType(in->getIT());
+                buttons[i][j]->setPlayer(!in->getColor());
+                buttons[i][j]->updateState(0);
+            }
+        }
+    }*/
 }
 
 
