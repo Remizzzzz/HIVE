@@ -145,17 +145,16 @@ public:
                     //Decalage pour que l'on travail pas sur les bords de la map
                     vec2i start = player_.inputs.getStart() + vec2i{offset,offset};
 
-                    std::cout << "loc0";
-                    std::cout << "ici ?.";
-                    std::cout << (map.getInsectAt(start) == nullptr);
-                    std::cout << (map.getInsectAt(start)->getCoordinates());
-                    std::cout << "ici ?";
-                    //Decalage
-                    map.getInsectAt(start)->getPossibleMovements(map);
-                    std::cout << "et Ici ?";
-                    player_.inputs.setPossibleDestinations(map.getInsectAt(start)->getPossibleMovements(map));
-                    player_.inputs.noNeedForPossibleDestinationsUpdate();
-                    return 0;
+                    if (!map.isSlotFree(start))
+                    {
+                        map.getInsectAt(start)->getPossibleMovements(map);
+                        std::cout << "et Ici ?";
+                        player_.inputs.setPossibleDestinations(map.getInsectAt(start)->getPossibleMovements(map));
+                        player_.inputs.noNeedForPossibleDestinationsUpdate();
+                        return 0;
+                    }
+                    else return -1;
+
                 }
                 else if (loc == player_.getId()){
                     std::cout << "loc1 ou deux";
