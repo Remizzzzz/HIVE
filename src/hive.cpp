@@ -389,7 +389,7 @@ void Hive::loadGame(const std::string& filename) {
             map.getHistoric().clear();
             int startI,startj,endI,endJ;
             while (std::getline(file, line) && line != "Fin_Historic:" && !line.empty()){
-                int num = std::stoi(line);
+                //int num = std::stoi(line);
                 std::istringstream iss(line);
                 iss >> startI>>startj>>endI>>endJ;
                 map.getHistoric().emplace_front(vec2i(startI,startj),vec2i(endI,endJ));
