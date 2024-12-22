@@ -218,6 +218,11 @@ void hiveRenderer::loadGame(bool load) {
             buttons[30][index+sizeDeck]->setInsectType(it->getIT());
             index++;
         }
+
+        if (hive.getCurrentPlayer()==hive.getPlayer2()->getId())playerTurn=false;
+        else playerTurn=true;
+
+        hive.setRewindNumber(hive.getRewindMax());
     } else {
         setupDeck(buttonSize);
     }

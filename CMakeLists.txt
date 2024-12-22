@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
-set(CMAKE_PREFIX_PATH "C:/Qt/6.8.1/mingw_64")
+set(CMAKE_PREFIX_PATH "C:/Qt/6.8.0/mingw_64")
 
 find_package(Qt6 COMPONENTS
         Core
@@ -31,11 +31,10 @@ file(GLOB SOURCES
 # Créer l'exécutable pour l'interface Qt
 add_executable(HiveQt ${SOURCES}
         src/features/AI.h)
-#add_executable(HiveConsole ${CONSOLE_SOURCES} src/mainConsole.cpp)
 
-if (WIN32)#Pour empêcher l'ouverture de la console
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
-endif ()
+#if (WIN32)#Pour empêcher l'ouverture de la console
+#    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
+#endif ()
 
 
 target_link_libraries(HiveQt
