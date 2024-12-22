@@ -227,6 +227,7 @@ void Hive::saveGame(const std::string& filename) const{
     file << "currentPlayer:"<< std::endl << (currentPlayer == &player1 ? 1:2 )<< std::endl;
     file << "renderedMapSideSize:"<< std::endl << renderedMapSideSize << std::endl;
     file << "RewindNb:"<< std::endl << rewindNb << std::endl;
+    file << "RewindUsed:"<< std::endl << rewindUsed << std::endl;
 
     // Sauvegarder l'état de la carte (Map)
     file << "Map:" << std::endl;
@@ -256,8 +257,9 @@ void Hive::saveGame(const std::string& filename) const{
     // Sauvegarder les joueurs
     file << "ID:"<< std::endl << player1.getId() << std::endl;
     file << "isHuman:" << std::endl<< player1.isHuman << std::endl;
+    if (!player1.getName().empty())
     file << "Player Name:"<< std::endl << player1.getName() << std::endl;
-
+    else{file << "Player Name:"<< std::endl << "Player1" << std::endl;}
     // Sauvegarder les éléments du Deck du Player
     file << "Deck Size:"<< std::endl << player1.deck.getInsects()->size() << std::endl;
 
@@ -280,7 +282,9 @@ void Hive::saveGame(const std::string& filename) const{
     // Sauvegarder les joueurs
     file << "ID:" << std::endl << player2.getId() << std::endl;
     file << "isHuman:" << std::endl << player2.isHuman << std::endl;
-    file << "Player Name:" << std::endl << player2.getName() << std::endl;
+    if (!player2.getName().empty())
+        file << "Player Name:"<< std::endl << player2.getName() << std::endl;
+    else{file << "Player Name:"<< std::endl << "Player2" << std::endl;}
 
     // Sauvegarder les éléments du Deck du Player
     file << "Deck Size:" << std::endl << player2.getDeck().getInsects()->size() << std::endl;
@@ -329,9 +333,11 @@ void Hive::loadGame(const std::string& filename) {
     if (!file.is_open()) {
         throw HiveException("loadGame", "Impossible d'ouvrir le fichier de sauvegarde.");
     }
+    // Déclaration des booléen pourne pas charger 2 les mêmes valeurs et gérer les ordres de chargements
     bool mode_done = false;
     bool historic_done = false;
-    bool rewind_done = false;
+    bool rewindnb_done = false;
+    bool rewindused_done = false;
     bool trueMapSideSize_done = false;
     bool renderedMapSideSize_done = false;
     bool Turn_done = false;
@@ -344,13 +350,13 @@ void Hive::loadGame(const std::string& filename) {
     int currentPlayeR;
     std::string line;
     // Charger les informations de base
-    while (counter < 11) {
+    while (counter < 12) {
         if(line.find("FinFichier") != std::string::npos) {
             file.clear();  // Réinitialise les indicateurs (EOF)
             file.seekg(0, std::ios::beg);
         }  // Repositionne le curseur au début
-
-        if(count++ > 50)break;
+        //Sécurité pour éviter que la fonction boucle trop longtemps
+        if(count++ > 150)break;
         std::getline(file, line);
 
 
@@ -369,9 +375,17 @@ void Hive::loadGame(const std::string& filename) {
             solver.setTurn(Turnvalue) ;
         }
 
-        else if (line.find("RewindNb:") == 0  && !rewind_done )  {  // Vérifie si la ligne commence par "RewindNb:"
-            counter++;rewind_done= true;
-            file >> rewindNb;  // Lire la valeur entière dans rewindNb
+        else if (line.find("RewindNb:") == 0  && !rewindnb_done )  {  // Vérifie si la ligne commence par "RewindNb:"
+            counter++;rewindnb_done= true;
+            int rew ;
+            file >> rew;  // Lire la valeur entière
+            setRewindNumber(rew);
+        }
+        else if (line.find("RewindUsed:") == 0  && !rewindused_done )  {  // Vérifie si la ligne commence par "RewindNb:"
+            counter++;rewindused_done= true;
+            int rew ;
+            file >> rew;  // Lire la valeur entière
+            setRewindUsed(rew);
         }
         else if (line.find("trueMapSideSize:") != std::string::npos  && !trueMapSideSize_done) {
             counter++;trueMapSideSize_done= true;

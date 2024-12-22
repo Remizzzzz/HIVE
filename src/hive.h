@@ -267,6 +267,9 @@ public:
         rewindNb = newRewindNumber;
         rewindUsed= rewindNb;
     }
+    void setRewindUsed(int newRewindUsed) {
+        rewindUsed = newRewindUsed;
+    }
     //int launchGame();
     void static displayRules() ;
     void changeSettings();
