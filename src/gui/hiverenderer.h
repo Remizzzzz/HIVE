@@ -17,7 +17,7 @@ class hiveRenderer : public QMainWindow
     Q_OBJECT
 
 public:
-    hiveRenderer(QWidget *parent = nullptr, int rewind=5,Mode mod=PvP, bool ladybug=false, bool mosquitoe=false, bool load=false);
+    hiveRenderer(QWidget *parent = nullptr, int rewind=5,Mode mod=PvP, bool ladybug=false, bool mosquitoe=false, bool load=false, QString nomJ1="Player1", QString nomJ2="Player2");
     ~hiveRenderer();
     void updateInputT(){
         if (inputT){
@@ -65,7 +65,7 @@ private:
     QWidget *centralWidget;      // Conteneur principal
     QLabel *infoLabel;           // Label pour afficher les infos
     void setupHexagonalGrid(int rows, int cols, int buttonSize);
-    void setupDeck(int buttonSize);
+    void setupDeck(int buttonSize, QString nomJ1, QString nomJ2);
     void loadGame(bool load);
 
 private slots : //Private slots, c'est pour détecter les signaux des boutons

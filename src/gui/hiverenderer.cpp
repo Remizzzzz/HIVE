@@ -15,7 +15,7 @@ QDebug operator<<(QDebug debug, const vec2i &v) {
 }
 
 
-hiveRenderer::hiveRenderer(QWidget *parent, int rewind, Mode mod, bool ladybug, bool mosquitoe, bool load)
+hiveRenderer::hiveRenderer(QWidget *parent, int rewind, Mode mod, bool ladybug, bool mosquitoe, bool load, QString nomJ1, QString nomJ2)
     : QMainWindow(parent),
     centralWidget(new QWidget(this)),
     infoLabel(new QLabel("Cliquez sur un bouton", this)),
@@ -35,7 +35,7 @@ hiveRenderer::hiveRenderer(QWidget *parent, int rewind, Mode mod, bool ladybug, 
 
     // Créer la grille hexagonale de boutons
     setupHexagonalGrid(rows, cols, buttonSize);  // 30x30 boutons, taille de 25 pixels max, à cause du displacement, le rapport entre la hauteur et la largeur est de 1*4 pour une map 2x2
-    setupDeck(buttonSize);
+    setupDeck(buttonSize, nomJ1, nomJ2);
     // Configurez la fenêtre
     setWindowTitle("Hive !");
     resize(1000,600);
@@ -107,15 +107,15 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
     menuButton->setStyleSheet("background: grey;");
 }
 
-void hiveRenderer::setupDeck(int buttonSize){
+void hiveRenderer::setupDeck(int buttonSize, QString nomJ1, QString nomJ2){
     vec2i deck(-1,-1);
     for (int num=0;num<2;num++){
         if (num==0) {
-            QLabel *name = new QLabel("Player 1");
+            QLabel *name = new QLabel(nomJ1);
             name->setGeometry(0,num*30*buttonSize+50,50,10);
         }
         else {
-            QLabel *name = new QLabel("Player 2");
+            QLabel *name = new QLabel(nomJ2);
             name->setGeometry(0,num*30*buttonSize+50,50,10);
         }
         for (int i=0;i<sizeDeck;i++){
