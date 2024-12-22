@@ -76,6 +76,11 @@ void Hive::displayMenu() {
 }
 
 void Hive::displayRules() {
+    std::cout << "=== Comment jouer? ===\n";
+    std::cout << "Une fois la partie lancée, vous pouvez renvenir dans le menu avec la touche echap.\n";
+    std::cout << "Pour jouer, vous pouvez utiliser les flèches du clavier pour déplacer le curseur violet.\n";
+    std::cout << "Pour séléctionner une case ou une pièce il suffit de taper sur entrer.\n";
+
     std::cout << "=== Règles du jeu Hive ===\n";
     std::cout << "1. Hive est un jeu de stratégie abstrait où deux joueurs s'affrontent.\n";
     std::cout << "2. Le but du jeu est de capturer complètement la reine de l'adversaire en l'entourant.\n";
