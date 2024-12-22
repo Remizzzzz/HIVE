@@ -2,6 +2,9 @@
 // Created by joanc on 22/12/2024.
 //
 
+
+#include <QDebug>
+
 #include "features/insect.h"
 #include "features/map.h"
 #include "features/player.h"

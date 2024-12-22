@@ -10,6 +10,7 @@
 #include "inputs.h"
 
 #include <algorithm>
+#include <QDebug>
 
 
 

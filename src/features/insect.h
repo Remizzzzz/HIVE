@@ -7,6 +7,7 @@
 
 #include <sstream>
 #include <vector>
+#include <QDebug>
 
 #include "../utils/utils.h"
 #include "../utils/hiveException.h"

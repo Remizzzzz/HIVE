@@ -1,19 +1,22 @@
 #include "hexagonalbutton.h"
 
-HexagonalButton::HexagonalButton(int size, QWidget *parent)
-    : QPushButton(parent) {
+
+
+HexagonalButton::HexagonalButton(int size, QWidget *parent) : QPushButton(parent) {
     // Créer l'hexagone
     createHexagon(size);
     // Créer un masque basé sur l'hexagone
     QRegion region(hexagon);  // Appliquer le polygone comme masque
     setMask(region);  // Le masque définit la zone cliquable du bouton
 }
+
 HexagonalButton& HexagonalButton::operator=(const HexagonalButton &other) {
     this->player=other.player;
     this->updateState(other.currentEvent);
     iT=other.iT;
     return *this;
 }
+
 void HexagonalButton::createHexagon(int size) {
     hexagon.clear();
     // Coordonnées des sommets d'un hexagone
@@ -25,10 +28,6 @@ void HexagonalButton::createHexagon(int size) {
             << QPoint(0, size / 4);                     // Haut-gauche
 }
 
-void HexagonalButton::updateState(int event) {
-    currentEvent = event;  // Met à jour l'état
-    update();              // Déclenche un rafraîchissement du bouton
-}
 
 void HexagonalButton::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
@@ -97,7 +96,7 @@ void HexagonalButton::paintEvent(QPaintEvent *event) {
 
             painter.drawPixmap(topLeft, scaledImage);
         }
-    }else if (iT==spider) {
+    } else if (iT==spider) {
         QPixmap buttonImageSpider("../assets/spider.PNG");
         if (buttonImageSpider.isNull()) {
             painter.setBrush(QBrush(Qt::blue));
@@ -113,7 +112,7 @@ void HexagonalButton::paintEvent(QPaintEvent *event) {
 
             painter.drawPixmap(topLeft, scaledImage);
         }
-    } else if (iT==beetle){
+    } else if (iT==beetle) {
         QPixmap buttonImageBeetle("../assets/beetle.PNG");
         if (buttonImageBeetle.isNull()) {
             painter.setBrush(QBrush(Qt::blue));
@@ -161,7 +160,7 @@ void HexagonalButton::paintEvent(QPaintEvent *event) {
 
             painter.drawPixmap(topLeft, scaledImage);
         }
-    }else if (iT==ladybug) {
+    } else if (iT==ladybug) {
         QPixmap buttonImageGrasshopper("../assets/ladybug.png");
         if (buttonImageGrasshopper.isNull()) {
             painter.setBrush(QBrush(Qt::blue));
@@ -179,9 +178,4 @@ void HexagonalButton::paintEvent(QPaintEvent *event) {
         }
     }
 }
-void HexagonalButton::setInsectType(insectType IT){
-    iT=IT;
-    update();
-}
 
-insectType HexagonalButton::getInsectType(){ return iT;}

@@ -5,6 +5,7 @@
 #ifndef HIVE_INPUTMANAGER_H
 #define HIVE_INPUTMANAGER_H
 
+#include <QDebug>
 
 #include "features/inputs.h"
 #include "features/player.h"

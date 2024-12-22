@@ -5,6 +5,8 @@
 #ifndef HIVE_SOLVER_H
 #define HIVE_SOLVER_H
 
+#include <QDebug>
+
 #include "features/insect.h"
 #include "features/map.h"
 #include "features/deck.h"

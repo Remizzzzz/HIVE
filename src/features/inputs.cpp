@@ -3,6 +3,7 @@
 //
 
 #include "inputs.h"
+#include <QDebug>
 
 
 

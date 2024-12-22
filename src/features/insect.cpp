@@ -10,6 +10,7 @@
 #include <vector>
 #include <list>
 #include <algorithm>
+#include <QDebug>
 
 #include "insect.h"
 #include "map.h"

@@ -1,4 +1,3 @@
-// MainWindow.cpp
 #include "MainWindow.h"
 #include "hiverenderer.h"
 #include <QPushButton>
@@ -18,6 +17,8 @@
 #include "../mainConsole.cpp"
 #include <iostream>
 
+
+
 //Fonction pour le lancement console
 void enableVirtualTerminalProcessing() {
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -31,7 +32,7 @@ void enableVirtualTerminalProcessing() {
 }
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent) {
-    /* Titre et taille de la fenêtre */
+    //Titre et taille de la fenêtre
     setWindowTitle(QString("Hive"));
     resize(1000, 600);
 
@@ -237,8 +238,6 @@ void MainWindow::initializeSettingsWidget() {
         if (mosquitoCheckBox->isChecked()) hasMosquito = true;
         else hasMosquito = false;
 
-
-
         stackedWidget->setCurrentIndex(0);
     });
 
@@ -274,17 +273,9 @@ void MainWindow::launchConsoleApp() {
     enableVirtualTerminalProcessing();
     std::cout << "Console ouverte... Lancement de l'application console..." << std::endl;
     this->close();
-    // Lancer l'application console avec QProcess
-    //QProcess::startDetached("../cmake-build-debug/HiveConsole.exe");
-    // QThread *consoleThread = QThread::create([]() {
-    //     mainConsole();
-    // });
-    //
-    // consoleThread->start();
+
     mainConsole();
     FreeConsole();
-
-    // Ferme la fenêtre de la console une fois l'application console lancée
 }
 
 

@@ -8,6 +8,7 @@
 #include <string>
 #include <stdexcept>
 #include <sstream>
+#include <QDebug>
 
 #include "utils/hiveException.h"
 #include "features/insect.h"

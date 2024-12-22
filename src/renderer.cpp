@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <QDebug>
 
 #include "features/map.h"
 #include "features/inputs.h"

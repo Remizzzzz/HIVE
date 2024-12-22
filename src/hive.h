@@ -8,6 +8,7 @@
 #include <vector>
 #include <set>
 #include <string>
+#include <QDebug>
 
 #include "features/insect.h"
 #include "inputsManager.h"

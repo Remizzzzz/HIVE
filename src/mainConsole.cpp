@@ -1,4 +1,5 @@
 #include <fstream>
+#include <QDebug>
 
 #include "features/insect.h"
 #include "hive.h"

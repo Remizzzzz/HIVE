@@ -2,6 +2,7 @@
 #define HIVE_RENDERER_H
 
 #include <iostream>
+#include <QDebug>
 
 #include "features/map.h"
 #include "features/player.h"

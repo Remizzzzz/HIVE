@@ -1,11 +1,12 @@
-#include "hiverenderer.h"
-#include "hexagonalbutton.h"
-#include "ui_hiverenderer.h"
 #include <QPixmap>
 #include <QIcon>
 #include <QDebug>
+
 #include "MainWindow.h"
 #include "ParamButton.h"
+#include "hiverenderer.h"
+#include "hexagonalbutton.h"
+#include "ui_hiverenderer.h"
 
 
 QDebug operator<<(QDebug debug, const vec2i &v) {
@@ -23,41 +24,47 @@ hiveRenderer::hiveRenderer(QWidget *parent, int rewind, Mode mod, bool ladybug, 
     ladExten(ladybug),
     mosExten(mosquitoe),
     mode(mod)
-{ui->setupUi(this);
+{
+    ui->setupUi(this);
     infoLabel->setAlignment(Qt::AlignCenter);
     infoLabel->setGeometry(0, 0, width(), 30);  // Placer le label en haut
     centralWidget->setGeometry(0, 50, width(), height() - 50);  // Ajuster la taille du widget central
     hive.runQt(ladybug, mosquitoe);
     hive.setRewindNumber(2*rewind);
     if (ladExten) sizeDeck+=2;
-
     if (mosExten) sizeDeck+=2;
 
     // Créer la grille hexagonale de boutons
-    setupHexagonalGrid(rows, cols, buttonSize);  // 30x30 boutons, taille de 25 pixels max, à cause du displacement, le rapport entre la hauteur et la largeur est de 1*4 pour une map 2x2
+    // 30x30 boutons, taille de 25 pixels max, à cause du displacement, le rapport entre la hauteur et la largeur est de 1*4 pour une map 2x2
+    setupHexagonalGrid(rows, cols, buttonSize);
     setupDeck(buttonSize, nomJ1, nomJ2);
+
     // Configurez la fenêtre
     setWindowTitle("Hive !");
     resize(1000,600);
     loadGame(load);
+
     // Ajoutez le widget central sans layout
     setCentralWidget(centralWidget);
 }
 
+
 void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
     int padding = 50;  // padding
     int xconv=0, yconv=0;
+
     // ajuste la largeur et la hauteur d'un hexagone en fonction de la taille
-    qreal hexWidth = buttonSize * 0.50; // Largeur de l'hexagone (ajustée pour l'espacement)
-    qreal hexHeight = buttonSize*1.4;       // Hauteur de l'hexagone
+    qreal hexWidth = buttonSize * 0.50;  // Largeur de l'hexagone (ajustée pour l'espacement)
+    qreal hexHeight = buttonSize*1.4;    // Hauteur de l'hexagone
 
     for (int row = 0; row < rows; ++row) {
         for (int col = 0; col < cols; ++col) {
             // Créer un bouton hexagonal
-            HexagonalButton *button = new HexagonalButton(buttonSize, this);
+            auto *button = new HexagonalButton(buttonSize, this);
             button->setText(QString("%1,%2").arg(xconv).arg(yconv));
             vec2i pos(xconv, yconv);
             button->setCoordinates(pos);
+
             // Décalage des colonnes impaires pour un motif hexagonal
             int offset = (col % 2 == 0) ? 0 : hexHeight / 2;
 
@@ -75,9 +82,7 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
             if (col%2 == 1) {
                 xconv--;
                 yconv++;
-            } else {
-                xconv++;
-            }
+            } else xconv++;
         }
         xconv+=2;
         yconv=0;
@@ -109,18 +114,17 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
 
 void hiveRenderer::setupDeck(int buttonSize, QString nomJ1, QString nomJ2){
     vec2i deck(-1,-1);
-    for (int num=0;num<2;num++){
+    for (int num=0;num<2;num++) {
         if (num==0) {
-            QLabel *name = new QLabel(nomJ1);
+            auto *name = new QLabel(nomJ1);
+            name->setGeometry(0,num*30*buttonSize+50,50,10);
+        } else {
+            auto *name = new QLabel(nomJ2);
             name->setGeometry(0,num*30*buttonSize+50,50,10);
         }
-        else {
-            QLabel *name = new QLabel(nomJ2);
-            name->setGeometry(0,num*30*buttonSize+50,50,10);
-        }
-        for (int i=0;i<sizeDeck;i++){
+        for (int i=0;i<sizeDeck;i++) {
             // Créer un bouton hexagonal
-            HexagonalButton *button = new HexagonalButton(buttonSize, this);
+            auto *button = new HexagonalButton(buttonSize, this);
             button->setText(QString("%1").arg(num*(-13)+i-13));
             button->setCoordinates(deck);
             qreal x = num*35*buttonSize+60;
@@ -135,6 +139,7 @@ void hiveRenderer::setupDeck(int buttonSize, QString nomJ1, QString nomJ2){
             connect(button,&QPushButton::clicked, this, &hiveRenderer::handleButtonClick);
             buttons[30][i+num*sizeDeck]=button;
         }
+
         buttons[30][0+num*sizeDeck]->setInsectType(bee);
 
         buttons[30][1+num*sizeDeck]->setInsectType(ant);
@@ -151,18 +156,22 @@ void hiveRenderer::setupDeck(int buttonSize, QString nomJ1, QString nomJ2){
 
         buttons[30][9+num*sizeDeck]->setInsectType(spider);
         buttons[30][10+num*sizeDeck]->setInsectType(spider);
+
         if (mosExten) {
             buttons[30][11+num*sizeDeck]->setInsectType(mosquitoe);
             buttons[30][12+num*sizeDeck]->setInsectType(mosquitoe);
         }
-        if (ladExten){
-            int mos=0;
-            if (mosExten) mos=1;
+
+        if (ladExten) {
+            int mos = 0;
+            if (mosExten) mos = 1;
             buttons[30][11+2*mos+num*sizeDeck]->setInsectType(ladybug);
             buttons[30][12+2*mos+num*sizeDeck]->setInsectType(ladybug);
         }
     }
 }
+
+
 void hiveRenderer::loadGame(bool load) {
     if (load) {
         hive.loadGame("../hive_parameters.txt");
@@ -176,33 +185,36 @@ void hiveRenderer::loadGame(bool load) {
                     buttons[i][j]->setInsectType(in->getIT());
                     buttons[i][j]->setPlayer(!in->getColor());
                     buttons[i][j]->updateState(0);
+
                     //Actu des decks
                     int index=0;
-                    while (in->getIT()!=buttons[30][index+!in->getColor()*sizeDeck]->getInsectType()) {
-                        index++;
-                    }
+                    while (in->getIT()!=buttons[30][index+!in->getColor()*sizeDeck]->getInsectType()) index++;
                     buttons[30][index+!in->getColor()*sizeDeck]->updateState(2);
                 }
             }
         }
     }
 }
+
+
 hiveRenderer::~hiveRenderer() {
     delete ui;
 }
 
-void hiveRenderer::handleButtonClick() {
 
+void hiveRenderer::handleButtonClick() {
     // Récupérez le bouton qui a déclenché le signal
     HexagonalButton *button = qobject_cast<HexagonalButton *>(sender());
     Player * actualP=hive.getPlayer1();
     Player * opponent = hive.getPlayer2();
     vec2i deck(-1,-1);
     vec2i index(-1,-1);
-    if (playerTurn){
+
+    if (playerTurn) {
         actualP=hive.getPlayer2();//Si c'est au tour du joueur 2, on change le joueur actuel
         opponent=hive.getPlayer1();
     }
+
     if (button) {
         infoLabel->setText(QString("bouton cliqué : %1, %2").arg(button->getCoordinates().getI()).arg(button->getCoordinates().getJ()));
         if (!getInputT()){//Si c'est la deuxième selection
@@ -215,11 +227,9 @@ void hiveRenderer::handleButtonClick() {
                         button->setInsectType(lastClicked->getInsectType());
 
                         if (lastClicked->getInsectType()==beetle && lastClicked->getCoordinates().getI()>-1) {
-
                             Beetle* b = dynamic_cast<Beetle*>(hive.getMap().getInsectAt(actualP->getInputs().getStart()));
 
                             if (b->getInsectUnder()!=nullptr) {
-
                                 insectType beetleInsectType=b->getInsectUnder()->getIT();
                                 bool  beetleInsectPlayer=b->getInsectUnder()->getColor();
                                 lastClicked->setInsectType(beetleInsectType);
@@ -229,11 +239,11 @@ void hiveRenderer::handleButtonClick() {
                                 lastClicked->setInsectType(none);
                                 lastClicked->updateState(2);//La case devient vide
                             }
+
                         } else if(lastClicked->getInsectType()==mosquitoe && lastClicked->getCoordinates().getI()>-1){
                             Mosquitoe* b = dynamic_cast<Mosquitoe*>(hive.getMap().getInsectAt(actualP->getInputs().getStart()));
 
                             if (b->getInsectUnder()!=nullptr) {
-
                                 insectType mosquitoeInsectType=b->getInsectUnder()->getIT();
                                 bool  mosquitoeInsectPlayer=b->getInsectUnder()->getColor();
                                 lastClicked->setInsectType(mosquitoeInsectType);
@@ -248,6 +258,7 @@ void hiveRenderer::handleButtonClick() {
                             lastClicked->setInsectType(none);
                             lastClicked->updateState(2);//La case devient vide
                         }
+
                         if (actualP->getInputs().getStart().getI()==-1) {//Si c'est deckToMap movement
 
                             hive.getSolver()->deckToMapMovement(*actualP);
@@ -259,7 +270,6 @@ void hiveRenderer::handleButtonClick() {
                             hive.decrRewindUsed();
                         }
 
-
                         button->updateState(0);
                         button->setPlayer(playerTurn);
                         if (opponent->lostGame(hive.getMap())) {
@@ -267,6 +277,7 @@ void hiveRenderer::handleButtonClick() {
                         } else if (actualP->lostGame(hive.getMap())) {
                             showWinner(opponent);
                         }
+
                         if (mode==PvP) {
                             updatePlayerTurn();
                         } else {
@@ -275,6 +286,7 @@ void hiveRenderer::handleButtonClick() {
                             updateInputT();
                             hive.getInputsManager()->updateAIInputs(*opponent,true,inputT);
                             HexagonalButton* startButton;
+
                             if (opponent->getInputs().getStart().getI()==-1) {
                                 startButton=buttons[30][sizeDeck+opponent->getInputs().getStart().getJ()];
                             } else {
@@ -282,6 +294,7 @@ void hiveRenderer::handleButtonClick() {
                                 coor=convertCoordinates(coor);
                                 startButton=buttons[coor.getI()][coor.getJ()];
                             }
+
                             vec2i v=convertCoordinates(opponent->getInputs().getPossibleDestinations()[opponent->getInputs().getDestinationIndex()]);
                             qDebug()<<"IA vec2i"<<v;
                             *buttons[v.getI()][v.getJ()]=*startButton;
@@ -289,6 +302,7 @@ void hiveRenderer::handleButtonClick() {
                             startButton->updateState(2);
                             startButton->setInsectType(none);
                             qDebug()<< "\nAI("<<opponent->getInputs().getStart().getI()<<","<<opponent->getInputs().getStart().getJ()<<")";
+
                             if (opponent->getInputs().getStart().getI()==-1) {//Si c'est deckToMap movement
                                 hive.getSolver()->deckToMapMovement(*opponent);
                                 hive.decrRewindUsed();
@@ -297,6 +311,7 @@ void hiveRenderer::handleButtonClick() {
                                 hive.decrRewindUsed();
                             }
                         }
+
                         qDebug()<<"\nHistorique : ";
                         for (auto move : hive.getMap().getHistoric()) {
                             qDebug()<<"\n("<<move.from.getI()<<","<<move.from.getJ()<<")";
@@ -306,6 +321,7 @@ void hiveRenderer::handleButtonClick() {
                 } else {
                     lastClicked->updateState(0);
                 }
+
                 for (auto b : actualP->getInputs().getPossibleDestinations()) {
                     b=convertCoordinates(b);
                     HexagonalButton * selec=buttons[b.getI()][b.getJ()];
@@ -336,7 +352,7 @@ void hiveRenderer::handleButtonClick() {
                         }
 
                         hive.getInputsManager()->updatePlayerInputsQt(actualP,index,inputT,playerTurn);
-                        for (auto b : actualP->getInputs().getPossibleDestinations()) {//On itère dans la liste des destionations possibles
+                        for (auto b : actualP->getInputs().getPossibleDestinations()) {//On itère dans la liste des destinations possibles
                             qDebug()<<"b =("<<b.getI()<<","<<b.getJ()<<")";
                             b=convertCoordinates(b);
                             buttons[b.getI()][b.getJ()]->updateState(3);
@@ -385,6 +401,8 @@ void hiveRenderer::handleButtonClick() {
         }
     }
 }
+
+
 void hiveRenderer::showWinner(Player* winner) {
     // Création d'une nouvelle fenêtre pour afficher les règles du jeu
     QWidget *winWindow = new QWidget;
@@ -425,8 +443,8 @@ void hiveRenderer::handleParamButtonClick() {
             if (hive.getRewindUsed()<hive.getRewindMax()) {
                 vec2i from =hive.getMap().getHistoric().front().from;
                 vec2i to = convertCoordinates(hive.getMap().getHistoric().front().to);
-                if(from.getI()>=0) {
-                    //c'etait un map to map movement
+                if (from.getI()>=0) {
+                    // c'était un map to map movement
                     from=convertCoordinates(from);
                     *buttons[from.getI()][from.getJ()]=*buttons[to.getI()][to.getJ()];
                     buttons[to.getI()][to.getJ()]->updateState(2);
@@ -443,9 +461,7 @@ void hiveRenderer::handleParamButtonClick() {
                         turn=0;
                     }
 
-                    while (buttons[30][index+(turn)*(sizeDeck)]->getState()!=2) {
-                        index++;
-                    }
+                    while (buttons[30][index+(turn)*(sizeDeck)]->getState()!=2) index++;
                     qDebug()<<"\n\nbuttonI "<<from.getJ()+index+(turn)*sizeDeck;
                     *buttons[30][index+(turn)*sizeDeck]=*buttons[to.getI()][to.getJ()];
                     buttons[to.getI()][to.getJ()]->updateState(2);

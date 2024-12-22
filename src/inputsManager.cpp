@@ -2,6 +2,13 @@
 // Created by joanc on 22/12/2024.
 //
 
+
+#include <iostream>
+#include <conio.h>
+#include <solver.h>
+#include <QDebug>
+#include <algorithm>
+
 #include "inputsManager.h"
 #include "features/inputs.h"
 #include "features/deck.h"
@@ -9,11 +16,7 @@
 #include "utils/utils.h"
 #include "utils/hiveException.h"
 #include "utils/random.hpp"
-#include <iostream>
-#include <conio.h>
-#include <solver.h>
 #include <features/map.h>
-#include <algorithm>
 
 
 

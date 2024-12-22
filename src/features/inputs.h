@@ -8,6 +8,7 @@
 
 #include <string>
 #include <vector>
+#include <QDebug>
 
 #include "../utils/utils.h"
 
