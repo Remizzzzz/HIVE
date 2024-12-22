@@ -60,7 +60,7 @@ class Bee : public virtual Insect {
 public://test
     Bee(bool col) : Insect(col, bee, "Qe") {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
-    bool isCircled(Map &m);
+    bool isCircled(Map &m) const;
 };
 
 

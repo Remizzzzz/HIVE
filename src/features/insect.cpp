@@ -185,7 +185,7 @@ int Insect::getFormerNeighbour(vec2i oldPosition, vec2i newPosition, Map &m) con
 
 // Méthodes de Bee
 // Fonction qui dit si la reine abeille est encerclée (partie terminée)
-bool Bee::isCircled(Map &m) {
+bool Bee::isCircled(Map &m) const{
     try {
         std::list<vec2i> neighbors = m.getNeighbours(this->getCoordinates());
         for (auto it : neighbors) { // On itère dans les voisins
