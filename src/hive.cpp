@@ -170,44 +170,39 @@ int Hive::run(){
 
             if (bee1->isCircled(map))
             {
-                std::cout << "\n#####PLAYER 2 WIN#####\n";
+                std::cout << "\n#####" << player2.getName() << " WIN#####\n";
                 menuPart = true;
                 gamePart = false;
             }
             if (bee2->isCircled(map))
             {
-                std::cout << "\n#####PLAYER 1 WIN#####\n";
+                std::cout << "\n#####" << player1.getName() << " WIN#####\n";
                 menuPart = true;
                 gamePart = false;
             }
 
             renderer->render(*currentPlayer);
 
+
             if (currentPlayer->isHuman){
                 inputsManager.updatePlayerInputs(*currentPlayer);
             }
             else{
                 inputsManager.updateAIInputs2(*currentPlayer, AI());
-                std::cout << "\n:" <<currentPlayer->inputs;
-
             }
-
-            std::cout << "\n:" <<currentPlayer->inputs;
 
             switch (solver.update(*currentPlayer)) {
             case -1:
-                std::cout << "\n---Reset---\n";
                 //le mouvement est pas bon
                 rewindUsed = 0;
-
                 resetPlayerInputs(*currentPlayer);
+                currentPlayer->inputs.setMessage("####Invalid Movement####");
                 break;
             case 0:
                 //Le travail est en cours
                 break;
             case 1:
                 //mouvement fait
-                std::cout << "\n---Deplacement---\n";
                 rewindUsed = 0;
 
                 resetPlayerInputs(*currentPlayer);
@@ -253,14 +248,13 @@ int Hive::run(){
                 }
                 else
                 {
-                    std::cout << "No more rewind";
+                    currentPlayer->inputs.setMessage("####No more rewind available####");
                 }
                 break;
 
             default:
                 throw HiveException("hive.h:Hive", "retour de run mauvais");
             }
-            std::cout << "\n:" <<currentPlayer->inputs.getStart();
 
             return 1;
         }

@@ -145,7 +145,6 @@ public:
 
         player2.inputs.reset();
         player2.inputs.setStart({player2.getDeck().isEmpty() * -1 + renderedMapSideSize,0});
-        std::cout << "odaodaoza : " << player2.getInputs().getStart();
     }
 
     void resetPlayerInputs(Player & player_){

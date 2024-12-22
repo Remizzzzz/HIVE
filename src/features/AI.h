@@ -22,7 +22,6 @@ public:
 
          int randomValue = std::max(0,random.getRandomInt(0,2));
 
-         std::cout << "randomValue: " << randomValue;
 
          const Insect * selectedInsect;
 
@@ -56,12 +55,10 @@ public:
          {
              if (!player_.getActiveInsects().empty())
              {
-                 std::cout << "map to map ";
                  const int fromIndex = random.getRandomInt(0,static_cast<int>(player_.getActiveInsects().size()));
 
                  selectedInsect = player_.getActiveInsects()[fromIndex];
 
-                 std::cout << "selectedInsect: " << selectedInsect->getPV();
 
                  inputs_.setStart(selectedInsect->getCoordinates());
                  inputs_.selectStart();
@@ -73,7 +70,6 @@ public:
 
                  inputs_.selectDestination();
 
-                 std::cout << "->" << inputs_;
              }
              else
              {
@@ -84,7 +80,6 @@ public:
 
          if (randomValue == 1 && player_.getDeck().getInsectNb() > 0) //Deck
          {
-             std::cout << "deck to map ";
 
              const int deckIndex = random.getRandomInt(0,player_.getDeck().getInsectNb());
              selectedInsect = player_.getDeck().getInsectAt(deckIndex);

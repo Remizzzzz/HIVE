@@ -16,14 +16,10 @@ class Inputs {
 private:
     bool rewindNeeded;
     bool leaveNeeded;
-    //le joueur a validé son action
     bool startSelected{};
-    //Position apres la premiere validation
     vec2i start;
 
-    //le joueur a validé son action
     bool destinationSelected{};
-    //Position apres la deuxième validation
     int destinationIndex{};
     bool needPossibleDestinations{false};
     std::vector<vec2i> possibleDestinations;
@@ -82,6 +78,7 @@ public:
         start = {0,0};
         possibleDestinations.clear();
         destinationIndex = 0;
+        message = "";
     }
 
     void resetQt() {

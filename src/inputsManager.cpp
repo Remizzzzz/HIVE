@@ -31,10 +31,7 @@ void InputsManager::moveCursor(Player & player, const int cursorId_, const int i
                     || ((inputs.getStart().getI() + i_ == -1 || inputs.getStart().getI() + i_ == renderedMapSideSize)
                         && (inputs.getStart().getJ() + j_ >= 0 && inputs.getStart().getJ() + j_ < player.getDeck().getInsectNb())))
             {
-                std::cout << "----------\n ";
-                std::cout << inputs.getStart() << ',' << vec2i{i_,j_} << '\n';
                 inputs.setStart(inputs.getStart() + vec2i{i_,j_});
-                std::cout << inputs.getStart();
             }
         break;
         case 2:
@@ -58,6 +55,7 @@ void InputsManager::moveCursor(Player & player, const int cursorId_, const int i
 
 void InputsManager::updatePlayerInputs(Player & player_){
     Inputs & inputs = player_.inputs;
+    inputs.setMessage("");
 
     int key = _getch();
     int cursorId = inputs.isStartSelected() + 1;
@@ -67,35 +65,32 @@ void InputsManager::updatePlayerInputs(Player & player_){
 
         switch (key) {
             case 72:
-                moveCursor(player_,cursorId,-1,0); std::cout << "Flèche Haut\n"; break;
+                moveCursor(player_,cursorId,-1,0); break;
             case 80:
-                moveCursor(player_,cursorId,1,0); std::cout << "Flèche Bas\n"; break;
+                moveCursor(player_,cursorId,1,0); break;
             case 75:
-                moveCursor(player_,cursorId,0,-1); std::cout << "Flèche Gauche\n"; break;
+                moveCursor(player_,cursorId,0,-1); break;
             case 77:
-                moveCursor(player_,cursorId,0,1); std::cout << "Flèche Droite\n"; break;
+                moveCursor(player_,cursorId,0,1); break;
             case 83:
-                inputs.needRewind(); std::cout << "Rewind\n"; break;
+                inputs.needRewind(); break;
 
-            default: std::cout << "Autre touche spéciale: Code " << key << "\n"; break;
+            default: break;
         }
     }
     else {
         switch (key) {
             case 13:
                 if (!inputs.isStartSelected()){
-                    std::cout << "here";
                     inputs.selectStart();
                     inputs.needPossibleDestinationsUpdate();
                 }
                 else{
                     inputs.selectDestination();
                 }
-                std::cout << "Enter.\n";
                 break;
             case 27:
                 inputs.needLeave();
-                std::cout << "Sortie.\n";
                 break;
             default: break;
         }

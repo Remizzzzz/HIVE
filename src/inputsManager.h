@@ -33,6 +33,7 @@ public:
     template <class THINKINGFONCTION>
         void updateAIInputs2(Player & player_, THINKINGFONCTION tf, bool Qt=false, bool inputT=false)
     {
+        player_.inputs.setMessage("");
         tf(map,player_, player_.inputs, random, Qt, inputT);
     }
     void updatePlayerInputs(Player & player_);

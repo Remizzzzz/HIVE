@@ -15,7 +15,6 @@ void ConsoleRenderer::renderDeck1(const Player & currentPlayer_) const {
     std::cout << "\033[31m";
     if (currentPlayer_.getInputs().getStart().getI() == -1) {
         for (const auto & insect: P1->getDeck()) {
-            std::cout << insect->getCoordinates();
             if (insect->getCoordinates().getJ() == currentPlayer_.getInputs().getStart().getJ()){
                 if (currentPlayer_.getInputs().isStartSelected()) {
                     std::cout << "\033[92m" << insect->getPV() << "\033[31m ";
