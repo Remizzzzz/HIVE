@@ -108,6 +108,8 @@ public:
          }
 
 
+
+
          /*if (player_.getActiveInsects().empty() && !player_.getDeck().isEmpty()) {
              int index=player_.getDeck().returnIndex(bee); //On place bee pour pas avoir de problèmes de mouvements impossibles
              selectedInsect = player_.getDeck().getInsectAt(index);

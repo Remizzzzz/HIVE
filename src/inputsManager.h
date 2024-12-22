@@ -177,7 +177,7 @@ public:
                 case 77:
                     moveCursor(player_,cursorId,0,1); std::cout << "Flèche Droite\n"; break;
                 case 83:
-                    inputs.needLeave(); std::cout << "Leaves\n"; break;
+                    inputs.needRewind(); std::cout << "Rewind\n"; break;
 
                 default: std::cout << "Autre touche spéciale: Code " << key << "\n"; break;
             }

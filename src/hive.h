@@ -267,6 +267,9 @@ public:
         rewindNb = newRewindNumber;
         rewindUsed= rewindNb;
     }
+    void setRewindUsed(int newRewindUsed) {
+        rewindUsed = newRewindUsed;
+    }
     //int launchGame();
     void static displayRules() ;
     void changeSettings();
@@ -344,22 +347,64 @@ public:
             case -1:
                 std::cout << "\n---Reset---\n";
                 //le mouvement est pas bon
+                rewindUsed = 0;
+
                 resetPlayerInputs(*currentPlayer);
                 break;
             case 0:
                 //Le travail est en cours
-                    break;
+                break;
             case 1:
                 //mouvement fait
                 std::cout << "\n---Deplacement---\n";
+                rewindUsed = 0;
+
                 resetPlayerInputs(*currentPlayer);
                 switchPlayer();
                 break;
             case 2:
+                rewindUsed = 0;
                 menuPart = true;
                 gamePart = false;
                 break;
                 //Fin
+            case 3:
+                if (rewindUsed < rewindNb)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Map::movement lastMove = map.getHistoric().front();
+
+                        if (lastMove.from.getI() == -1)
+                        {
+                            Insect * insect = map.getInsectAt(lastMove.to);
+                            map.removeInsectAt(lastMove.to);
+                            insect->setCoordinates(vec2i{lastMove.from.getI(), player1.getDeck().getInsectNb()});
+                            player1.deck.addInsect(insect);
+                            map.getHistoric().pop_front();
+                        }
+                        else if (lastMove.from.getI() == renderedMapSideSize)
+                        {
+                            Insect * insect = map.getInsectAt(lastMove.to);
+                            map.removeInsectAt(lastMove.to);
+                            insect->setCoordinates(vec2i{lastMove.from.getI(), player2.getDeck().getInsectNb()});
+                            player2.deck.addInsect(insect);
+                            map.getHistoric().pop_front();
+
+                        }
+                        else
+                        {
+                            map.goBack();
+                        }
+                    }
+                    rewindUsed++;
+                    resetPlayerInputs(*currentPlayer);
+                }
+                else
+                {
+                    std::cout << "No more rewind";
+                }
+                break;
 
             default:
                 throw HiveException("hive.h:Hive", "retour de run mauvais");
