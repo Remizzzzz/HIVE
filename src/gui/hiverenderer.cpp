@@ -171,20 +171,34 @@ void hiveRenderer::loadGame(bool load) {
         for (int i=0;i<renderedSize;i++) {
             for (int j=0;j<renderedSize;j++) {
                 vec2i pos(i,j);
+                pos=reconvertCoordinates(pos);
                 Insect* in=hive.getMap().getInsectAt(pos);
                 if (in!=nullptr) {
                     //Actu de la map
                     buttons[i][j]->setInsectType(in->getIT());
                     buttons[i][j]->setPlayer(!in->getColor());
                     buttons[i][j]->updateState(0);
-                    //Actu des decks
-                    int index=0;
-                    while (in->getIT()!=buttons[30][index+!in->getColor()*sizeDeck]->getInsectType()) {
-                        index++;
-                    }
-                    buttons[30][index+!in->getColor()*sizeDeck]->updateState(2);
                 }
             }
+        }
+        //Actu des decks
+        int index=0;
+        for (index=0;index<2*sizeDeck;index++) {
+            buttons[30][index]->setInsectType(none);
+            buttons[30][index]->updateState(2);
+            index++;
+        }
+        index=0;
+        for (auto it : hive.getPlayer1()->getDeck()) {
+            buttons[30][index]->updateState(0);
+            buttons[30][index]->setInsectType(it->getIT());
+            index++;
+        }
+        index=-1;
+        for (auto it : hive.getPlayer2()->getDeck()) {
+            buttons[30][index+sizeDeck]->updateState(0);
+            buttons[30][index+sizeDeck]->setInsectType(it->getIT());
+            index++;
         }
     }
 }
