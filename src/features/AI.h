@@ -15,8 +15,6 @@ public:
      void operator()(Map & map, Player & player_, Inputs & inputs_, lv::Random & random, bool Qt=false, bool inputT=false)
      {
 
-         std::cout << "oueeeee le sang oueeee";
-
          if (player_.getDeck().isEmpty() && player_.getActiveInsects().empty()){
              throw HiveException("inputsManager.h:InputsManager:updateAIInputs","deck and activeInsects are empty");
              return;
@@ -65,7 +63,7 @@ public:
              const int deckIndex = random.getRandomInt(0,player_.getDeck().getInsectNb());
              selectedInsect = player_.getDeck().getInsectAt(deckIndex);
 
-             if (player_.getId() == 1)
+             if (player_.getId() == 1 || Qt)
              {
                  inputs_.setStart({-1,deckIndex});
              }

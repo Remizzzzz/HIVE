@@ -166,6 +166,7 @@ void hiveRenderer::loadGame(bool load) {
     if (load) {
         //hive.setRenderer(hiveRenderer()) ;
         hive.loadGame("../hive_parameters.txt");
+        mode=hive.getMode();
         int renderedSize=hive.getRenderedMapSideSize();
         for (int i=0;i<renderedSize;i++) {
             for (int j=0;j<renderedSize;j++) {
@@ -180,7 +181,22 @@ void hiveRenderer::loadGame(bool load) {
                 }
             }
         }
-
+        switch (hive.getExtension()) {
+            case 0:
+                ladExten=false;
+            mosExten=false;
+            case 1:
+                ladExten=true;
+            mosExten=false;
+            break;
+            case 2 :
+                ladExten=false;
+            mosExten=true;
+            break;
+            case 3 :
+                ladExten=true;
+            mosExten=true;
+        }
         if (ladExten) sizeDeck+=2;
         if (mosExten) sizeDeck+=2;
         setupDeck(buttonSize);
@@ -189,7 +205,6 @@ void hiveRenderer::loadGame(bool load) {
         for (index=0;index<2*sizeDeck;index++) {
             buttons[30][index]->setInsectType(none);
             buttons[30][index]->updateState(2);
-            index++;
         }
         index=0;
         for (auto it : hive.getPlayer1()->getDeck()) {
@@ -213,13 +228,13 @@ hiveRenderer::~hiveRenderer() {
 
 void hiveRenderer::AIMovement(Player* opponent) {
     updateInputT();
-    hive.getInputsManager()->updateAIInputs2(*opponent,AI{});
+    hive.getInputsManager()->updateAIInputs2(*opponent,AI{},true);
     updateInputT();
-    hive.getInputsManager()->updateAIInputs2(*opponent,AI{});
+    hive.getInputsManager()->updateAIInputs2(*opponent,AI{},true);
     qDebug()<<"\nDepart  : "<<opponent->getInputs().getStart();
     qDebug()<<"Arrivee : "<<opponent->getInputs().getPossibleDestinations()[opponent->getInputs().getDestinationIndex()];
     HexagonalButton* startButton;
-    if (opponent->getInputs().getStart().getI()==30) {
+    if (opponent->getInputs().getStart().getI()==-1) {
         startButton=buttons[30][sizeDeck+opponent->getInputs().getStart().getJ()];
     } else {
         vec2i coor(opponent->getInputs().getStart().getI(),opponent->getInputs().getStart().getJ());
@@ -233,7 +248,7 @@ void hiveRenderer::AIMovement(Player* opponent) {
     startButton->updateState(2);
     startButton->setInsectType(none);
     qDebug()<< "\nAI("<<opponent->getInputs().getStart().getI()<<","<<opponent->getInputs().getStart().getJ()<<")";
-    if (opponent->getInputs().getStart().getI()==30) {//Si c'est deckToMap movement
+    if (opponent->getInputs().getStart().getI()==-1) {//Si c'est deckToMap movement
         hive.getSolver()->deckToMapMovement(*opponent);
         hive.decrRewindUsed();
     } else { //Si c'est mapToMapMovementdebug

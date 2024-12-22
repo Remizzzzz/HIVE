@@ -228,7 +228,9 @@ public:
         offset = ((trueMapSideSize - renderedMapSideSize) / 2.f);
     }
 
-
+    Mode getMode() {
+        return mode;
+    }
 
 
 
