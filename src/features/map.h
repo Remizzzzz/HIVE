@@ -79,6 +79,9 @@ public:
         }
     }
 
+    void setRewind(int New) {
+        rewind=New;
+    }
     Insect* getSlot(int nb) const {
         return slot[nb];
     }
