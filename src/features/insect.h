@@ -6,29 +6,31 @@
 #define HIVE_INSECT_H
 
 #include <sstream>
-#include <utility>
 #include <vector>
+#include <QDebug>
 
 #include "../utils/utils.h"
 #include "../utils/hiveException.h"
+
+
+
 class Map;
 enum insectType{ant,beetle, grasshopper,bee,spider, mosquitoe, ladybug,none};
+
 class Insect{
+private:
     int id;
     insectType iT;
     vec2i coordinates;
     bool color; // 0 = bleu, 1 = rouge
-    //bool relie_ruche   sûr qu'on en ai besoin?
     static int counter; // pour définir les identifiants à init dans le .cpp
-    //static int const max_instance = MI; // A voir si utile
-
-
-    //static int const max_instance = MI; // A voir si utile
     std::string PV;
 
 
 public:
-    Insect( bool col, insectType type, std::string PV_) : id(counter++), iT(type), color(col),coordinates({-1,-1}), PV(PV_) {};//Ici -1 c'est pour NULL, mais la valeur doit être int
+    Insect(bool col, insectType type, std::string PV_) :
+    //Ici -1, c'est pour NULL, mais la valeur doit être int
+    id(counter++), iT(type), coordinates({-1,-1}),color(col), PV(PV_) {}
 
     virtual ~Insect() = default;
 
@@ -36,38 +38,21 @@ public:
     insectType  getIT() const { return iT; }
     bool  getColor() const { return color; }
     vec2i getCoordinates() const { return coordinates; }
-    void setCoordinates(const vec2i & coordinates_){coordinates = coordinates_;}
-    static int  get_counter() { return counter; }// A voir si utile
-    //static int  get_max_instance() { return max_instance; }// A voir si utile
-    // Setter pour 'id'
-    void setId(int newId) {
-        id = newId;
-    }
-    void setColor(bool newcolor) {
-        id = newcolor;
-    }
-    static void setCounter(int compt) {
-        counter = compt;
-    }
+    static int  get_counter() { return counter; }
+    const std::string & getPV() const { return PV; }
 
-    // Setter pour 'iT'
-    void setType(insectType newType) {
-        iT = newType;
-    }
-
-
-    const std::string & getPV() const {
-        return PV;
-    }
+    void setCoordinates(const vec2i & coordinates_) { coordinates = coordinates_; }
+    void setId(int newId) { id = newId; }
+    void setColor(bool newcolor) { id = newcolor; }
+    static void setCounter(int compt) { counter = compt; }
+    void setType(insectType newType) { iT = newType; }
 
     int getFormerNeighbour(vec2i oldPosition, vec2i newPosition, Map &m) const; //Fonctions pour detecter les anciens voisins à la nouvelle position
     virtual std::vector<vec2i> getPossibleMovements(Map &m) const = 0;
     std::vector<vec2i> setRule(Map &m, bool color) const;
     bool isLinkingHive(Map &m) const;
-    void setAboveOf(Insect * insect){};
-    Insect* getInsectUnder() const {
-        return nullptr;
-    }
+    void setAboveOf(Insect* insect){};
+    Insect* getInsectUnder() const { return nullptr; }
 };
 
 
@@ -75,24 +60,21 @@ class Bee : public virtual Insect {
 public://test
     Bee(bool col) : Insect(col, bee, "Qe") {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
-    bool isCircled(Map &m) const;
+    bool isCircled(Map &m);
 };
 
 
 class Beetle : public virtual Insect {
 
     // Pointe vers l'insecte sur lequel le scarabée est placé
-    // nullptr par défaut, car le scarabée ne peut pas être placé au-dessus d'une pièce
+    // nullptr par défaut, car le scarabée ne peut pas être possé au-dessus d'une pièce
     Insect* isAboveOf = nullptr;
 
 public:
     Beetle(const bool col) : Insect(col, beetle,"Be") {}
-    Insect* getInsectUnder() const {
-        return isAboveOf;
-    }
-    void setAboveOf(Insect *insect) {
-        isAboveOf = insect;
-    }
+
+    Insect* getInsectUnder() const { return isAboveOf; }
+    void setAboveOf(Insect *insect) { isAboveOf = insect; }
 
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
 };
@@ -109,6 +91,7 @@ public:
 class Spider : public virtual Insect {
 public:
     Spider(bool col) : Insect(col, spider,"Sp") {}
+
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
 };
 
@@ -116,12 +99,14 @@ public:
 class Ant : public virtual Insect {
 public:
     Ant(bool col) : Insect(col, ant,"An") {}
+
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
 };
 
 class Ladybug : public virtual Insect {
 public:
     Ladybug(bool col) : Insect(col, ladybug,"La") {}
+
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
 };
 

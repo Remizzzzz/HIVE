@@ -1,5 +1,10 @@
 #include <QApplication>
+#include <QDebug>
+
 #include "gui/mainWindow.h"
+
+
+
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
     MainWindow w;

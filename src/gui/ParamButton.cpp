@@ -3,6 +3,8 @@
 //
 
 #include "ParamButton.h"
+
+
 ParamButton::ParamButton( QWidget *parent, QString label)
     : QPushButton(parent) {
     setText(label);

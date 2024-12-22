@@ -4,7 +4,7 @@
 #include <QPushButton>
 #include <QPainter>
 #include <QPolygon>
-#include <QRegion>
+
 #include "../features/insect.h"
 
 class HexagonalButton : public QPushButton {
@@ -12,19 +12,21 @@ class HexagonalButton : public QPushButton {
 
 public:
     explicit HexagonalButton(int size, QWidget *parent = nullptr);
-    HexagonalButton& operator =(const HexagonalButton &other);
-    void setInsectType(insectType IT);
-    insectType getInsectType();
+    HexagonalButton& operator=(const HexagonalButton &other);
+
+    insectType getInsectType() { return iT; }
+    QPolygon getHexagon() { return hexagon; }
+    int getState() { return currentEvent; }
+    vec2i getCoordinates() { return coordinates; }
+    bool getPlayer() { return player; }
+
+    void setInsectType(insectType IT) { iT=IT; update(); }
+    void setCoordinates(vec2i coordinates) { this->coordinates = coordinates; }
+    void setPlayer(int player_) { if (player_)player=true; else player=false; }
+    void updateState(int event) { currentEvent = event; update(); }
+
     void paintEvent(QPaintEvent *event) override;
-    QPolygon getHexagon(){return hexagon;}
-    void updateState(int event);
-    int getState(){return currentEvent;}
-    vec2i getCoordinates(){return coordinates;}
-    void setCoordinates(vec2i coordinates) {
-        this->coordinates = coordinates;
-    }
-    void setPlayer(int player_) {if (player_)player=true; else player=false;}
-    bool getPlayer(){return player;}
+
 private:
     bool player;
     int currentEvent=2; //Case vide
@@ -35,4 +37,6 @@ private:
 };
 
 void paintButton(HexagonalButton* b,int event);
+
+
 #endif // HEXAGONALBUTTON_H

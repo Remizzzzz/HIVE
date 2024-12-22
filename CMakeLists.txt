@@ -30,7 +30,10 @@ file(GLOB SOURCES
 
 # Créer l'exécutable pour l'interface Qt
 add_executable(HiveQt ${SOURCES}
-        src/features/AI.h)
+        src/features/AI.h
+        src/inputsManager.cpp
+        src/solver.cpp
+        src/renderer.cpp)
 
 if (WIN32)#Pour empêcher l'ouverture de la console
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")

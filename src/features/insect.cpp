@@ -6,21 +6,23 @@
 #ifndef HIVE_INSECT_CPP
 #define HIVE_INSECT_CPP
 
-#include "insect.h"
-#include "map.h"
-#include <iostream>
+
 #include <vector>
 #include <list>
 #include <algorithm>
-#include <set>
+#include <QDebug>
+
+#include "insect.h"
+#include "map.h"
 #include "../utils/hiveException.h"
+
+
 
 int Insect::counter = 0;
 
 // Méthodes de Insect
 // Renvoie tous les slots dispos sur la map pour poser une pièce
 std::vector<vec2i> Insect::setRule(Map &m, bool color_insect) const {
-    //bool found = color;
     try {
         std::vector<vec2i> possiblePlace;
 
@@ -72,9 +74,7 @@ std::vector<vec2i> Insect::setRule(Map &m, bool color_insect) const {
         // Si un seul insecte est présent, proposer ses six voisins
         if (insectSet.size() == 1) {
             for (const auto& neighbor : m.getNeighbours(insectSet[0])) {
-                if (m.isSlotFree(neighbor)) {
-                    possiblePlace.push_back(neighbor);
-                }
+                if (m.isSlotFree(neighbor)) possiblePlace.push_back(neighbor);
             }
             return possiblePlace;
         }
@@ -89,23 +89,18 @@ std::vector<vec2i> Insect::setRule(Map &m, bool color_insect) const {
 
                 if (m.isSlotFree(neighbor)) {
                     // Vérifier la couleur de l'insecte à ce voisin
-                        if (m.getInsectAt(insect)->getColor() == color_insect) {
-                            sameColorSet.insert(neighbor);
-                        } else {
-                            differentColorSet.insert(neighbor);
-                        }
-                    } else {
-                        // Ajouter les cases vides à `toCheck`
-                        toCheck.insert(neighbor);
-                    }
+                    if (m.getInsectAt(insect)->getColor() == color_insect) sameColorSet.insert(neighbor);
+                    else differentColorSet.insert(neighbor);
+                } else {
+                    // Ajouter les cases vides à `toCheck`
+                    toCheck.insert(neighbor);
                 }
             }
+        }
 
         // Faire la différence entre les ensembles
         std::set<vec2i> validPositions = sameColorSet;
-        for (const auto& slot : differentColorSet) {
-            validPositions.erase(slot);
-        }
+        for (const auto& slot : differentColorSet) validPositions.erase(slot);
 
         // Convertir l'ensemble des positions valides en vecteur
         possiblePlace.assign(validPositions.begin(), validPositions.end());
@@ -121,42 +116,43 @@ std::vector<vec2i> Insect::setRule(Map &m, bool color_insect) const {
     }
 }
 
-//Fonction qui détermine si en enlevant un insecte la ruche est toujours lié (si l'insecte à le droit de bouger)
+//Fonction qui détermine si en enlevant un insecte la ruche est toujours lié (si l'insecte a le droit de bouger)
 bool Insect:: isLinkingHive(Map &m) const {
-    try{
-    // On parcourt toute la map pour compter son nombre d'insecte et garder une valeur d'insect
-    int found_i = -1, found_j, nbInsect = 0;
-    for(int i = 0; i < m.getSideSize(); i++) {
-        for(int j = 0; j < m.getSideSize(); j++) {
-            if(m.isSlotFree(vec2i{i,j}) == 0 && getCoordinates() != vec2i{i,j}) {
-                found_i = i;
-                found_j = j;
-                nbInsect++;
-            }
-        }
-    }
-    if(found_i == -1) { //Si aucun insect trouvé on renvoie true
-        return true;
-    }
-    std::vector<vec2i> insectSet = {vec2i(found_i,found_j)};
-    int i_insect = 0;
-    std::list<vec2i> neighbors;
-    while (insectSet.size() > i_insect) // On itère dans insectSet tant qu'il y a des elements ;
-    {
-        neighbors = m.getNeighbours(insectSet[i_insect]);
-        for (auto it : neighbors) {// On itère dans les voisins
-            if(m.isSlotFree(it) == 0) // Quand on trouve un voisin insect de l'elem on l'ajoute dans la liste insectset si pas encore dedans sauf si c'est l'insect sur lequel on a appelé la fonction
-            {
-                auto search=std::find(insectSet.begin(), insectSet.end(), it);
-                if (search==insectSet.end() && it != getCoordinates()) {
-                    // L'élément n'est pas trouvé, donc on l'ajoute
-                    insectSet.push_back(it);
+    try {
+        // On parcourt toute la map pour compter son nombre d'insectes et garder une valeur d'insecte
+        int found_i = -1, found_j, nbInsect = 0;
+        for (int i = 0; i < m.getSideSize(); i++) {
+            for (int j = 0; j < m.getSideSize(); j++) {
+                if(m.isSlotFree(vec2i{i,j}) == 0 && getCoordinates() != vec2i{i,j}) {
+                    found_i = i;
+                    found_j = j;
+                    nbInsect++;
                 }
             }
         }
-        i_insect++;
-    }
-    return i_insect != nbInsect;
+        if (found_i == -1) return true; // Si aucun insect trouvé, on renvoie true
+
+        std::vector<vec2i> insectSet = {vec2i(found_i,found_j)};
+        int i_insect = 0;
+        std::list<vec2i> neighbors;
+
+        // On itère dans insectSet tant qu'il y a des elements ;
+        while (insectSet.size() > i_insect) {
+            neighbors = m.getNeighbours(insectSet[i_insect]);
+            for (auto it : neighbors) {  // On itère dans les voisins
+                // Quand on trouve un voisin insect de l'élément, on l'ajoute dans la liste "insectset" si pas encore dedans
+                // sauf si c'est l'insecte sur lequel on a appelé la fonction.
+                if(m.isSlotFree(it) == 0) {
+                    auto search=std::find(insectSet.begin(), insectSet.end(), it);
+                    if (search==insectSet.end() && it != getCoordinates()) {
+                        // L'élément n'est pas trouvé, donc on l'ajoute
+                        insectSet.push_back(it);
+                    }
+                }
+            }
+            i_insect++;
+        }
+        return i_insect != nbInsect;
     } catch (const std::string& e) {
         throw HiveException("Insect::isLinkingHive", e);
     }
@@ -164,22 +160,19 @@ bool Insect:: isLinkingHive(Map &m) const {
         throw HiveException("Insect::isLinkingHive", "Erreur dans isLinkingHive");
     }
 }
-//Fonction former Neighbour pour détecter les anciens voisin à la nouvelle position : POUR BOUGER, IL FAUT STRICTEMENT 1 ANCIEN VOISIN!!
-int Insect::getFormerNeighbour(vec2i oldPosition, vec2i newPosition, Map &m) const{
-    try{
-    int count=0;
-    std::list<vec2i> formerNeighbour=m.getNeighbours(oldPosition);
-    std::list<vec2i> newNeighbours=m.getNeighbours(newPosition);
-    for (auto it : formerNeighbour) {
-        for (auto itn :newNeighbours) {
-            if(!m.isSlotFree(it) && !m.isSlotFree(itn)) {
-                if (it == itn) {
-                    count++;
-                }
+
+//Fonction former Neighbour pour détecter les anciens voisins à la nouvelle position : POUR BOUGER, IL FAUT STRICTEMENT 1 ANCIEN VOISIN!!
+int Insect::getFormerNeighbour(vec2i oldPosition, vec2i newPosition, Map &m) const {
+    try {
+        int count=0;
+        std::list<vec2i> formerNeighbour=m.getNeighbours(oldPosition);
+        std::list<vec2i> newNeighbours=m.getNeighbours(newPosition);
+        for (auto it : formerNeighbour) {
+            for (auto itn :newNeighbours) {
+                if (!m.isSlotFree(it) && !m.isSlotFree(itn) && it == itn) count++;
             }
         }
-    }
-    return count;
+        return count;
     } catch (const std::string& e) {
         throw HiveException("Insect::getFormerNeighbor", e);
     }
@@ -192,21 +185,15 @@ int Insect::getFormerNeighbour(vec2i oldPosition, vec2i newPosition, Map &m) con
 
 // Méthodes de Bee
 // Fonction qui dit si la reine abeille est encerclée (partie terminée)
-bool Bee::isCircled(Map &m) const{
-    try{
-    std::list<vec2i> neighbors = m.getNeighbours(this->getCoordinates());
-
-    /*qDebug() << "Voisins trouvés :";
-    for (const auto& n : neighbors) {
-        qDebug() << "  Voisin :" << n;
-    }*/
-
-    for (auto it : neighbors) { // On itère dans les voisins
-        // Quand on trouve une case vide, on renvoie false. La reine n'est pas encerclée
-        if(m.isSlotFree(it)) return false;
-    }
-    // La reine est encerclée.
-    return true;
+bool Bee::isCircled(Map &m) {
+    try {
+        std::list<vec2i> neighbors = m.getNeighbours(this->getCoordinates());
+        for (auto it : neighbors) { // On itère dans les voisins
+            // Quand on trouve une case vide, on renvoie false. La reine n'est pas encerclée
+            if(m.isSlotFree(it)) return false;
+        }
+        // La reine est encerclée.
+        return true;
     } catch (const std::string& e) {
         throw HiveException("Bee::isCircled", e);
     }
@@ -217,20 +204,20 @@ bool Bee::isCircled(Map &m) const{
 
 // Renvoi un vector avec les mouvements possibles de la reine abeille
 std::vector<vec2i> Bee::getPossibleMovements(Map &m) const {
-    try{
-    std::vector<vec2i> possibleMovements;
-    // Vérifie que l'abeille puisse bouger sans casser la ruche en deux
-    if(!this->isLinkingHive(m) && m.isSlotUsable(getCoordinates(), vec2i(-1,-1))) {
-        std::list<vec2i> neighbors = m.getNeighbours(getCoordinates()); // Récupère les voisins de la case
-        // Parcourt chaque voisin
-        for (auto neighbor : neighbors) {
-            // Si le slot est libre ET qu'il y a exactement un ancien voisin parmi les nouveaux
-            if(m.isSlotFree(neighbor) == true  && getFormerNeighbour(getCoordinates(),neighbor, m) == 1) {
-                possibleMovements.push_back(neighbor); // Ajoute la case valide
+    try {
+        std::vector<vec2i> possibleMovements;
+        // Vérifie que l'abeille puisse bouger sans casser la ruche en deux
+        if (!this->isLinkingHive(m) && m.isSlotUsable(getCoordinates(), vec2i(-1,-1))) {
+            std::list<vec2i> neighbors = m.getNeighbours(getCoordinates()); // Récupère les voisins de la case
+            // Parcourt chaque voisin
+            for (auto neighbor : neighbors) {
+                // Si le slot est libre ET qu'il y a exactement un ancien voisin parmi les nouveaux
+                if (m.isSlotFree(neighbor) == true  && getFormerNeighbour(getCoordinates(),neighbor, m) == 1) {
+                    possibleMovements.push_back(neighbor); // Ajoute la case valide
+                }
             }
         }
-    }
-    return possibleMovements;
+        return possibleMovements;
     } catch (const std::string& e) {
         throw HiveException("Bee::getPossibleMovements", e);
     }
@@ -243,26 +230,26 @@ std::vector<vec2i> Bee::getPossibleMovements(Map &m) const {
 
 // Méthodes de Beetle
 std::vector<vec2i> Beetle:: getPossibleMovements(Map &m) const{
-    try{
-    std::vector<vec2i> possibleMovements;
-    std::list<vec2i> neighbors = m.getNeighbours(getCoordinates()); // Récupère la liste des cases voisines
+    try {
+        std::vector<vec2i> possibleMovements;
+        std::list<vec2i> neighbors = m.getNeighbours(getCoordinates()); // Récupère la liste des cases voisines
 
-    // Si le scarabée est au-dessus d'un autre insecte
-    if (isAboveOf != nullptr) {
-        // Alors, on ajoute tous les voisins directement
-        possibleMovements.insert(possibleMovements.end(), neighbors.begin(), neighbors.end());
-    } else if (!this->isLinkingHive(m)) { // Sinon si le scarabée peut bouger sans casser la ruche en deux
-        // Alors, on boucle sur tous les voisins
-        for (const auto &neighbor : neighbors) {
-            // Et si le scarabée est au-dessus d'une pièce ou s'il y a exactement un ancien voisin parmi les nouveaux
-            if (!m.isSlotFree(neighbor)  ||
-                getFormerNeighbour(getCoordinates(), neighbor, m) == 1) {
-                // Alors, on ajoute le voisin en question
-                possibleMovements.push_back(neighbor);
+        // Si le scarabée est au-dessus d'un autre insecte
+        if (isAboveOf != nullptr) {
+            // Alors, on ajoute tous les voisins directement
+            possibleMovements.insert(possibleMovements.end(), neighbors.begin(), neighbors.end());
+        } else if (!this->isLinkingHive(m)) { // Sinon si le scarabée peut bouger sans casser la ruche en deux
+            // Alors, on boucle sur tous les voisins
+            for (const auto &neighbor : neighbors) {
+                // Et si le scarabée est au-dessus d'une pièce ou s'il y a exactement un ancien voisin parmi les nouveaux
+                if (!m.isSlotFree(neighbor)  ||
+                    getFormerNeighbour(getCoordinates(), neighbor, m) == 1) {
+                    // Alors, on ajoute le voisin en question
+                    possibleMovements.push_back(neighbor);
+                }
             }
         }
-    }
-    return possibleMovements;
+        return possibleMovements;
     } catch (const std::string& e) {
         throw HiveException("Beetle::getPossibleMovements", e);
     }catch (...) {
@@ -272,10 +259,9 @@ std::vector<vec2i> Beetle:: getPossibleMovements(Map &m) const{
 
 
 
-//Grasshoper
+// Méthode de grasshopper
 std::vector<vec2i> Grasshopper::getPossibleMovements(Map &m) const {
     std::vector<vec2i> possibleMovements;
-
     try {
         // Si le déplacement casse la continuité de la ruche, aucun mouvement n'est possible
         if (this->isLinkingHive(m)) {
@@ -287,25 +273,19 @@ std::vector<vec2i> Grasshopper::getPossibleMovements(Map &m) const {
         std::list<vec2i> neighbours;
         int count = 0;
         for (const auto& neighbour : neighboursList) {
-
             // Vérifie si le voisin contient une pièce
             if (!m.isSlotFree(neighbour)) {
                 vec2i current = neighbour;
-
-                //vec2i direction = current - getCoordinates(); // Calculer la direction du mouvement
-
                 // Avancer dans la direction jusqu'à trouver une case libre ou sortir des limites
                 while ( !m.isSlotFree(current)) {
                     neighbours = m.getNeighbours(current);
                     auto it = std::begin(neighbours);
-                    std::advance(it, count); // Avance l'itérateur jusqu'à l'indexe count
+                    std::advance(it, count); // Avance l'itérateur jusqu'à l'index count
                     current = *it;
                 }
 
                 // Ajouter la case libre trouvée si elle est valide
-                if ( m.isSlotFree(current)) {
-                    possibleMovements.push_back(current);
-                }
+                if ( m.isSlotFree(current)) possibleMovements.push_back(current);
             }
             count++;
         }
@@ -320,24 +300,21 @@ std::vector<vec2i> Grasshopper::getPossibleMovements(Map &m) const {
 
 
 
-
 // Méthodes de Ant
 std::vector<vec2i> Ant::getPossibleMovements(Map &m) const {
-    std::vector<vec2i> possibleMovements;
-
     try {
+        std::vector<vec2i> possibleMovements;
+
         // Vérification initiale : l'insecte ne doit pas être lié à la ruche
         if (!isLinkingHive(m) && m.isSlotUsable(getCoordinates(), vec2i(-1, -1))) {
             std::set<vec2i> toCheck;  // Ensemble des cases à vérifier
             std::set<vec2i> visited; // Ensemble des cases déjà explorées
-
             bool attach = false;
 
             // Initialiser `toCheck` avec les voisins de l'insecte
             for (const auto& neighbor : m.getNeighbours(this->getCoordinates())) {
                 if (m.isSlotFree(neighbor)) {
                     attach = false;
-
                     // Vérification des voisins du voisin
                     for (const auto& neighborCheck : m.getNeighbours(neighbor)) {
                         if (!m.isSlotFree(neighborCheck) && neighborCheck != this->getCoordinates()) {
@@ -347,9 +324,7 @@ std::vector<vec2i> Ant::getPossibleMovements(Map &m) const {
                     }
 
                     // Ajouter les cases valides à `toCheck`
-                    if (attach) {
-                        toCheck.insert(neighbor);
-                    }
+                    if (attach) toCheck.insert(neighbor);
                 }
             }
 
@@ -360,9 +335,7 @@ std::vector<vec2i> Ant::getPossibleMovements(Map &m) const {
                 toCheck.erase(toCheck.begin());
 
                 // Si déjà visitée, passer à la suivante
-                if (visited.find(current) != visited.end()) {
-                    continue;
-                }
+                if (visited.find(current) != visited.end()) continue;
 
                 // Marquer la case actuelle comme visitée
                 visited.insert(current);
@@ -381,18 +354,14 @@ std::vector<vec2i> Ant::getPossibleMovements(Map &m) const {
                         }
 
                         // Si attachable, ajouter à `toCheck`
-                        if (attach) {
-                            toCheck.insert(neighbor);
-                        }
+                        if (attach) toCheck.insert(neighbor);
                     }
                 }
             }
 
             // Après exploration, vérifier que les cases restantes sont utilisables
             for (const auto& slot : visited) {
-                if (m.isSlotUsable(slot, getCoordinates())) {
-                    possibleMovements.push_back(slot);
-                }
+                if (m.isSlotUsable(slot, getCoordinates())) possibleMovements.push_back(slot);
             }
         }
 
@@ -406,6 +375,7 @@ std::vector<vec2i> Ant::getPossibleMovements(Map &m) const {
         throw HiveException("Ant::getPossibleMovements", "Erreur inattendue lors du calcul des déplacements possibles.");
     }
 }
+
 
 
 // Méthodes de spider
@@ -442,9 +412,7 @@ std::vector<vec2i> Spider::getPossibleMovements(Map &m) const {
                                         }
                                     }
                                     // Si le test est vérifié, ajout de la position
-                                    if (test == true) {
-                                        possibleMovements.push_back(level3);
-                                    }
+                                    if (test == true) possibleMovements.push_back(level3);
                                 }
                             }
                         }
@@ -462,8 +430,10 @@ std::vector<vec2i> Spider::getPossibleMovements(Map &m) const {
 }
 
 
+
+// Méthode de ladybug
 std::vector<vec2i> Ladybug::getPossibleMovements(Map &m) const {
-    try{
+    try {
         std::vector<vec2i> possibleMovements;
         // Vérifie que l'insecte puisse bouger
         if (!this->isLinkingHive(m)) {
@@ -505,7 +475,7 @@ std::vector<vec2i> Ladybug::getPossibleMovements(Map &m) const {
 
 // Méthodes de mosquito
 std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) const{
-    try{
+    try {
         if (!this->isLinkingHive(m)) {
             if(getInsectUnder()==nullptr)
             {
@@ -513,15 +483,15 @@ std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) const{
                 std::set<vec2i> possibleMovements;
                 for (auto & neighbour : neighbours) {
                     //On itère dans chaque case voisine
-                    if(!m.isSlotFree(neighbour)){ // Si la case est occupé on détermine le type d'insecte et on applique sa
-                        // method getPossibleMovement où on ajoute les cases dans l'ensemble
-                        switch(m.getInsectAt(neighbour)->getIT()) {
+                    if(!m.isSlotFree(neighbour)){
+                        // Si la case est occupé, on détermine le type d'insecte et on applique sa
+                        // method getPossibleMovement où on ajoute les cases dans l'ensemble.
+                        switch (m.getInsectAt(neighbour)->getIT()) {
                             case bee:
                                 if( m.isSlotUsable(getCoordinates(), vec2i(-1,-1))){
-                                for (const auto& movement : Bee::getPossibleMovements(m)) {
-                                    possibleMovements.insert(movement);
-                                }
-
+                                    for (const auto& movement : Bee::getPossibleMovements(m)) {
+                                        possibleMovements.insert(movement);
+                                    }
                                 }
                             break;
                             case ant:
@@ -558,16 +528,19 @@ std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) const{
                         }
                     }
                 }
-
-            // Converti l'ensemble en vector
-            std::vector<vec2i> possibleMovementsVector(possibleMovements.begin(), possibleMovements.end());
-            return possibleMovementsVector;
+                // Converti l'ensemble en vector
+                std::vector<vec2i> possibleMovementsVector(possibleMovements.begin(), possibleMovements.end());
+                return possibleMovementsVector;
             }
             else
             {
-                return Beetle::getPossibleMovements(m);
+                std::set<vec2i> possibleMovements;
+                for (const auto& movement : Beetle::getPossibleMovements(m)) {
+                    possibleMovements.insert(movement);
+                }
+                std::vector<vec2i> possibleMovementsVector(possibleMovements.begin(), possibleMovements.end());
+                return possibleMovementsVector;
             }
-
         }
     } catch (const std::string& e) {
         throw HiveException("Mosquitoe::getPossibleMovements", e);

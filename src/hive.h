@@ -5,30 +5,24 @@
 #ifndef HIVE_HIVE_H
 #define HIVE_HIVE_H
 
-#include <unistd.h>
 #include <vector>
 #include <set>
-#include "utils/hiveException.h"
+#include <string>
+#include <QDebug>
 
 #include "features/insect.h"
-#include "features/deck.h"
-
 #include "inputsManager.h"
 #include "solver.h"
 #include "renderer.h"
-#include <iostream>
-#include <sstream>
-#include <vector>
-#include <string>
 
 #include "features/AI.h"
 
 
-//enum Mode{PvP,PvAI};
+
 enum Version{console, graphic};
 
 class Hive{
-
+private:
     bool isInit = false;
     bool menuPart = true;
     bool gamePart = false;
@@ -61,182 +55,23 @@ class Hive{
     Renderer * renderer;
 
 
-    std::vector<Insect *>& getInsects() {
-        return insects;
-    }
+    std::vector<Insect *>& getInsects() { return insects; }
     Insect* generateSingleInsect(int type, bool color, vec2i vec);
-    void generateAllInsects(bool Lad=false, bool Mos=false){
+    void generateAllInsects(bool Lad=false, bool Mos=false);
 
-        int cpt1 = 0;
-        int cpt2 = 0;
-
-        for (int i = 0; i < 2; ++i) {
-            bool color = bool(int (float (i) / 1.f));
-            auto insect = new Bee(color);
-            insects.push_back(insect);
-
-            if (color){
-                insect->setCoordinates({-1,cpt1});
-                bee1 = insect;
-                player1.deck.addInsect(insect);
-                cpt1++;
-            }
-            else{
-                insect->setCoordinates({renderedMapSideSize,cpt2});
-                bee2 = insect;
-                player2.deck.addInsect(insect);
-                cpt2++;
-            }
-        }
-
-        for (int i = 0; i < 6; ++i) {
-            bool color = bool(int (float (i) / 3.f));
-            Insect * insect = new Ant(color);
-            insects.push_back(insect);
-
-            if (color){
-                insect->setCoordinates({-1,cpt1});
-                player1.deck.addInsect(insect);
-                cpt1++;
-            }
-            else{
-                insect->setCoordinates({renderedMapSideSize,cpt2});
-                player2.deck.addInsect(insect);
-                cpt2++;
-            }
-        }
-
-        for (int i = 0; i < 4; ++i) {
-            bool color = bool(int (float (i) / 2.f));
-
-            Insect * insect = new Beetle(color);
-            insects.push_back(insect);
-
-            if (color){
-                insect->setCoordinates({-1,cpt1});
-                player1.deck.addInsect(insect);
-                cpt1++;
-            }
-            else{
-                insect->setCoordinates({renderedMapSideSize,cpt2});
-                player2.deck.addInsect(insect);
-                cpt2++;
-            }
-        }
-
-        for (int i = 0; i < 6; ++i) {
-            bool color = bool(int (float (i) / 3.f));
-
-            Insect * insect = new Grasshopper(color);
-            insects.push_back(insect);
-
-            if (color){
-                insect->setCoordinates({-1,cpt1});
-                player1.deck.addInsect(insect);
-                cpt1++;
-            }
-            else{
-                insect->setCoordinates({renderedMapSideSize,cpt2});
-                player2.deck.addInsect(insect);
-                cpt2++;
-            }
-        }
-
-        for (int i = 0; i < 4; ++i) {
-            bool color = bool(int (float (i) / 2.f));
-
-            Insect * insect = new Spider(color);
-            insects.push_back(insect);
-
-            if (color){
-                insect->setCoordinates({-1,cpt1});
-                player1.deck.addInsect(insect);
-                cpt1++;
-            }
-            else{
-                insect->setCoordinates({renderedMapSideSize,cpt2});
-                player2.deck.addInsect(insect);
-                cpt2++;
-            }
-        }
-        if (Mos) {
-            for (int i = 0; i < 4; ++i) {
-                bool color = bool(int (float (i) / 2.f));
-
-                Insect * insect = new Mosquitoe(color);
-                insects.push_back(insect);
-
-                if (color){
-                    insect->setCoordinates({-1,cpt1});
-                    player1.deck.addInsect(insect);
-                    cpt1++;
-                }
-                else{
-                    insect->setCoordinates({renderedMapSideSize,cpt2});
-                    player2.deck.addInsect(insect);
-                    cpt2++;
-                }
-            }
-        }
-        if (Lad) {
-            for (int i = 0; i < 4; ++i) {
-                bool color = bool(int (float (i) / 2.f));
-
-                Insect * insect = new Ladybug(color);
-                insects.push_back(insect);
-
-                if (color){
-                    insect->setCoordinates({-1,cpt1});
-                    player1.deck.addInsect(insect);
-                    cpt1++;
-                }
-                else{
-                    insect->setCoordinates({renderedMapSideSize,cpt2});
-                    player2.deck.addInsect(insect);
-                    cpt2++;
-                }
-            }
-        }
-
-    }
-
-
-    void displayMenu();
+    void static resetInputs(Player & player_) { player_.inputs.reset(); }
 
 public:
+    Renderer* getRenderer() const { return renderer; }
+    void displayMenu();
+    Hive() : mode(PvP), version(console), insects(), rewindNb(5),rewindUsed(rewindNb),
+            offset((trueMapSideSize - renderedMapSideSize) / 2.f), map(trueMapSideSize,rewindNb),
+             player1(1), player2(2), currentPlayer(&player1), inputsManager(mode, renderedMapSideSize, map),
+             solver(map, renderedMapSideSize, offset),renderer( nullptr) {}
 
-    void setRenderer(Renderer* rend) {
-        renderer = rend;
-    }
-
-
-
-    Renderer* getRenderer() const{
-        return renderer;
-    }
-
-    Hive() : mode(PvP), version(console),
-             insects(),
-             rewindNb(5),rewindUsed(rewindNb),
-            offset((trueMapSideSize - renderedMapSideSize) / 2.f),
-            map(trueMapSideSize,rewindNb),
-             player1(1), player2(2), currentPlayer(&player1),
-             inputsManager(mode, renderedMapSideSize, map),
-             solver(map, renderedMapSideSize, offset),renderer( nullptr)
-    {
-    }
-
-    Mode getMode() {
-        return mode;
-    }
-
-
-
-    ~Hive(){
+    ~Hive() {
         delete renderer;
-        for (const auto& insect : insects) {
-            delete insect;
-        }
+        for (const auto& insect : insects) delete insect;
     }
 
     int getExtension() {
@@ -252,6 +87,7 @@ public:
         if (lady && !mosq) return 1;
         if (!lady && mosq) return 2;
         if (lady && mosq) return 3;
+        else return 300;
     }
     int getRewindUsed() {return rewindUsed;}
     void incrRewindUsed() {rewindUsed++;}
@@ -270,28 +106,26 @@ public:
     void changeSettings();
     void saveGame(const std::string& filename) const;
     void loadGame(const std::string& filename);
+    int run();
 
-    void resetInputs()
-    {
+    void resetInputs() {
         player1.inputs.reset();
         player1.inputs.setStart({!player1.getDeck().isEmpty() * -1,0});
 
         player2.inputs.reset();
         player2.inputs.setStart({player2.getDeck().isEmpty() * -1 + renderedMapSideSize,0});
-        std::cout << "odaodaoza : " << player2.getInputs().getStart();
     }
 
-    void resetPlayerInputs(Player & player_){
+    void resetPlayerInputs(Player & player_) {
         player_.inputs.reset();
         if (player_.getId() == 1) player_.inputs.setStart({!player1.getDeck().isEmpty() * -1,0});
         else player_.inputs.setStart({player2.getDeck().isEmpty() * -1 + renderedMapSideSize,0});
     }
 
-    void initIfNeeded(){
-        if (!isInit){
-
-            renderer = new ConsoleRenderer(map, &player1, &player2, 30, offset);
-            if (insects.empty())generateAllInsects();
+    void initIfNeeded() {
+        if (!isInit) {
+            renderer = new ConsoleRenderer(map, &player1, &player2, renderedMapSideSize, offset);
+            generateAllInsects();
             isInit = true;
         }
 
@@ -299,118 +133,19 @@ public:
         else player2.setHumanity(true);
 
         resetInputs();
-
     }
-    int getRenderedMapSideSize() const {return renderedMapSideSize;}
 
-    int run(){
-
-        if (menuPart)
-        {
-            displayMenu();
-            return 1;
-        }
-        else if (gamePart)
-        {
-
-            if (bee1->isCircled(map))
-            {
-                std::cout << "\n#####PLAYER 2 WIN#####\n";
-                menuPart = true;
-                gamePart = false;
-            }
-            if (bee2->isCircled(map))
-            {
-                std::cout << "\n#####PLAYER 1 WIN#####\n";
-                menuPart = true;
-                gamePart = false;
-            }
-
-            renderer->render(*currentPlayer);
-
-            if (currentPlayer->isHuman){
-                inputsManager.updatePlayerInputs(*currentPlayer);
-            }
-            else{
-                inputsManager.updateAIInputs2(*currentPlayer, AI());
-                std::cout << "\n:" <<currentPlayer->inputs;
-
-            }
-
-            std::cout << "\n:" <<currentPlayer->inputs;
-
-            switch (solver.update(*currentPlayer)) {
-            case -1:
-                std::cout << "\n---Reset---\n";
-                //le mouvement est pas bon
-                rewindUsed = 0;
-
-                resetPlayerInputs(*currentPlayer);
-                break;
-            case 0:
-                //Le travail est en cours
-                break;
-            case 1:
-                //mouvement fait
-                std::cout << "\n---Deplacement---\n";
-                rewindUsed = 0;
-
-                resetPlayerInputs(*currentPlayer);
-                switchPlayer();
-                break;
-            case 2:
-                rewindUsed = 0;
-                menuPart = true;
-                gamePart = false;
-                break;
-                //Fin
-            case 3:
-                if (rewindUsed < rewindNb)
-                {
-                    for (int i = 0; i < 2; i++)
-                    {
-                        Map::movement lastMove = map.getHistoric().front();
-
-                        if (lastMove.from.getI() == -1)
-                        {
-                            Insect * insect = map.getInsectAt(lastMove.to);
-                            map.removeInsectAt(lastMove.to);
-                            insect->setCoordinates(vec2i{lastMove.from.getI(), player1.getDeck().getInsectNb()});
-                            player1.deck.addInsect(insect);
-                            map.getHistoric().pop_front();
-                        }
-                        else if (lastMove.from.getI() == renderedMapSideSize)
-                        {
-                            Insect * insect = map.getInsectAt(lastMove.to);
-                            map.removeInsectAt(lastMove.to);
-                            insect->setCoordinates(vec2i{lastMove.from.getI(), player2.getDeck().getInsectNb()});
-                            player2.deck.addInsect(insect);
-                            map.getHistoric().pop_front();
-
-                        }
-                        else
-                        {
-                            map.goBack();
-                        }
-                    }
-                    rewindUsed++;
-                    resetPlayerInputs(*currentPlayer);
-                }
-                else
-                {
-                    std::cout << "No more rewind";
-                }
-                break;
-
-            default:
-                throw HiveException("hive.h:Hive", "retour de run mauvais");
-            }
-            std::cout << "\n:" <<currentPlayer->inputs.getStart();
-
-            return 1;
-        }
-        else return 0;
-
+    Player* getPlayer1() { return &player1; }
+    Player* getPlayer2() { return &player2; }
+    InputsManager* getInputsManager() { return &inputsManager; }
+    Solver* getSolver() { return &solver; }
+    Map& getMap(){ return map; }
+    Mode getMode() { return mode; }
+    int getRenderedMapSideSize() const{ return renderedMapSideSize; }
+    bool getCurrentPlayer() { return currentPlayer->getId(); }
+    void switchPlayer() {
+        if (currentPlayer == &player1) currentPlayer = &player2;
+        else currentPlayer = &player1;
     }
     int getOffset() {return offset;}
     void runQt(bool Lady, bool Mosq) {
@@ -421,20 +156,6 @@ public:
             extensions.emplace(mosquitoe);
         }
         generateAllInsects(Lady, Mosq);
-    }
-    Player* getPlayer1() {return &player1;}
-    Player* getPlayer2() {return &player2;}
-    InputsManager* getInputsManager() {return &inputsManager;}
-    Solver* getSolver() {return &solver;}
-    Map& getMap(){return map;}
-    bool getCurrentPlayer(){return currentPlayer->getId();}
-    void switchPlayer(){
-        if (currentPlayer == &player1){
-            currentPlayer = &player2;
-        }
-        else{
-            currentPlayer = &player1;
-        }
     }
 };
 

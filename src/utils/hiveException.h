@@ -14,23 +14,11 @@ private:
     std::string content;
 
 public:
-    explicit HiveException(std::string location_, std::string content_) : location(location_), content(content_){}
+    explicit HiveException(std::string location_, std::string content_) : location(location_), content(content_) {}
 
-    //Return where the Exception occurred
-    const std::string & getLocation() const{
-        return location;
-    }
-
-    //Return the content of the Exception
-    const std::string & getContent() const{
-        return content;
-    }
-
-    //Return location:content of the Exception
-    std::string getInfos() const{
-        return location + ":" + content;
-    }
-
+    const std::string & getLocation() const { return location; }
+    const std::string & getContent() const { return content; }
+    std::string getInfos() const { return location + ":" + content; }
 };
 
 #endif //HIVE_EXEPTION_H

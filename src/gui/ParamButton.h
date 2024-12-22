@@ -10,13 +10,19 @@
 #include <QPolygon>
 #include <QRegion>
 #include "../features/insect.h"
+
+
+
 enum buttonType {Rewind, Save, Load, Menu};
+
 class ParamButton : public QPushButton {
+
     Q_OBJECT
-    public:
+
+public:
     explicit ParamButton(QWidget *parent = nullptr, QString label="");
-    void setType(buttonType t){bT=t;}
-    buttonType getType(){return bT;}
+    void setType(buttonType t) { bT=t; }
+    buttonType getType() { return bT; }
 private:
     buttonType bT;
 };
