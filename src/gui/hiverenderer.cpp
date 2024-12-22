@@ -212,7 +212,7 @@ void hiveRenderer::loadGame(bool load) {
             buttons[30][index]->setInsectType(it->getIT());
             index++;
         }
-        index=-1;
+        index=0;
         for (auto it : hive.getPlayer2()->getDeck()) {
             buttons[30][index+sizeDeck]->updateState(0);
             buttons[30][index+sizeDeck]->setInsectType(it->getIT());
@@ -270,7 +270,7 @@ void hiveRenderer::handleButtonClick() {
         opponent=hive.getPlayer1();
     }
     if (button) {
-        infoLabel->setText(QString("bouton cliqué : %1, %2").arg(button->getCoordinates().getI()).arg(button->getCoordinates().getJ()));
+        //infoLabel->setText(QString("bouton cliqué : %1, %2").arg(button->getCoordinates().getI()).arg(button->getCoordinates().getJ()));
         if (!getInputT()){//Si c'est la deuxième selection
             if (lastClicked!=nullptr){
                 if (button->getState()==3) { //Si la case sélectionnée est bien dans les mouvements possibles
