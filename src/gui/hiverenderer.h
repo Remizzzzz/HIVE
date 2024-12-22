@@ -38,13 +38,13 @@ public:
     void AIMovement(Player* opponent);
 
     vec2i convertCoordinates(vec2i coordinates) {
-        coordinates.setJ(coordinates.getJ()-2);
-        coordinates.setI(coordinates.getI()-2);
+        coordinates.setJ(coordinates.getJ()-hive.getOffset()-1);
+        coordinates.setI(coordinates.getI()-hive.getOffset()-1);
         return coordinates;
     }
     vec2i reconvertCoordinates(vec2i coordinates) {
-        coordinates.setJ(coordinates.getJ()+2);
-        coordinates.setI(coordinates.getI()+2);
+        coordinates.setJ(coordinates.getJ()+hive.getOffset()+1);
+        coordinates.setI(coordinates.getI()+hive.getOffset()+1);
         return coordinates;
     }
 
