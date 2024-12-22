@@ -33,8 +33,8 @@ add_executable(HiveQt ${SOURCES}
         src/features/AI.h)
 #add_executable(HiveConsole ${CONSOLE_SOURCES} src/mainConsole.cpp)
 
-#if (WIN32)#Pour empêcher l'ouverture de la console
-#    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
+if (WIN32)#Pour empêcher l'ouverture de la console
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
 #endif ()
 
 
