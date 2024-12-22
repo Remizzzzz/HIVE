@@ -133,9 +133,7 @@ public:
      * @param pos_ : position of the slot to check
      */
     bool isSlotFree(const vec2i & pos_) const{
-        int a = posToIndex(pos_);
-        Insect* insec = slot[a];
-        return insec == nullptr;
+        return slot[posToIndex(pos_)] == nullptr;
     }
 
     /**@brief move the insect on pos1_ to the pos2_.*/
