@@ -112,6 +112,7 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
     menuButton->move(30*25+100, 30);
     connect(menuButton, &ParamButton::clicked, this, &hiveRenderer::handleParamButtonClick);
     menuButton->setStyleSheet("background: grey;");
+
 }
 
 void hiveRenderer::setupDeck(int buttonSize, QString nomJ1_, QString nomJ2_){
@@ -119,12 +120,14 @@ void hiveRenderer::setupDeck(int buttonSize, QString nomJ1_, QString nomJ2_){
     for (int num=0;num<2;num++) {
         if (num==0) {
             auto *name = new QLabel(nomJ1_);
-            name->setGeometry(num*30*buttonSize+50,700,50,10);
+            name->setParent(centralWidget);
+            name->setGeometry(50,400,50,30);
             name->setStyleSheet("color:white;");
             name->show();
         } else {
             auto *name = new QLabel(nomJ2_);
-            name->setGeometry(num*30*buttonSize+50,700,50,10);
+            name->setParent(centralWidget);
+            name->setGeometry(num*30*buttonSize+175,400,50,30);
             name->setStyleSheet("color:white;");
             name->show();
         }
@@ -214,7 +217,6 @@ void hiveRenderer::loadGame(bool load) {
         }
         if (ladExten) sizeDeck+=2;
         if (mosExten) sizeDeck+=2;
-        setupDeck(buttonSize,"","");
         //Actu des decks
         int index=0;
         for (index=0;index<2*sizeDeck;index++) {
@@ -238,8 +240,6 @@ void hiveRenderer::loadGame(bool load) {
         else playerTurn=true;
 
         hive.setRewindNumber(hive.getRewindMax());
-    } else {
-        setupDeck(buttonSize,"","");
     }
 }
 
