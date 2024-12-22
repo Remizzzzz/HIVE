@@ -200,6 +200,7 @@ public:
     }
 
     void render(const Player & currentPlayer_) const override{
+        std::cout << std::endl;
         std::cout << "\033[2J\033[H";
         renderDeck1(currentPlayer_);
         renderMap(currentPlayer_);

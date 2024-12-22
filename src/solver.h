@@ -160,9 +160,10 @@ public:
                 else if (loc == player_.getId()){
                     std::cout << "loc1 ou deux";
                     //player_.inputs.setPossibleDestinations(map.getInsectAt(player_.inputs.getStart())->setRule(map));
-                    auto possiblesDestinations = map.setRule(player_.getId());
 
-                    player_.inputs.setPossibleDestinations(map.setRule(player_.getId()));
+                    auto possiblesDestinations = map.setRule(player_.getId() % 2);
+
+                    player_.inputs.setPossibleDestinations(possiblesDestinations);
                     //player_.inputs.setPossibleDestinations(map.setRule((player_.getId())%2));
                     //player_.inputs.setPossibleDestinations(std::vector<vec2i>{{15,15},{16,16},{14,14}});
 
