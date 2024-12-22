@@ -12,7 +12,8 @@
 
 #include "features/insect.h"
 #include "features/deck.h"
-
+#include <thread>
+#include <chrono>
 #include "inputsManager.h"
 #include "hive.h"
 #include "solver.h"
@@ -41,38 +42,47 @@ void Hive::displayMenu() {
     switch (choice) {
         case 1:  // Start a game
             std::cout << "Starting a new game...\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
         menuPart = false;
         gamePart = true;
         initIfNeeded();
         break;
         case 2:  // Tutorial
             std::cout << "Launching tutorial...\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+
         displayRules();
         break;
         case 3:  // Resume game
             std::cout << "Resuming the last game...\n";
 
         loadGame("../hive_parameters.txt");
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
         initIfNeeded();
         menuPart = false;
         gamePart = true;
         break;
         case 4:  // Change parameters
             std::cout << "Changing parameters...\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
         changeSettings();
         break;
 
         case 5:  // Save game
             std::cout << "Saving...\n";
+
         saveGame("../hive_parameters.txt");
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
         break;
         case 6:  // Leave
             menuPart = false;
         gamePart = false;
         std::cout << "Au revoir !\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
         break;
         default:
             std::cout << "Option invalide, veuillez réessayer.\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         break;
     }
     std::cout << std::endl;
@@ -100,6 +110,7 @@ void Hive::displayRules() {
     std::cout << "7. Si les deux reines sont entourées au même moment, c'est une égalité.\n";
     std::cout << "8. Les joueurs jouent à tour de rôle, en posant une nouvelle pièce ou en déplaçant une pièce déjà posée.\n";
     std::cout << "\nAmusez-vous bien et bonne chance !\n";
+    getch();
 }
 
 
