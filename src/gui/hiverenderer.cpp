@@ -121,10 +121,12 @@ void hiveRenderer::setupDeck(int buttonSize, QString nomJ1_, QString nomJ2_){
             auto *name = new QLabel(nomJ1_);
             name->setGeometry(num*30*buttonSize+50,700,50,10);
             name->setStyleSheet("color:white;");
+            name->show();
         } else {
             auto *name = new QLabel(nomJ2_);
             name->setGeometry(num*30*buttonSize+50,700,50,10);
             name->setStyleSheet("color:white;");
+            name->show();
         }
         for (int i=0;i<sizeDeck;i++) {
             // Créer un bouton hexagonal
@@ -361,12 +363,13 @@ void hiveRenderer::handleButtonClick() {
 
                         button->updateState(0);
                         button->setPlayer(playerTurn);
-                        if (opponent->lostGame(hive.getMap())) {
+
+                        if (opponent->lostGame(hive.getMap())&& actualP->lostGame(hive.getMap())){
+                            showWinner(QString("Personne"));
+                        } else if (opponent->lostGame(hive.getMap())) {
                             showWinner(nomJ1);
                         } else if (actualP->lostGame(hive.getMap())) {
                             showWinner(nomJ2);
-                        } else {
-                            showWinner(QString("Personne"));
                         }
 
                         if (mode==PvP) {
