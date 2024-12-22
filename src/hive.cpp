@@ -508,7 +508,7 @@ void Hive::saveGame(const std::string& filename) const{
     file << "Fin_Joueur2:" << std::endl << std::endl;
 
     file << "Current_Player:"<< std::endl << std::endl;
-    file << "ID:"<< std::endl << player2.getId() << std::endl;
+    file << "ID:"<< std::endl << currentPlayer->getId() << std::endl;
     file << "Fin_Current_Player:"<< std::endl << std::endl;
     file << "InputManager:"<< std::endl << std::endl;
     file << "InputManager_Fin:"<< std::endl << std::endl;
