@@ -221,7 +221,7 @@ public:
         return renderer;
     }
 
-    Hive() : mode(PvAI), version(console),
+    Hive() : mode(PvP), version(console),
              insects(),
              rewindNb(5),rewindUsed(rewindNb),
             offset((trueMapSideSize - renderedMapSideSize) / 2.f),
