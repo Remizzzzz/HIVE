@@ -103,8 +103,7 @@ int Solver::update(Player & player_){
 
             std::cout << "::::" << player_.inputs.getStart();
             return -1;
-        }
-        else{
+        } else{
             std::cout << "possibleDestinationsIsNotNeeded\n";
             std::cout << player_.inputs.isStartSelected();
             std::cout << player_.inputs.isDestinationSelected();

@@ -507,6 +507,26 @@ void hiveRenderer::handleParamButtonClick() {
     auto *button = qobject_cast<ParamButton *>(sender());
     qDebug()<<"\n nombre Rewind : "<<hive.getRewindMax()-hive.getRewindUsed();
     if (button->getType()==Rewind) {
+        Player * actualP=hive.getPlayer1();
+        if (playerTurn) {
+            actualP=hive.getPlayer2();//Si c'est au tour du joueur 1, on change le joueur actuel
+        }
+        for (auto b : actualP->getInputs().getPossibleDestinations()) {
+            b=convertCoordinates(b);
+            HexagonalButton * selec=buttons[b.getI()][b.getJ()];
+            if (selec->getInsectType()!=none) {
+                selec->updateState(0);
+            } else {
+                selec->updateState(2);
+            }
+        }
+        hive.getInputsManager()->resetPlayerInputs(actualP);
+        if (lastClicked!=nullptr) {
+            if (lastClicked->getInsectType()!=none) {
+                lastClicked->updateState(0);
+            }
+            lastClicked=nullptr;
+        }
         for (int i=0; i<2;i++) {
             if (hive.getRewindUsed()<hive.getRewindMax()) {
                 vec2i from =hive.getMap().getHistoric().front().from;
@@ -521,9 +541,7 @@ void hiveRenderer::handleParamButtonClick() {
                 } else {
                     int index=0;
                     int turn=1;
-                    Player * actualP=hive.getPlayer2();
-                    qDebug()<<"\n index :"<<from.getJ();
-                    qDebug()<<"\n\nPlayer 1 ? : "<<playerTurn;
+                    actualP=hive.getPlayer2();
                     if (playerTurn) {
                         actualP=hive.getPlayer1();//Si c'est au tour du joueur 1, on change le joueur actuel
                         turn=0;
