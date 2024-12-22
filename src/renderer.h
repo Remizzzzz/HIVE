@@ -49,8 +49,8 @@ public:
     }
 
     void render(const Player & currentPlayer_) const override {
-        //system("cls");
-        std::cout << '\n';
+        std::cout << "\033[2J\033[H";
+        std::cout << currentPlayer_.getInputs().getMessage() << "\n";
         renderDeck1(currentPlayer_);
         renderMap(currentPlayer_);
         renderDeck2(currentPlayer_);

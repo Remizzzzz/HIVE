@@ -14,12 +14,6 @@
 #include "../utils/utils.h"
 
 
-
-
-
-
-
-
 class Map{
 public:
     class movement{

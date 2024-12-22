@@ -94,14 +94,12 @@ public:
     bool isSlotFree(const int & index_) const { return insects.at(index_) == nullptr; }
 
     bool isIndexValid(const int & index_) const {
-        std::cout << '(' << insectNb << "," << index_ << ')';
-        std::cout << (index_ >= 0 && index_ < insectNb);
         return index_ >= 0 && index_ < insectNb ;
     }
 
     void removeAt(const int & index_) {
         insectNb--;
-        //insects[insectNb]->setCoordinates({insects[index_]->getCoordinates().getI(),index_});
+        insects[insectNb]->setCoordinates({insects[insectNb]->getCoordinates().getI(),index_});
         insects[index_] = insects[insectNb];
         insects[insectNb] = nullptr;
     }

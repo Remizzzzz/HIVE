@@ -19,7 +19,7 @@ void Solver::deckToMapMovement(Player & player_) {
     const vec2i & destination = player_.inputs.getDestination();
     if (player_.getDeck().isIndexValid(start.getJ())){
         if (map.isSlotFree(destination)) {
-            qDebug()<<"\n\nC'est free";
+            //qDebug()<<"\n\nC'est free";
             map.putInsectTo(player_.getDeck().getInsectAt(start.getJ()), destination);
 
             map.getInsectAt(destination)->setCoordinates(destination);
@@ -53,13 +53,8 @@ int Solver::update(Player & player_){
         }
 
         if (player_.inputs.isPossibleDestinationsNeeded()){
-            std::cout << "possibleDestinationsNeeded\n";
             if (isStartValid(player_)){
-                std::cout << "startValid\n" ;
                 int loc = getStartLocation(player_);
-
-                std::cout << "loc : " << loc << "\n";
-                std::cout << "player : " << player_.getId() << "\n";
 
                 if (loc == 0){
 
@@ -69,7 +64,6 @@ int Solver::update(Player & player_){
                     if (!map.isSlotFree(start))
                     {
                         map.getInsectAt(start)->getPossibleMovements(map);
-                        std::cout << "et Ici ?";
                         player_.inputs.setPossibleDestinations(map.getInsectAt(start)->getPossibleMovements(map));
                         player_.inputs.noNeedForPossibleDestinationsUpdate();
                         return 0;
@@ -78,59 +72,35 @@ int Solver::update(Player & player_){
 
                 }
                 else if (loc == player_.getId()){
-                    std::cout << "loc1 ou deux";
-                    //player_.inputs.setPossibleDestinations(map.getInsectAt(player_.inputs.getStart())->setRule(map));
 
                     auto possiblesDestinations = map.setRule(player_.getId() % 2);
 
                     player_.inputs.setPossibleDestinations(possiblesDestinations);
-                    //player_.inputs.setPossibleDestinations(map.setRule((player_.getId())%2));
-                    //player_.inputs.setPossibleDestinations(std::vector<vec2i>{{15,15},{16,16},{14,14}});
-
-                    for(auto & a : player_.inputs.getPossibleDestinations()){
-                        std::cout << a << " \n";
-                    }
 
                     player_.inputs.noNeedForPossibleDestinationsUpdate();
                     return 0;
                 }
                 else{
-                    //Wrong deck selected;
-                    //throw HiveException("solver.h:Solver:update", "cursor 1 invalid");
                     return -1;
                 }
             }
 
-            std::cout << "::::" << player_.inputs.getStart();
             return -1;
         }
         else{
-            std::cout << "possibleDestinationsIsNotNeeded\n";
-            std::cout << player_.inputs.isStartSelected();
-            std::cout << player_.inputs.isDestinationSelected();
             if(player_.inputs.movementNeeded()){
-                std::cout << "movementNeeded\n";
-                std::cout << "for start : " << isStartValid(player_) << '\n';
-                std::cout << "for destination : " << isDestinationValid(player_) << '\n';
                 if (isStartValid(player_) && isDestinationValid(player_)){
-                    std::cout << "Both cursor or valid\n";
 
-                    int loc = getStartLocation(player_);
-
-                    std::cout << "loc" << loc << " id :" << player_.getId() <<  "\n";
-                    std::cout << "start :" << player_.inputs.getStart();
+                    const int loc = getStartLocation(player_);
 
                     if (loc == 0){
                         if (map.getInsectAt(player_.inputs.getStart() + vec2i{offset,offset})->getColor() == player_.getId()%2){
-                            std::cout << "good color";
-                            std::cout << "map to map";
                             mapToMapMovement(player_);
                             return 1;
                         }
                         else return -1;
                     }
                     else if (loc == player_.getId()){
-                        std::cout << "deck to map";
                         deckToMapMovement(player_);
                         return 1;
                     }
@@ -140,7 +110,7 @@ int Solver::update(Player & player_){
                         return -1;
                     }
                 }
-                else throw HiveException("solver.h:Solver:update", "start or destination invalid for map");
+                return -1;
             }
         }
         return 0;

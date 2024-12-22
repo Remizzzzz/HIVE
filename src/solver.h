@@ -27,7 +27,6 @@ private:
     int turn=1; //Sert pour compter les tours
     bool isStartValid(Player & player_) const{
 
-        std::cout << !map.isSlotFree(player_.inputs.getStart()) << '_';
         if (player_.inputs.getStart().getI() >= 0 && player_.inputs.getStart().getI() < renderedMapSideSize &&
             player_.inputs.getStart().getJ() >= 0 && player_.inputs.getStart().getJ() < renderedMapSideSize){
             return true;
@@ -76,7 +75,6 @@ public:
         const vec2i & destination = player_.inputs.getDestination();
 
         if (!map.isSlotFree(start)){
-            std::cout << "slot pas free binks";
             map.moveInsect(start,destination);
             map.addToHistoric(start,destination);
             map.getInsectAt(destination)->setCoordinates(destination);
@@ -92,8 +90,6 @@ public:
         player_.removeActiveInsect(ins);
         map.getHistoric().pop_front();
     }
-
-    void fullGoBack(Player & player_, vec2i from, vec2i to) {}
 
     void decrTurn(){turn--;}
     int update(Player & player_);
