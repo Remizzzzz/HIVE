@@ -5,15 +5,17 @@
 #ifndef HIVE_DECK_H
 #define HIVE_DECK_H
 
+
 #include <vector>
+#include <QDebug>
 
 #include "insect.h"
-#include <QDebug>
 #include "../utils/hiveException.h"
+
+
 
 class Player;
 class Solver;
-
 
 class Deck{
 private:

@@ -5,10 +5,13 @@
 #ifndef HIVE_PLAYER_H
 #define HIVE_PLAYER_H
 
+
 #include "deck.h"
 #include "inputs.h"
 
 #include <algorithm>
+
+
 
 class Hive;
 class InputsManager;
@@ -34,7 +37,7 @@ public:
         : id(id), isHuman(isHuman), name(name), deck(deck), activeInsects(activeInsects) {}
 
     const int & getId() const { return id; }
-    const Inputs & getInputs() const { return inputs; }7
+    const Inputs & getInputs() const { return inputs; }
     Deck& getDeck () { return deck; }
     const std::string getName() const { return name; }
     const std::vector<Insect *> & getActiveInsects() const { return activeInsects; }

@@ -107,21 +107,39 @@ void MainWindow::initializeTutorialWidget() {
 
     // Texte des règles
     QString rulesText =
-        "=== Règles du jeu Hive ===\n"
-        "\n1. Hive est un jeu de stratégie abstrait où deux joueurs s'affrontent.\n"
-        "2. Le but du jeu est de capturer complètement la reine de l'adversaire en l'entourant.\n"
-        "3. Chaque joueur possède un ensemble d'insectes avec des mouvements spécifiques :\n"
-        "   - La Reine (Queen Bee) : doit être posée dans les 4 premiers tours. Elle bouge d'une case à la fois.\n"
-        "   - Les Fourmis (Ants) : peuvent se déplacer n'importe où autour de la ruche.\n"
-        "   - Les Araignées (Spiders) : se déplacent exactement de 3 cases.\n"
-        "   - Les Scarabées (Beetles) : peuvent grimper sur d'autres pièces.\n"
-        "   - Les Sauterelles (Grasshoppers) : sautent en ligne droite par-dessus des pièces.\n"
-        "4. Les pièces doivent toujours rester connectées pour former une seule ruche.\n"
-        "5. Aucun mouvement ne peut séparer la ruche en plusieurs parties.\n"
-        "6. Le premier joueur à entourer complètement la reine de l'adversaire gagne la partie.\n"
-        "7. Si les deux reines sont entourées au même moment, c'est une égalité.\n"
-        "8. Les joueurs jouent à tour de rôle, en posant une nouvelle pièce ou en déplaçant une pièce déjà posée.\n"
-        "\nAmusez-vous bien et bonne chance !";
+        "\n=== Règles du jeu Hive ===\n\n"
+
+        "Objectif du jeu\n"
+        "-----------------\n"
+        "Chaque joueur doit utiliser ses insectes pour encercler complètement l'abeille reine de son adversaire. "
+        "Le premier joueur à capturer l'abeille ennemie remporte la partie.\n\n"
+
+        "Règles générales\n"
+        "-------------------\n"
+        "1. Les pièces doivent toujours rester connectées. Vous ne pouvez pas diviser la ruche en deux parties.\n"
+        "2. Chaque joueur doit poser son abeille reine sur le plateau dans les 4 premiers tours.\n"
+        "3. Les mouvements des insectes doivent respecter les limites physiques de la ruche :\n"
+        "   - Un insecte ne peut pas passer dans un espace trop étroit (règle du \"glissement\").\n"
+        "   - Certains insectes ont des mouvements uniques, décrits ci-dessous.\n\n"
+
+        "Caractéristiques des insectes\n"
+        "--------------------------------\n"
+        "• Reine (Abeille) : Se déplace d'une seule case par tour. "
+        "Elle est la pièce la plus importante. Si elle est complètement encerclée, vous perdez.\n"
+
+        "• Fourmi : Se déplacer d'autant de cases que souhaité autour de la ruche. "
+        "Très utile pour la mobilité et la stratégie.\n"
+
+        "• Scarabée : Se déplace d'une case comme la reine, mais peut grimper sur d'autres pièces. "
+        "Lorsqu'il grimpe, il bloque la pièce en dessous et la rend inutilisable.\n"
+
+        "• Sauterelle : Saute en ligne droite au-dessus d'une ou plusieurs pièces adjacentes. "
+        "Ne peut pas s'arrêter sur des pièces, seulement sur des espaces vides.\n"
+
+        "• Araignée : Se déplacer exactement de trois cases. "
+        "Ne peut pas revenir en arrière ou changer de direction avant d'avoir atteint trois cases.\n"
+
+        "Bon jeu !\n";
 
     // Mise en page
     auto *tutorialLayout = new QVBoxLayout;
@@ -241,7 +259,6 @@ void MainWindow::changeSettings() {
 }
 
 void MainWindow::startNewGame() {
-    // Ajouter ", nomJ1, nomJ2" quand le constructeur sera prêts ce sont des QString
     auto *hive = new hiveRenderer(nullptr, hiveNbRewind, hiveMode, hasLadybug, hasMosquito, load, nomJ1, nomJ2);
     hive->setStyleSheet("background-color: black;");
     hive->show();

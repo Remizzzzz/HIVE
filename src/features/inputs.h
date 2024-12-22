@@ -5,11 +5,13 @@
 #ifndef HIVE_INPUTS_H
 #define HIVE_INPUTS_H
 
+
 #include <string>
 #include <vector>
 
 #include "../utils/utils.h"
-#include "../utils/hiveException.h"
+
+
 
 class Inputs {
 private:
@@ -94,5 +96,6 @@ public:
 };
 
 std::ostream & operator<<(std::ostream & f_, const Inputs & inputs_);
+
 
 #endif //HIVE_INPUTS_H

@@ -3,10 +3,8 @@
 //
 #include <set>
 #include <algorithm>
+
 #include "map.h"
-#include <QDebug>
-
-
 
 
 std::vector<vec2i> Map::setRule(bool color_insect) {

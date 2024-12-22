@@ -5,6 +5,7 @@
 #include "inputs.h"
 
 
+
 std::ostream & operator<<(std::ostream & f_, const Inputs & inputs_) {
     f_ << "-------\n";
     f_ << inputs_.getStart()<< ' ' << inputs_.isStartSelected() << '\n';

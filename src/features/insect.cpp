@@ -6,14 +6,16 @@
 #ifndef HIVE_INSECT_CPP
 #define HIVE_INSECT_CPP
 
-#include "insect.h"
-#include "map.h"
-#include <iostream>
+
 #include <vector>
 #include <list>
 #include <algorithm>
-#include <set>
+
+#include "insect.h"
+#include "map.h"
 #include "../utils/hiveException.h"
+
+
 
 int Insect::counter = 0;
 

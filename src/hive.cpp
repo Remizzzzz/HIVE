@@ -5,26 +5,185 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-
 #include <string>
 #include <stdexcept>
-#include "utils/hiveException.h"
+#include <sstream>
 
+#include "utils/hiveException.h"
 #include "features/insect.h"
 #include "features/deck.h"
-
 #include "inputsManager.h"
 #include "hive.h"
 #include "solver.h"
 #include "renderer.h"
-#include <sstream>
 
 
 
+void Hive::generateAllInsects(bool Lad, bool Mos) {
 
-/**
- * @brief Affiche un menu interactif pour l'utilisateur.
- */
+        int cpt1 = 0;
+        int cpt2 = 0;
+
+        for (int i = 0; i < 2; ++i) {
+            bool color = bool (int (float (i) / 1.f));
+            Insect * insect = new Bee(color);
+            insects.push_back(insect);
+
+            if (color) {
+                insect->setCoordinates({-1,cpt1});
+                player1.deck.addInsect(insect);
+                cpt1++;
+            } else {
+                insect->setCoordinates({renderedMapSideSize,cpt2});
+                player2.deck.addInsect(insect);
+                cpt2++;
+            }
+        }
+
+        for (int i = 0; i < 6; ++i) {
+            bool color = bool(int (float (i) / 3.f));
+            Insect * insect = new Ant(color);
+            insects.push_back(insect);
+
+            if (color) {
+                insect->setCoordinates({-1,cpt1});
+                player1.deck.addInsect(insect);
+                cpt1++;
+            } else {
+                insect->setCoordinates({renderedMapSideSize,cpt2});
+                player2.deck.addInsect(insect);
+                cpt2++;
+            }
+        }
+
+        for (int i = 0; i < 4; ++i) {
+            bool color = bool(int (float (i) / 2.f));
+            Insect * insect = new Beetle(color);
+            insects.push_back(insect);
+
+            if (color) {
+                insect->setCoordinates({-1,cpt1});
+                player1.deck.addInsect(insect);
+                cpt1++;
+            } else {
+                insect->setCoordinates({renderedMapSideSize,cpt2});
+                player2.deck.addInsect(insect);
+                cpt2++;
+            }
+        }
+
+        for (int i = 0; i < 6; ++i) {
+            bool color = bool(int (float (i) / 3.f));
+            Insect * insect = new Grasshopper(color);
+            insects.push_back(insect);
+
+            if (color) {
+                insect->setCoordinates({-1,cpt1});
+                player1.deck.addInsect(insect);
+                cpt1++;
+            } else {
+                insect->setCoordinates({renderedMapSideSize,cpt2});
+                player2.deck.addInsect(insect);
+                cpt2++;
+            }
+        }
+
+        for (int i = 0; i < 4; ++i) {
+            bool color = bool(int (float (i) / 2.f));
+
+            Insect * insect = new Spider(color);
+            insects.push_back(insect);
+
+            if (color) {
+                insect->setCoordinates({-1,cpt1});
+                player1.deck.addInsect(insect);
+                cpt1++;
+            }
+            else {
+                insect->setCoordinates({renderedMapSideSize,cpt2});
+                player2.deck.addInsect(insect);
+                cpt2++;
+            }
+        }
+        if (Mos) {
+            for (int i = 0; i < 4; ++i) {
+                bool color = bool(int (float (i) / 2.f));
+
+                Insect * insect = new Mosquitoe(color);
+                insects.push_back(insect);
+
+                if (color) {
+                    insect->setCoordinates({-1,cpt1});
+                    player1.deck.addInsect(insect);
+                    cpt1++;
+                } else{
+                    insect->setCoordinates({renderedMapSideSize,cpt2});
+                    player2.deck.addInsect(insect);
+                    cpt2++;
+                }
+            }
+        }
+        if (Lad) {
+            for (int i = 0; i < 4; ++i) {
+                bool color = bool(int (float (i) / 2.f));
+                Insect * insect = new Ladybug(color);
+                insects.push_back(insect);
+
+                if (color) {
+                    insect->setCoordinates({-1,cpt1});
+                    player1.deck.addInsect(insect);
+                    cpt1++;
+                } else{
+                    insect->setCoordinates({renderedMapSideSize,cpt2});
+                    player2.deck.addInsect(insect);
+                    cpt2++;
+                }
+            }
+        }
+
+    }
+
+
+int Hive::run() {
+    if (menuPart) {
+        displayMenu();
+        return 1;
+    } else if (gamePart) {
+        renderer->render(*currentPlayer);
+        if (currentPlayer->isHuman) inputsManager.updatePlayerInputs(*currentPlayer);
+        else inputsManager.updateAIInputs(*currentPlayer);
+        std::cout << "\n:" <<currentPlayer->inputs;
+
+        switch (solver.update(*currentPlayer)) {
+            case -1:
+                std::cout << "\n---Reset---\n";
+            //le mouvement n'est pas bon
+            resetPlayerInputs(*currentPlayer);
+            break;
+            case 0:
+                // Le travail est en cours
+                break;
+            case 1:
+                // mouvement fait
+                std::cout << "\n---Deplacement---\n";
+                resetPlayerInputs(*currentPlayer);
+                switchPlayer();
+                break;
+            case 2:
+                menuPart = true;
+                gamePart = false;
+                break;
+            //Fin
+            default:
+                throw HiveException("hive.h:Hive", "retour de run mauvais");
+        }
+        std::cout << "\n:" <<currentPlayer->inputs.getStart();
+        return 1;
+    }
+    else return 0;
+}
+
+
 int Hive::displayMenu() {
     renderer = new ConsoleRenderer(map, &player1, &player2, renderedMapSideSize, offset);
     version = console;
@@ -81,22 +240,52 @@ int Hive::displayMenu() {
     return 0;
 }
 
+
 void Hive::displayRules() {
-    std::cout << "=== Règles du jeu Hive ===\n";
-    std::cout << "1. Hive est un jeu de stratégie abstrait où deux joueurs s'affrontent.\n";
-    std::cout << "2. Le but du jeu est de capturer complètement la reine de l'adversaire en l'entourant.\n";
-    std::cout << "3. Chaque joueur possède un ensemble d'insectes avec des mouvements spécifiques :\n";
-    std::cout << "   - La Reine (Queen Bee) : doit être posée dans les 4 premiers tours. Elle bouge d'une case à la fois.\n";
-    std::cout << "   - Les Fourmis (Ants) : peuvent se déplacer n'importe où autour de la ruche.\n";
-    std::cout << "   - Les Araignées (Spiders) : se déplacent exactement de 3 cases.\n";
-    std::cout << "   - Les Scarabées (Beetles) : peuvent grimper sur d'autres pièces.\n";
-    std::cout << "   - Les Sauterelles (Grasshoppers) : sautent en ligne droite par-dessus des pièces.\n";
-    std::cout << "4. Les pièces doivent toujours rester connectées pour former une seule ruche.\n";
-    std::cout << "5. Aucun mouvement ne peut séparer la ruche en plusieurs parties.\n";
-    std::cout << "6. Le premier joueur à entourer complètement la reine de l'adversaire gagne la partie.\n";
-    std::cout << "7. Si les deux reines sont entourées au même moment, c'est une égalité.\n";
-    std::cout << "8. Les joueurs jouent à tour de rôle, en posant une nouvelle pièce ou en déplaçant une pièce déjà posée.\n";
-    std::cout << "\nAmusez-vous bien et bonne chance !\n";
+    std::cout << "\n=== Règles du jeu Hive ===\n\n";
+
+    std::cout << "Objectif du jeu :\n";
+    std::cout << "-----------------\n";
+    std::cout << "Chaque joueur doit utiliser ses insectes pour encercler complètement l'abeille reine de son adversaire. "
+              << "Le premier joueur à capturer l'abeille ennemie remporte la partie.\n\n";
+
+    std::cout << "Règles générales :\n";
+    std::cout << "-------------------\n";
+    std::cout << "1. Les pièces doivent toujours rester connectées. Vous ne pouvez pas diviser la ruche en deux parties.\n";
+    std::cout << "2. Chaque joueur doit poser son abeille reine sur le plateau dans les 4 premiers tours.\n";
+    std::cout << "3. Les mouvements des insectes doivent respecter les limites physiques de la ruche :\n";
+    std::cout << "   - Un insecte ne peut pas passer dans un espace trop étroit (règle du \"glissement\").\n";
+    std::cout << "   - Certains insectes ont des mouvements uniques, décrits ci-dessous.\n\n";
+
+    std::cout << "Caractéristiques des insectes :\n";
+    std::cout << "--------------------------------\n";
+    std::cout << "- Reine (Abeille) :\n";
+    std::cout << "  • Se déplace d'une seule case par tour.\n";
+    std::cout << "  • Elle est la pièce la plus importante. Si elle est complètement encerclée, vous perdez.\n\n";
+
+    std::cout << "- Fourmi :\n";
+    std::cout << "  • Peut se déplacer d'autant de cases que souhaité autour de la ruche.\n";
+    std::cout << "  • Très utile pour la mobilité et la stratégie.\n\n";
+
+    std::cout << "- Scarabée :\n";
+    std::cout << "  • Se déplace d'une case comme la reine, mais peut grimper sur d'autres pièces.\n";
+    std::cout << "  • Lorsqu'il grimpe, il bloque la pièce en dessous et la rend inutilisable.\n\n";
+
+    std::cout << "- Sauterelle :\n";
+    std::cout << "  • Saute en ligne droite au-dessus d'une ou plusieurs pièces adjacentes.\n";
+    std::cout << "  • Ne peut pas s'arrêter sur des pièces, seulement sur des espaces vides.\n\n";
+
+    std::cout << "- Araignée :\n";
+    std::cout << "  • Doit se déplacer exactement de trois cases.\n";
+    std::cout << "  • Ne peut pas revenir en arrière ou changer de direction avant d'avoir atteint trois cases.\n\n";
+
+    std::cout << "Conseils :\n";
+    std::cout << "----------\n";
+    std::cout << "• Positionnez vos pièces stratégiquement pour défendre votre reine et attaquer celle de l'adversaire.\n";
+    std::cout << "• Utilisez les mouvements uniques de vos insectes pour bloquer ou déstabiliser votre adversaire.\n";
+    std::cout << "• Faites attention à ne pas isoler vos pièces, car cela pourrait limiter vos options de mouvement.\n\n";
+
+    std::cout << "Bon jeu !\n";
 }
 
 
@@ -327,9 +516,6 @@ void Hive::saveGame(const std::string& filename) const{
     file.close();
     std::cout << "Partie sauvegardée avec succès dans " << filename << std::endl;
 }
-//void Hive::loadGame(const std::string& filename) {}
-
-
 
 
 void Hive::loadGame(const std::string& filename) {
@@ -600,12 +786,10 @@ void Hive::loadGame(const std::string& filename) {
 }
 
 
-
 Insect* Hive::generateSingleInsect(int type, bool color, vec2i vec) {
     Insect* insect = nullptr;
     // Création de l'insecte en fonction du type
     switch (type) {
-
         case 0: insect = new Ant(color);break;
         case 1: insect = new Beetle(color);break;
         case 2: insect = new Grasshopper(color);break;
@@ -617,16 +801,17 @@ Insect* Hive::generateSingleInsect(int type, bool color, vec2i vec) {
             throw HiveException("Hive::generateSingleInsect", "Insecte de type inconnu");
         return nullptr;
     }
+
     insect->setCoordinates(vec);
     // Définition des coordonnées et ajout dans le deck
     if (color) {
-        if(vec.getI() == -1)player1.deck.addInsect(insect);
+        if (vec.getI() == -1) player1.deck.addInsect(insect);
         else {
             map.putInsectTo(insect,vec);
             player1.addActiveInsect(insect);
         }
     } else {
-        if(vec.getI() == 30)player2.deck.addInsect(insect);
+        if (vec.getI() == 30) player2.deck.addInsect(insect);
         else {
             map.putInsectTo(insect,vec);
             player2.addActiveInsect(insect);
@@ -638,10 +823,5 @@ Insect* Hive::generateSingleInsect(int type, bool color, vec2i vec) {
 
     return insect;
 }
-
-
-
-
-
 
 

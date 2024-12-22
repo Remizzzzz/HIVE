@@ -6,7 +6,6 @@
 #define HIVE_INSECT_H
 
 #include <sstream>
-#include <utility>
 #include <vector>
 
 #include "../utils/utils.h"

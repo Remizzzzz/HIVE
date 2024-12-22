@@ -29,7 +29,10 @@ file(GLOB SOURCES
 )
 
 # Créer l'exécutable pour l'interface Qt
-add_executable(HiveQt ${SOURCES})
+add_executable(HiveQt ${SOURCES}
+        src/inputsManager.cpp
+        src/renderer.cpp
+        src/solver.cpp)
 #add_executable(HiveConsole ${CONSOLE_SOURCES} src/mainConsole.cpp)
 
 #if (WIN32)#Pour empêcher l'ouverture de la console
