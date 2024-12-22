@@ -27,6 +27,7 @@
  */
 void Hive::displayMenu() {
     int choice = 0;
+    std::cout << "\033[2J\033[H";
     std::cout << "\n=== Menu Hive ===\n";
     std::cout << "1. Start a game\n";
     std::cout << "2. Tutorial\n";

@@ -17,6 +17,8 @@
 #include <solver.h>
 #include <features/map.h>
 #include <algorithm>
+
+
 enum Mode{PvP,PvAI};
 
 class InputsManager{

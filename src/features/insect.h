@@ -60,24 +60,6 @@ public:
         return PV;
     }
 
-    [[nodiscard]] virtual std::string getPrintableValue(int idColor) const
-    {
-        if(idColor == 0)
-        {
-            std::string color;
-            if(getColor()) {
-                color = "\033[34m";
-            }else {
-                color = "\033[31m";
-            }
-            return color;
-        }
-        else
-        {
-            return "\033[92m";
-        }
-
-    }
     int getFormerNeighbour(vec2i oldPosition, vec2i newPosition, Map &m) const; //Fonctions pour detecter les anciens voisins à la nouvelle position
     virtual std::vector<vec2i> getPossibleMovements(Map &m) const = 0;
     std::vector<vec2i> setRule(Map &m, bool color) const;
@@ -93,44 +75,7 @@ class Bee : public virtual Insect {
 public://test
     Bee(bool col) : Insect(col, bee, "Qe") {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
-    bool isCircled(Map &m);
-    [[nodiscard]] std::string getPrintableValue(int idColor) const override
-    {
-        if(idColor == 0)
-        {
-            std::string color;
-            std::stringstream s;
-            if(getColor() == true ) {
-                color = "\033[34m";
-            }else {
-                color = "\033[31m";
-            }
-            s << "\033[33mQ" << color << "B" << "\033[0m"; // Q affiché en jaune, B avec la couleur du joueur (pour Queen Bee)
-            return s.str();
-        }
-        else if(idColor == 1)
-        {
-            std::string color="\033[92m";
-            std::stringstream s;
-            s << color << "QB" << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 2)
-        {
-            std::string color="\033[32m";
-            std::stringstream s;
-            s << color << "QB" << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 3)
-        {
-            std::string color="\033[35m";
-            std::stringstream s;
-            s << color << "QB" << "\033[0m";
-            return s.str();
-        }
-        throw HiveException("Bee: Unknown color", "Insect.h : Insect::Bee::getPrintableValue");
-    }
+    bool isCircled(Map &m) const;
 };
 
 
@@ -150,43 +95,6 @@ public:
     }
 
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
-    [[nodiscard]] std::string getPrintableValue(int idColor) const override
-    {
-        if(idColor == 0)
-        {
-            std::string color;
-            std::stringstream s;
-            if(getColor() == true ) {
-                color = "\033[34m";
-            }else {
-                color = "\033[31m";
-            }
-            s << color<< "B " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 1)
-        {
-            std::string color="\033[92m";
-            std::stringstream s;
-            s << color << "B "  << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 2)
-        {
-            std::string color="\033[32m";
-            std::stringstream s;
-            s << color << "B " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 3)
-        {
-            std::string color="\033[35m";
-            std::stringstream s;
-            s << color << "B "  << "\033[0m";
-            return s.str();
-        }
-        throw HiveException("Beettle: Unknown color", "Insect.h : Insect::Beettle::getPrintableValue");
-    }
 };
 
 
@@ -195,43 +103,6 @@ public:
 
     Grasshopper(bool col) : Insect(col, grasshopper,"G") {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
-    [[nodiscard]] std::string getPrintableValue(int idColor) const override
-    {
-        if(idColor == 0)
-        {
-            std::string color;
-            std::stringstream s;
-            if(getColor() == true ) {
-                color = "\033[34m";
-            }else {
-                color = "\033[31m";
-            }
-            s << color<< "G "  << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 1)
-        {
-            std::string color="\033[92m";
-            std::stringstream s;
-            s << color << "G " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 2)
-        {
-            std::string color="\033[32m";
-            std::stringstream s;
-            s << color << "G " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 3)
-        {
-            std::string color="\033[35m";
-            std::stringstream s;
-            s << color << "G " "\033[0m";
-            return s.str();
-        }
-        throw HiveException("Grasshopper: Unknown color", "Insect.h : Insect::Grasshopper::getPrintableValue");
-    }
 };
 
 
@@ -239,43 +110,6 @@ class Spider : public virtual Insect {
 public:
     Spider(bool col) : Insect(col, spider,"Sp") {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
-    [[nodiscard]] std::string getPrintableValue(int idColor) const override
-    {
-        if(idColor == 0)
-        {
-            std::string color;
-            std::stringstream s;
-            if(getColor() == true ) {
-                color = "\033[34m";
-            }else {
-                color = "\033[31m";
-            }
-            s << color<< "S " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 1)
-        {
-            std::string color="\033[92m";
-            std::stringstream s;
-            s << color << "S " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 2)
-        {
-            std::string color="\033[32m";
-            std::stringstream s;
-            s << color << "S " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 3)
-        {
-            std::string color="\033[35m";
-            std::stringstream s;
-            s << color << "S " << "\033[0m";
-            return s.str();
-        }
-        throw HiveException("Spider: Unknown color", "Insect.h : Insect::Spider::getPrintableValue");
-    }
 };
 
 
@@ -283,86 +117,12 @@ class Ant : public virtual Insect {
 public:
     Ant(bool col) : Insect(col, ant,"An") {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
-    [[nodiscard]] std::string getPrintableValue(int idColor) const override
-    {
-        if(idColor == 0)
-        {
-            std::string color;
-            std::stringstream s;
-            if(getColor() == true ) {
-                color = "\033[34m";
-            }else {
-                color = "\033[31m";
-            }
-            s << color<< "A " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 1)
-        {
-            std::string color="\033[92m";
-            std::stringstream s;
-            s << color << "A " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 2)
-        {
-            std::string color="\033[32m";
-            std::stringstream s;
-            s << color << "A " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 3)
-        {
-            std::string color="\033[35m";
-            std::stringstream s;
-            s << color << "A " << "\033[0m";
-            return s.str();
-        }
-        throw HiveException("Ant: Unknown color", "Insect.h : Insect::Ant::getPrintableValue");
-    }
 };
 
 class Ladybug : public virtual Insect {
 public:
     Ladybug(bool col) : Insect(col, ladybug,"La") {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
-    [[nodiscard]] std::string getPrintableValue(int idColor) const override
-    {
-        if(idColor == 0)
-        {
-            std::string color;
-            std::stringstream s;
-            if(getColor() == true ) {
-                color = "\033[34m";
-            }else {
-                color = "\033[31m";
-            }
-            s << color<< "L " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 1)
-        {
-            std::string color="\033[92m";
-            std::stringstream s;
-            s << color << "L " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 2)
-        {
-            std::string color="\033[32m";
-            std::stringstream s;
-            s << color << "L " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 3)
-        {
-            std::string color="\033[35m";
-            std::stringstream s;
-            s << color << "L " << "\033[0m";
-            return s.str();
-        }
-        throw HiveException("Ladybug: Unknown color", "Insect.h : Insect::Ladybug::getPrintableValue");
-    }
 };
 
 class Mosquitoe : public virtual Insect, public virtual Ant, public virtual Bee, public virtual Grasshopper,
@@ -372,44 +132,6 @@ public:
         : Insect(col, mosquitoe,"M"), Ant(col), Bee(col), Grasshopper(col), Beetle(col), Spider(col), Ladybug(col) {}
 
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
-    [[nodiscard]] std::string getPrintableValue(int idColor) const override
-    {
-        if(idColor == 0)
-        {
-            std::string color;
-            std::stringstream s;
-            if(getColor() == true ) {
-                color = "\033[34m";
-            }else {
-                color = "\033[31m";
-            }
-            s << color<< "M " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 1)
-        {
-            std::string color="\033[92m";
-            std::stringstream s;
-            s << color << "M " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 2)
-        {
-            std::string color="\033[32m";
-            std::stringstream s;
-            s << color << "M " << "\033[0m";
-            return s.str();
-        }
-        else if(idColor == 3)
-        {
-            std::string color="\033[35m";
-            std::stringstream s;
-            s << color << "M " << "\033[0m";
-            return s.str();
-        }
-        throw HiveException("Mosquitoe: Unknown color", "Insect.h : Insect::Mosquitoe::getPrintableValue");
-
-    }
 };
 
 

@@ -62,11 +62,8 @@ public:
     void renderDeck1(const Player & currentPlayer_) const{
         std::cout << "\033[31m";
         if (currentPlayer_.getInputs().getStart().getI() == -1){
-            std::cout << "caca";
             for(const auto & insect: P1->getDeck()){
-                std::cout << insect->getCoordinates();
                 if (insect->getCoordinates().getJ() == currentPlayer_.getInputs().getStart().getJ()){
-                    std::cout << "caca2";
                     if (currentPlayer_.getInputs().isStartSelected()){
                         std::cout << "\033[92m" << insect->getPV() << "\033[31m ";
                     }
@@ -203,14 +200,10 @@ public:
     }
 
     void render(const Player & currentPlayer_) const override{
-        //system("cls");
-        std::cout << '\n';
+        std::cout << "\033[2J\033[H";
         renderDeck1(currentPlayer_);
-        std::cout<<"1";
         renderMap(currentPlayer_);
-        std::cout<<"2";
         renderDeck2(currentPlayer_);
-        std::cout << '\n';
     }
 
 

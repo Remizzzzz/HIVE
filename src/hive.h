@@ -49,6 +49,9 @@ class Hive{
     Player player1;
     Player player2;
 
+    const Bee * bee1;
+    const Bee * bee2;
+
     Player * currentPlayer;
 
     InputsManager inputsManager;
@@ -69,16 +72,18 @@ class Hive{
 
         for (int i = 0; i < 2; ++i) {
             bool color = bool(int (float (i) / 1.f));
-            Insect * insect = new Bee(color);
+            auto insect = new Bee(color);
             insects.push_back(insect);
 
             if (color){
                 insect->setCoordinates({-1,cpt1});
+                bee1 = insect;
                 player1.deck.addInsect(insect);
                 cpt1++;
             }
             else{
                 insect->setCoordinates({renderedMapSideSize,cpt2});
+                bee2 = insect;
                 player2.deck.addInsect(insect);
                 cpt2++;
             }
@@ -216,7 +221,7 @@ public:
         return renderer;
     }
 
-    Hive() : mode(PvP), version(console),
+    Hive() : mode(PvAI), version(console),
              insects(),
              rewindNb(5),rewindUsed(rewindNb),
             offset((trueMapSideSize - renderedMapSideSize) / 2.f),
@@ -225,7 +230,6 @@ public:
              inputsManager(mode, renderedMapSideSize, map),
              solver(map, renderedMapSideSize, offset),renderer( nullptr)
     {
-        offset = ((trueMapSideSize - renderedMapSideSize) / 2.f);
     }
 
     Mode getMode() {
@@ -272,16 +276,16 @@ public:
     void resetInputs()
     {
         player1.inputs.reset();
-        player1.inputs.setStart({-1,0});
+        player1.inputs.setStart({0,0});
 
         player2.inputs.reset();
-        player2.inputs.setStart({renderedMapSideSize,0});
+        player2.inputs.setStart({renderedMapSideSize-1,0});
     }
 
     void resetPlayerInputs(Player & player_){
         player_.inputs.reset();
-        if (player_.getId() == 1) player_.inputs.setStart({-1,0});
-        else player_.inputs.setStart({renderedMapSideSize,0});
+        if (player_.getId() == 1) player_.inputs.setStart({0,0});
+        else player_.inputs.setStart({renderedMapSideSize-1,0});
     }
 
     void initIfNeeded(){
@@ -309,6 +313,19 @@ public:
         }
         else if (gamePart)
         {
+
+            if (bee1->isCircled(map))
+            {
+                std::cout << "\n#####PLAYER 2 WIN#####\n";
+                menuPart = true;
+                gamePart = false;
+            }
+            if (bee2->isCircled(map))
+            {
+                std::cout << "\n#####PLAYER 1 WIN#####\n";
+                menuPart = true;
+                gamePart = false;
+            }
 
             renderer->render(*currentPlayer);
 

@@ -20,11 +20,37 @@ public:
              return;
          }
 
-         int randomValue = std::max(0,random.getRandomInt(0,3) - 1); // 1 chance sur 4
+         int randomValue = std::max(0,random.getRandomInt(0,2));
 
          std::cout << "randomValue: " << randomValue;
 
          const Insect * selectedInsect;
+
+
+         if (player_.getActiveInsects().empty() && !player_.getDeck().isEmpty())
+         {
+             int deckIndex=player_.getDeck().returnIndex(bee); //On place bee pour pas avoir de problèmes de mouvements impossibles
+             selectedInsect = player_.getDeck().getInsectAt(deckIndex);
+
+             if (player_.getId() == 1)
+             {
+                 inputs_.setStart({-1,deckIndex});
+             }
+             else
+             {
+                 inputs_.setStart({30,deckIndex});
+             }
+             inputs_.selectStart();
+
+             inputs_.setPossibleDestinations(map.setRule(player_.getId() % 2));
+
+             const int destinationsIndex = random.getRandomInt(0,static_cast<int>(inputs_.getPossibleDestinations().size()));
+             inputs_.setDestinationIndex(destinationsIndex);
+
+             inputs_.selectDestination();
+
+             randomValue = -1;
+         }
 
          if (randomValue == 0)
          {
