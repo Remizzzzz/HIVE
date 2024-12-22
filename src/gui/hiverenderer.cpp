@@ -21,6 +21,8 @@ hiveRenderer::hiveRenderer(QWidget *parent, int rewind, Mode mod, bool ladybug, 
     centralWidget(new QWidget(this)),
     infoLabel(new QLabel("Cliquez sur un bouton", this)),
     ui(new Ui::hiveRenderer),
+    nomJ1(nomJ1),
+    nomJ2(nomJ2),
     ladExten(ladybug),
     mosExten(mosquitoe),
     mode(mod)
@@ -112,15 +114,19 @@ void hiveRenderer::setupHexagonalGrid(int rows, int cols, int buttonSize) {
     menuButton->setStyleSheet("background: grey;");
 }
 
-void hiveRenderer::setupDeck(int buttonSize, QString nomJ1, QString nomJ2){
+void hiveRenderer::setupDeck(int buttonSize, QString nomJ1_, QString nomJ2_){
     vec2i deck(-1,-1);
     for (int num=0;num<2;num++) {
         if (num==0) {
-            auto *name = new QLabel(nomJ1);
-            name->setGeometry(0,num*30*buttonSize+50,50,10);
+            auto *name = new QLabel(nomJ1_);
+            name->setGeometry(num*30*buttonSize+50,700,50,10);
+            name->setStyleSheet("color:white;");
+            name->show();
         } else {
-            auto *name = new QLabel(nomJ2);
-            name->setGeometry(0,num*30*buttonSize+50,50,10);
+            auto *name = new QLabel(nomJ2_);
+            name->setGeometry(num*30*buttonSize+50,700,50,10);
+            name->setStyleSheet("color:white;");
+            name->show();
         }
         for (int i=0;i<sizeDeck;i++) {
             // Créer un bouton hexagonal
@@ -357,10 +363,13 @@ void hiveRenderer::handleButtonClick() {
 
                         button->updateState(0);
                         button->setPlayer(playerTurn);
-                        if (opponent->lostGame(hive.getMap())) {
-                            showWinner(actualP);
+
+                        if (opponent->lostGame(hive.getMap())&& actualP->lostGame(hive.getMap())){
+                            showWinner(QString("Personne"));
+                        } else if (opponent->lostGame(hive.getMap())) {
+                            showWinner(nomJ1);
                         } else if (actualP->lostGame(hive.getMap())) {
-                            showWinner(opponent);
+                            showWinner(nomJ2);
                         }
 
                         if (mode==PvP) {
@@ -410,9 +419,11 @@ void hiveRenderer::handleButtonClick() {
 
                         hive.getInputsManager()->updatePlayerInputsQt(actualP,index,inputT,playerTurn);
                         for (auto b : actualP->getInputs().getPossibleDestinations()) {//On itère dans la liste des destinations possibles
-                            qDebug()<<"b =("<<b.getI()<<","<<b.getJ()<<")";
+
                             b=convertCoordinates(b);
-                            buttons[b.getI()][b.getJ()]->updateState(3);
+                            if (b.getI()>=0 && b.getJ()>=0 && b.getI()<renderedMapSize && b.getJ()<renderedMapSize) {
+                                buttons[b.getI()][b.getJ()]->updateState(3);
+                            }
                         }
                         updateInputT();
                     } else {
@@ -460,7 +471,7 @@ void hiveRenderer::handleButtonClick() {
 }
 
 
-void hiveRenderer::showWinner(Player* winner) {
+void hiveRenderer::showWinner(QString winner) {
     // Création d'une nouvelle fenêtre pour afficher les règles du jeu
     QWidget *winWindow = new QWidget;
     winWindow->setWindowTitle("Winner !");
@@ -470,7 +481,7 @@ void hiveRenderer::showWinner(Player* winner) {
     QVBoxLayout *layout = new QVBoxLayout;
 
     // Les règles (à écrire)
-    QString message = QString("Congratulations ! Player %1 just won the game !!").arg(winner->getId());
+    QString message = QString("Congratulations ! Player %1 just won the game !!").arg(winner);
     QLabel *winLabel = new QLabel(message, winWindow);
     winLabel->setAlignment(Qt::AlignCenter);
     QFont winFont = winLabel->font();

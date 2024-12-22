@@ -29,7 +29,7 @@ public:
     bool getInputT() { return inputT; }
     void updatePlayerTurn() { if (playerTurn) playerTurn=false; else playerTurn=true; }
 
-    void showWinner(Player* winner);
+    void showWinner(QString winner);
     void AIMovement(Player* opponent);
 
     vec2i convertCoordinates(vec2i coordinates) {
@@ -54,6 +54,8 @@ private:
     bool mosExten;
     Mode mode;
     bool ladExten;
+    QString nomJ1;
+    QString nomJ2;
     bool inputT=true;
     bool playerTurn=false;
     HexagonalButton* buttons[31][30];
