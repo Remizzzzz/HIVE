@@ -235,6 +235,21 @@ public:
             delete insect;
         }
     }
+
+    int getExtension() {
+        bool lady=false;
+        bool mosq=false;
+        if (extensions.find(ladybug)!=extensions.end()) {
+            lady=true;
+        }
+        if (extensions.find(mosquitoe)!=extensions.end()) {
+            mosq=true;
+        }
+        if (!lady && !mosq) return 0;
+        if (lady && !mosq) return 1;
+        if (!lady && mosq) return 2;
+        if (lady && mosq) return 3;
+    }
     int getRewindUsed() {return rewindUsed;}
     void incrRewindUsed() {rewindUsed++;}
     void decrRewindUsed() {if (rewindUsed>0) rewindUsed--;}
@@ -333,8 +348,14 @@ public:
 
     }
     int getOffset() {return offset;}
-    void runQt(bool Ladybug, bool Mosquitoe) {
-        generateAllInsects(Ladybug, Mosquitoe);
+    void runQt(bool Lady, bool Mosq) {
+        if (Lady) {
+            extensions.emplace(ladybug);
+        }
+        if (Mosq) {
+            extensions.emplace(mosquitoe);
+        }
+        generateAllInsects(Lady, Mosq);
     }
     Player* getPlayer1() {return &player1;}
     Player* getPlayer2() {return &player2;}

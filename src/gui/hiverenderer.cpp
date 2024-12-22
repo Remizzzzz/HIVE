@@ -35,7 +35,6 @@ hiveRenderer::hiveRenderer(QWidget *parent, int rewind, Mode mod, bool ladybug, 
 
     // Créer la grille hexagonale de boutons
     setupHexagonalGrid(rows, cols, buttonSize);  // 30x30 boutons, taille de 25 pixels max, à cause du displacement, le rapport entre la hauteur et la largeur est de 1*4 pour une map 2x2
-    setupDeck(buttonSize);
     // Configurez la fenêtre
     setWindowTitle("Hive !");
     resize(1000,600);
@@ -181,6 +180,25 @@ void hiveRenderer::loadGame(bool load) {
                 }
             }
         }
+        switch (hive.getExtension()) {
+            case 0:
+                ladExten=false;
+                mosExten=false;
+            case 1:
+                ladExten=true;
+                mosExten=false;
+                break;
+            case 2 :
+                ladExten=false;
+                mosExten=true;
+                break;
+            case 3 :
+                ladExten=true;
+                mosExten=true;
+        }
+        if (ladExten) sizeDeck+=2;
+        if (mosExten) sizeDeck+=2;
+        setupDeck(buttonSize);
         //Actu des decks
         int index=0;
         for (index=0;index<2*sizeDeck;index++) {
@@ -200,11 +218,44 @@ void hiveRenderer::loadGame(bool load) {
             buttons[30][index+sizeDeck]->setInsectType(it->getIT());
             index++;
         }
+    } else {
+        setupDeck(buttonSize);
     }
 }
 hiveRenderer::~hiveRenderer() {
     delete ui;
 }
+
+void hiveRenderer::AIMovement(Player* opponent) {
+    updateInputT();
+    hive.getInputsManager()->updateAIInputs(*opponent,true,inputT);
+    updateInputT();
+    hive.getInputsManager()->updateAIInputs(*opponent,true,inputT);
+    HexagonalButton* startButton;
+    if (opponent->getInputs().getStart().getI()==-1) {
+        startButton=buttons[30][sizeDeck+opponent->getInputs().getStart().getJ()];
+    } else {
+        vec2i coor(opponent->getInputs().getStart().getI(),opponent->getInputs().getStart().getJ());
+        coor=convertCoordinates(coor);
+        startButton=buttons[coor.getI()][coor.getJ()];
+    }
+    vec2i v=convertCoordinates(opponent->getInputs().getPossibleDestinations()[opponent->getInputs().getDestinationIndex()]);
+    qDebug()<<"IA vec2i"<<v;
+    *buttons[v.getI()][v.getJ()]=*startButton;
+    buttons[v.getI()][v.getJ()]->updateState(0);
+    startButton->updateState(2);
+    startButton->setInsectType(none);
+    qDebug()<< "\nAI("<<opponent->getInputs().getStart().getI()<<","<<opponent->getInputs().getStart().getJ()<<")";
+    if (opponent->getInputs().getStart().getI()==-1) {//Si c'est deckToMap movement
+        hive.getSolver()->deckToMapMovement(*opponent);
+        hive.decrRewindUsed();
+    } else { //Si c'est mapToMapMovement
+        hive.getInputsManager()->convertQtToSolver(opponent);
+        hive.getSolver()->mapToMapMovement(*opponent);
+        hive.decrRewindUsed();
+    }
+}
+
 
 void hiveRenderer::handleButtonClick() {
 
@@ -285,32 +336,7 @@ void hiveRenderer::handleButtonClick() {
                         if (mode==PvP) {
                             updatePlayerTurn();
                         } else {
-                            updateInputT();
-                            hive.getInputsManager()->updateAIInputs(*opponent,true,inputT);
-                            updateInputT();
-                            hive.getInputsManager()->updateAIInputs(*opponent,true,inputT);
-                            HexagonalButton* startButton;
-                            if (opponent->getInputs().getStart().getI()==-1) {
-                                startButton=buttons[30][sizeDeck+opponent->getInputs().getStart().getJ()];
-                            } else {
-                                vec2i coor(opponent->getInputs().getStart().getI(),opponent->getInputs().getStart().getJ());
-                                coor=convertCoordinates(coor);
-                                startButton=buttons[coor.getI()][coor.getJ()];
-                            }
-                            vec2i v=convertCoordinates(opponent->getInputs().getPossibleDestinations()[opponent->getInputs().getDestinationIndex()]);
-                            qDebug()<<"IA vec2i"<<v;
-                            *buttons[v.getI()][v.getJ()]=*startButton;
-                            buttons[v.getI()][v.getJ()]->updateState(0);
-                            startButton->updateState(2);
-                            startButton->setInsectType(none);
-                            qDebug()<< "\nAI("<<opponent->getInputs().getStart().getI()<<","<<opponent->getInputs().getStart().getJ()<<")";
-                            if (opponent->getInputs().getStart().getI()==-1) {//Si c'est deckToMap movement
-                                hive.getSolver()->deckToMapMovement(*opponent);
-                                hive.decrRewindUsed();
-                            } else { //Si c'est mapToMapMovement
-                                hive.getSolver()->mapToMapMovement(*opponent);
-                                hive.decrRewindUsed();
-                            }
+                            AIMovement(opponent);
                         }
                         qDebug()<<"\nHistorique : ";
                         for (auto move : hive.getMap().getHistoric()) {

@@ -35,6 +35,7 @@ public:
         }
     }
     void showWinner(Player* winner);
+    void AIMovement(Player* opponent);
     vec2i convertCoordinates(vec2i coordinates) {
         coordinates.setJ(coordinates.getJ()-2);
         coordinates.setI(coordinates.getI()-2);
