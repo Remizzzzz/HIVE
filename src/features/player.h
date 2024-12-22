@@ -30,6 +30,7 @@ private:
     friend class Hive;
     friend class InputsManager;
     friend class Solver;
+
 public:
     explicit Player(const int & id_) : id(id_), isHuman(true), deck(), activeInsects(), inputs() {}
     explicit Player(const int & id_, const std::string &newname) : id(id_), isHuman(true), name(newname), deck(), activeInsects(), inputs() {}

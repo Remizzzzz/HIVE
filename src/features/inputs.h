@@ -5,10 +5,8 @@
 #ifndef HIVE_INPUTS_H
 #define HIVE_INPUTS_H
 
-
 #include <string>
 #include <vector>
-#include <QDebug>
 
 #include "../utils/utils.h"
 
