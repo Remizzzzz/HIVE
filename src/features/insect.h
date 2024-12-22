@@ -101,7 +101,7 @@ public:
 class Grasshopper : public virtual Insect {
 public:
 
-    Grasshopper(bool col) : Insect(col, grasshopper,"G") {}
+    Grasshopper(bool col) : Insect(col, grasshopper,"Gr") {}
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
 };
 
@@ -129,7 +129,7 @@ class Mosquitoe : public virtual Insect, public virtual Ant, public virtual Bee,
 public virtual Beetle, public virtual Spider, public virtual Ladybug  {
 public:
     Mosquitoe(bool col)
-        : Insect(col, mosquitoe,"M"), Ant(col), Bee(col), Grasshopper(col), Beetle(col), Spider(col), Ladybug(col) {}
+        : Insect(col, mosquitoe,"Mo"), Ant(col), Bee(col), Grasshopper(col), Beetle(col), Spider(col), Ladybug(col) {}
 
     std::vector<vec2i> getPossibleMovements(Map &m) const override;
 };
