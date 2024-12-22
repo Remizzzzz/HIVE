@@ -525,13 +525,19 @@ std::vector<vec2i> Mosquitoe:: getPossibleMovements(Map &m) const{
                         }
                     }
                 }
-
-            // Converti l'ensemble en vector
-            std::vector<vec2i> possibleMovementsVector(possibleMovements.begin(), possibleMovements.end());
-            return possibleMovementsVector;
+                // Converti l'ensemble en vector
+                std::vector<vec2i> possibleMovementsVector(possibleMovements.begin(), possibleMovements.end());
+                return possibleMovementsVector;
             }
-
-            else return Beetle::getPossibleMovements(m);
+            else
+            {
+                std::set<vec2i> possibleMovements;
+                for (const auto& movement : Beetle::getPossibleMovements(m)) {
+                    possibleMovements.insert(movement);
+                }
+                std::vector<vec2i> possibleMovementsVector(possibleMovements.begin(), possibleMovements.end());
+                return possibleMovementsVector;
+            }
         }
     } catch (const std::string& e) {
         throw HiveException("Mosquitoe::getPossibleMovements", e);

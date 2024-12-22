@@ -36,8 +36,8 @@ private:
     bool hasLadybug = false;
     bool hasMosquito = false;
     bool load = false;
-    QString nomJ1;
-    QString nomJ2 = "IA";
+    QString nomJ1 = "Player 1";
+    QString nomJ2 = "Player 2";
 
     // Boutons du menu
     QPushButton *startButton;

@@ -211,6 +211,7 @@ void MainWindow::initializeSettingsWidget() {
         }
         else {
             hiveMode = PvAI;
+            nomJ2 = "IA";
         }
 
         if (ladybugCheckBox->isChecked()) hasLadybug = true;
@@ -241,7 +242,7 @@ void MainWindow::changeSettings() {
 
 void MainWindow::startNewGame() {
     // Ajouter ", nomJ1, nomJ2" quand le constructeur sera prêts ce sont des QString
-    auto *hive = new hiveRenderer(nullptr, hiveNbRewind, hiveMode, hasLadybug, hasMosquito, load);
+    auto *hive = new hiveRenderer(nullptr, hiveNbRewind, hiveMode, hasLadybug, hasMosquito, load, nomJ1, nomJ2);
     hive->setStyleSheet("background-color: black;");
     hive->show();
     this->close();
