@@ -4,7 +4,7 @@
 
 #ifndef HIVE_SOLVER_H
 #define HIVE_SOLVER_H
-
+#include <QDebug>
 
 #include "features/insect.h"
 #include "features/map.h"
@@ -70,9 +70,10 @@ public:
 
     void deckToMapMovement(Player & player_) {
         const vec2i & start = player_.inputs.getStart();
-        const vec2i & destination = player_.inputs.getDestination();//+vec2i{offset,offset};
+        const vec2i & destination = player_.inputs.getDestination();
         if (player_.getDeck().isIndexValid(start.getJ())){
             if (map.isSlotFree(destination)) {
+                qDebug()<<"\n\nC'est free";
                 map.putInsectTo(player_.getDeck().getInsectAt(start.getJ()), destination);
 
                 map.getInsectAt(destination)->setCoordinates(destination);
