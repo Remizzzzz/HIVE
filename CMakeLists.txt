@@ -35,7 +35,7 @@ add_executable(HiveQt ${SOURCES}
 
 if (WIN32)#Pour empêcher l'ouverture de la console
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
-#endif ()
+endif ()
 
 
 target_link_libraries(HiveQt
