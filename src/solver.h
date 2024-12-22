@@ -74,8 +74,8 @@ public:
         if (player_.getDeck().isIndexValid(start.getJ())){
             if (map.isSlotFree(destination)) {
                 map.putInsectTo(player_.getDeck().getInsectAt(start.getJ()), destination);
-
-                map.getInsectAt(destination)->setCoordinates(destination);
+                Insect* ins = map.getInsectAt(destination);
+                ins->setCoordinates(destination);
                 map.addToHistoric(start,destination);//If the movement is a rewind, goBack will manage the historic
                 player_.addActiveInsectsFromDeck(start.getJ());
                 player_.deck.removeAt(start.getJ());
